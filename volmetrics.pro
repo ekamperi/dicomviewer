@@ -13,10 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    dicomviewer.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    dicomviewer.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    dicomviewer.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd
