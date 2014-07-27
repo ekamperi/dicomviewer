@@ -45,4 +45,13 @@ void MainWindow::on_actionOpenDICOM_triggered()
     } else {
         qWarning() << status.text();
     }
+
+    /* Iterate over all objects */
+    DcmDataset *pDcmDataset = dcmFile.getDataset();
+    DcmStack stack;
+    DcmObject *obj = NULL;
+    while (pDcmDataset->nextObject(stack, /* Depth-first */ OFTrue).good()) {
+        obj = stack.top();
+        obj->print(std::cout);
+    }
 }
