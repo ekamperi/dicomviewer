@@ -1,6 +1,8 @@
 #ifndef DICOMVIEWER_H
 #define DICOMVIEWER_H
 
+#include <QMap>
+#include <QString>
 #include <QWidget>
 
 namespace Ui {
@@ -19,6 +21,8 @@ public:
 
 private:
     Ui::DicomViewer *ui;
+    QList< QMap<QString, QString> > *list;
+    QMap<QString, QString> parseDicomFromXml(const char *s);
 };
 
 #endif // DICOMVIEWER_H
