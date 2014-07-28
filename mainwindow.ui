@@ -29,6 +29,7 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionOpenDICOM"/>
+    <addaction name="action_Close"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -62,6 +63,11 @@
   <action name="actionExit">
    <property name="text">
     <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="action_Close">
+   <property name="text">
+    <string>&amp;Close</string>
    </property>
   </action>
  </widget>

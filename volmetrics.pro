@@ -22,4 +22,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     dicomviewer.ui
 
-unix|win32: LIBS += -ldcmdata -lofstd
+unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
+-lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
+-ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm -lgomp -lpthread
