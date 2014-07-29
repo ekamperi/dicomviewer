@@ -151,9 +151,9 @@ void DicomViewer::getCompressedData(DcmDataset *pDcmDataset)
     dpix->getOriginalRepresentationKey(xferSyntax, rep);
 
     /*
-	 * Access original data representation and get result within
+     * Access original data representation and get result within
      * pixel sequence.
-	 */
+     */
     cond = dpix->getEncapsulatedRepresentation(xferSyntax, rep, dseq);
     if (cond == EC_Normal) {
         DcmPixelItem* pixitem = NULL;
@@ -164,9 +164,9 @@ void DicomViewer::getCompressedData(DcmDataset *pDcmDataset)
 			return;
 
         /*
-		 * Get the length of this pixel item (i.e. fragment, i.e. most of
+         * Get the length of this pixel item (i.e. fragment, i.e. most of
          * the time, the length of the frame).
-		 */
+         */
 		Uint32 length = pixitem->getLength();
         if (length == 0) return;
 
@@ -191,10 +191,10 @@ void DicomViewer::jp2k_to_png(Uint8* pixelData, Uint32 length)
         return;
     }
 
-	/*
-	 * Initialize library or else it will abort.
+    /*
+     * Initialize library or else it will abort.
      * It may not be needed in newer versions of it.
-	 */
+     */
 	Magick::InitializeMagick(NULL);
 
     Magick::Blob blob(pixelData, length);
