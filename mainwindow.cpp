@@ -1,11 +1,9 @@
 #include <QFileDialog>
-#include <QGraphicsScene>
-#include <QGraphicsView>
 
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include "dicomviewer.h"
-
+#include "mainwindow.h"
+#include "myglwidget.h"
+#include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H
@@ -25,10 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
     /* Register decompression codecs */
     DcmRLEDecoderRegistration::registerCodecs();
     DJDecoderRegistration::registerCodecs();
-
-    /* */
-    this->pScene = new QGraphicsScene();
-    this->pView = new QGraphicsView(pScene);
 }
 
 MainWindow::~MainWindow()
@@ -54,4 +48,7 @@ void MainWindow::on_actionOpenDICOM_triggered()
     pDicomViewer->loadDicomFile(filename);
     pDicomViewer->setAttribute(Qt::WA_DeleteOnClose);
     pDicomViewer->show();
+
+    MyGLWidget *w = new MyGLWidget;
+    ui->verticalLayout->addWidget(w);
 }

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,13 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dicomviewer.cpp
+    dicomviewer.cpp \
+    myglwidget.cpp
 
 HEADERS  += mainwindow.h \
-    dicomviewer.h
+    dicomviewer.h \
+    myglwidget.h
 
 FORMS    += mainwindow.ui \
-    dicomviewer.ui
+    dicomviewer.ui \
+    myglwidget.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
 -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
