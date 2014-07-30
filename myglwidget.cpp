@@ -72,18 +72,11 @@ void MyGLWidget::loadTextureFile(QString filename)
     glBindTexture(GL_TEXTURE_2D, this->textureID);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    // Black/white checkerboard
-    float pixels[] = {
-        0.0f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,   0.0f, 0.0f, 0.0f
-    };
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
-
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-//                 this->texWidth,
-//                 this->texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-//                 this->rawPixel);
-//    Q_ASSERT(glGetError() == GL_NO_ERROR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 this->texWidth,
+                 this->texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 this->rawPixel);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     /* Set texture stretching parameters */
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
