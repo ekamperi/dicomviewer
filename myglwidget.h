@@ -1,7 +1,7 @@
 #ifndef MYGLWIDGET_H
 #define MYGLWIDGET_H
 
-#include <QtOpenGL/QGLWidget>
+#include <qt5/QtOpenGL/QGLWidget>
 
 #include "Magick++.h"
 
@@ -12,7 +12,7 @@ class MyGLWidget : public QGLWidget
 public:
      MyGLWidget(QWidget *parent = 0);
 
-     void loadFile(QString filename);
+     void loadTextureFile(QString filename);
 
 protected:
      void initializeGL();
@@ -24,6 +24,7 @@ protected:
      int textheight;
 
     GLuint textureID;
+    unsigned char *rawPixel;
 };
 
 #endif // MYGLWIDGET_H
