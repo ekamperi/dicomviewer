@@ -10,14 +10,17 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 
 void MyGLWidget::initializeGL()
 {
+    qDebug() << Q_FUNC_INFO;
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void MyGLWidget::resizeGL(int w, int h) {
+void MyGLWidget::resizeGL(int w, int h)
+{
 }
 
 void MyGLWidget::paintGL() {
+    qDebug() << Q_FUNC_INFO;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glColor3f(1, 0.5, 0.5);
@@ -32,6 +35,8 @@ void MyGLWidget::paintGL() {
 
 void MyGLWidget::loadFile(QString filename)
 {
+    qDebug() << Q_FUNC_INFO;
+
     QImage img;
     if (!img.load(filename)) {
         qDebug("Image not found");
@@ -50,6 +55,8 @@ void MyGLWidget::loadFile(QString filename)
         qDebug() << "Error converting texture image to GLFormat";
         return;
     }
+
+    glEnable(GL_TEXTURE_2D);
 
     /* Obtain an id for the texture */
     glGenTextures(1, &textureID);
@@ -78,6 +85,7 @@ void MyGLWidget::loadFile(QString filename)
 /* XXX: Caller must free up the memory */
 unsigned char *MyGLWidget::png2raw(QString filename)
 {
+    qDebug() << Q_FUNC_INFO;
     Magick::Image img;
 
     try {

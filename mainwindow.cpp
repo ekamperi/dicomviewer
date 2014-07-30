@@ -49,7 +49,7 @@ void MainWindow::on_actionOpenDICOM_triggered()
     pDicomViewer->setAttribute(Qt::WA_DeleteOnClose);
     pDicomViewer->show();
 
-    MyGLWidget *w = new MyGLWidget;
+    MyGLWidget *w = new MyGLWidget();
     w->loadFile("/home/stathis/Desktop/audit1.png");
     ui->verticalLayout->addWidget(w);
 }
