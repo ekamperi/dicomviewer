@@ -18,6 +18,9 @@ MyGLWidget::~MyGLWidget()
 void MyGLWidget::initializeGL()
 {
     qDebug() << Q_FUNC_INFO;
+    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
+    qDebug() << "Driver Version String:" << versionString;
+    qDebug() << "Current Context:" << format();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

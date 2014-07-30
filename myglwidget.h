@@ -16,9 +16,9 @@ public:
      void loadTextureFile(QString filename);
 
 protected:
-     void initializeGL();
-     void resizeGL(int w, int h);
-     void paintGL();
+     virtual void initializeGL();
+     virtual void resizeGL(int w, int h);
+     virtual void paintGL();
 
      void png2raw(QString string);
      int texWidth;
