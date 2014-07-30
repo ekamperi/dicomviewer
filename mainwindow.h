@@ -24,8 +24,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene *pScene;
-    QGraphicsView *pView;
 };
 
 #endif // MAINWINDOW_H

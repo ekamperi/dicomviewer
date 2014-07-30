@@ -27,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete this->pView;
-    delete this->pScene;
     delete ui;
 
     /* Deregister decompression codecs */
@@ -47,9 +45,9 @@ void MainWindow::on_actionOpenDICOM_triggered()
     DicomViewer *pDicomViewer = new DicomViewer;
     pDicomViewer->loadDicomFile(filename);
     pDicomViewer->setAttribute(Qt::WA_DeleteOnClose);
-    pDicomViewer->show();
+//    pDicomViewer->show();
 
     MyGLWidget *w = new MyGLWidget();
-    w->loadFile("/home/stathis/Desktop/audit1.png");
+    w->loadTextureFile("/home/stathis/Desktop/audit1.png");
     ui->verticalLayout->addWidget(w);
 }
