@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     myglwidget.cpp \
     dicomfile.cpp \
-    loaddicomworker.cpp
+    loaddicomworker.cpp \
+    slice.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
     dicomfile.h \
-    loaddicomworker.h
+    loaddicomworker.h \
+    slice.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

@@ -26,12 +26,14 @@ private slots:
     void on_actionOpenDICOM_triggered();
     void getProgress(unsigned int cnt);
     void progressDialogCanceled();
+    void filesLoaded();
 
 private:
     Ui::MainWindow *ui;
     std::vector<MyGLWidget*> dicomWidgets;
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
+    std::vector<Slice *> slices;
 };
 
 #endif // MAINWINDOW_H

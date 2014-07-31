@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QFileDialog>
+#include <QtGlobal>
 #include <QProgressDialog>
 
 #include "dicomfile.h"
@@ -67,18 +68,17 @@ void MainWindow::on_actionOpenDICOM_triggered()
     this->progressDialog->setWindowModality(Qt::WindowModal);
     this->progressDialog->show();
 
-    loadDicomThread = new LoadDicomThread(fileNames, this);
+    loadDicomThread = new LoadDicomThread(fileNames, &slices, this);
     connect(loadDicomThread, SIGNAL(finished()),
             loadDicomThread, SLOT(deleteLater()));
+    connect(loadDicomThread, SIGNAL(finished()),
+            this, SLOT(filesLoaded()));
     connect(loadDicomThread, SIGNAL(reportProgress(unsigned int)),
             this, SLOT(getProgress(unsigned int)));
     connect(progressDialog, SIGNAL(canceled()),
             this, SLOT(progressDialogCanceled()));
 
     loadDicomThread->start();
-
-//        /* Add widget to UI */
-//        ui->verticalLayout->addWidget(pMyGLWidget);
 }
 
 void MainWindow::getProgress(unsigned int cnt)
@@ -96,4 +96,22 @@ void MainWindow::progressDialogCanceled()
     qDebug() << Q_FUNC_INFO;
 
     loadDicomThread->abortOperation();
+}
+
+void MainWindow::filesLoaded()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Add widget to UI */
+    qDebug() << this->slices.size();
+
+    for (int i = 0; i < qMin((int)this->slices.size(), 4); i++) {
+         MyGLWidget *pMyGLWidget = new MyGLWidget();
+         Slice *s = this->slices.at(i);
+         pMyGLWidget->loadTextureFile2(
+                     s->getRawPixelData(),
+                     s->getWidth(),
+                     s->getHeight());
+         ui->verticalLayout->addWidget(pMyGLWidget);
+    }
 }

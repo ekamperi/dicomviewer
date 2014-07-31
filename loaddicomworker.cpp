@@ -4,10 +4,16 @@
 
 #include <QDebug>
 
-LoadDicomThread::LoadDicomThread(const QStringList &fileNames, QObject *parent)
-    : QThread(parent), fileNames(fileNames)
+LoadDicomThread::LoadDicomThread(
+        const QStringList &fileNames,
+        std::vector<Slice *> *results,
+        QObject *parent)
+    : QThread(parent)
 {
     qDebug() << Q_FUNC_INFO;
+
+    this->results = results;
+    this->fileNames = fileNames;
 }
 
 void LoadDicomThread::run()
@@ -38,6 +44,10 @@ void LoadDicomThread::run()
                 pDicomFile->getCompressedData();
         unsigned int width = pDicomFile->getWidth();
         unsigned int height = pDicomFile->getHeight();
+
+        /* Save result */
+        this->results->push_back(new Slice(pRawPixelData, width, height));
+
         emit this->reportProgress(i);
     }
 }
@@ -50,3 +60,4 @@ void LoadDicomThread::abortOperation()
     this->abort = true;
     this->mutex.unlock();
 };
+
