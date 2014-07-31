@@ -20,6 +20,8 @@ protected:
      virtual void resizeGL(int w, int h);
      virtual void paintGL();
 
+     void mouseMoveEvent(QMouseEvent *event);
+
      void png2raw(QString string);
      int texWidth;
      int texHeight;

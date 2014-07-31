@@ -62,6 +62,7 @@ void MyGLWidget::paintGL() {
 void MyGLWidget::loadTextureFile(QString filename)
 {
     qDebug() << Q_FUNC_INFO;
+    this->makeCurrent();
 
     png2raw(filename);
 
@@ -106,4 +107,11 @@ void MyGLWidget::png2raw(QString filename)
     } catch (Magick::Exception &error) {
         qDebug() << "Caught exception: " << error.what();
     }
+}
+
+void MyGLWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->updateGL();
 }
