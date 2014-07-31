@@ -16,13 +16,15 @@ public:
      void loadTextureFile(QString filename);
      void loadTextureFile2(unsigned char *pRawData, unsigned int width, unsigned int height);
 
+     void setPatient(const char *patientName);
+
+
 protected:
      virtual void initializeGL();
      //virtual void resizeGL(int w, int h);
      //virtual void paintGL();
 
      void mouseMoveEvent(QMouseEvent *event);
-
      void paintEvent(QPaintEvent *event);
 
      void png2raw(QString string);
@@ -34,6 +36,7 @@ protected:
 
     GLuint textureID;
     unsigned char *rawPixel;
+    QString patientName;
 };
 
 #endif // MYGLWIDGET_H

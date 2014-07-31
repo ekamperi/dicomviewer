@@ -160,14 +160,14 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    // XXX
+    /* Classical 3D drawing, usually performed by resizeGL */
     glViewport(0, 0, this->width(), this->height());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, 1, 1, 0, 0, 1);
     glMatrixMode(GL_MODELVIEW);
 
-    // Classical 3D drawing, usually performed by paintGL().
+    /* Classical 3D drawing, usually performed by paintGL() */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glActiveTexture(GL_TEXTURE0);
@@ -185,9 +185,19 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
+    /* Native drawing */
+    QFont font = painter.font();
+    font.setPointSize(9);
+    painter.setFont(font);
     painter.setPen(Qt::yellow);
-    painter.drawText(rect(), Qt::AlignCenter, "This is a test");
+    painter.drawText(QPoint(20,20), this->patientName);
 
     painter.end();
+}
 
+void MyGLWidget::setPatient(const char *patientName)
+{
+    qDebug() << patientName;
+
+    this->patientName = QString(patientName);
 }

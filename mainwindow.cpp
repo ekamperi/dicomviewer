@@ -73,7 +73,9 @@ void MainWindow::on_actionOpenDICOM_triggered()
 
         /* Create a DicomFile object to dissect the input file */
         DicomFile *pDicomFile = new DicomFile();
-        pDicomFile->setFileName(fileNames[i]);
+        pDicomFile->loadDicomFile(fileNames[i]);
+
+        pMyGLWidget->setPatient(pDicomFile->getPatient()->toStdString().c_str());
 
         /* Extract the raw pixel data from the DICOM file */
         unsigned char *pRawPixelData =

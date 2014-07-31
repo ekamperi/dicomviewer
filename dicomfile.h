@@ -25,12 +25,13 @@ public:
     explicit DicomFile(QWidget *parent = 0);
     ~DicomFile();
 
-    void setFileName(QString filename);
-
     void loadDicomFile(QString filename);
+
+    void parseDicomFile(QString filename);
     void getRawPixel(QString filename);
 
     unsigned char *getCompressedData();
+    const QString *getPatient();
 
     unsigned int getWidth() const { return this->cols; }
     unsigned int getHeight() const { return this->rows; }
@@ -38,12 +39,15 @@ public:
 private:
     Ui::DicomFile *ui;
     QString filename;
+    DcmFileFormat dcmFileFormat;
     DcmDataset *dcmDataset;
 
     /* Image data */
     Magick::Blob *rawBlob;
     unsigned int rows;
     unsigned int cols;
+
+    QString patientName;
 
     QList< QMap<QString, QString> > *list;
     QMap<QString, QString> parseDicomFromXml(const char *s);

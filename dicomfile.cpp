@@ -41,12 +41,19 @@ DicomFile::~DicomFile()
     delete list;
 }
 
-void DicomFile::setFileName(QString filename)
+void DicomFile::loadDicomFile(QString filename)
 {
+    qDebug() << Q_FUNC_INFO;
+
     this->filename = filename;
+    OFCondition status = this->dcmFileFormat.loadFile(filename.toStdString().c_str());
+    if (!status.good()) {
+        qDebug() << status.text();
+    }
+    this->dcmDataset = this->dcmFileFormat.getDataset();
 }
 
-void DicomFile::loadDicomFile(QString filename)
+void DicomFile::parseDicomFile(QString filename)
 {
     DcmFileFormat dcmFile;
     OFCondition status = dcmFile.loadFile(filename.toStdString().c_str());
@@ -221,4 +228,20 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
         }
 
         return myPixels;
+}
+
+
+const QString *DicomFile::getPatient()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    OFString patientName;
+    OFCondition status = this->dcmDataset->findAndGetOFString(DCM_PatientName, patientName);
+    if (status.good()) {
+        this->patientName = QString(patientName.c_str());
+        return &this->patientName;
+    } else {
+        qDebug() << status.text();
+    }
+    return NULL;
 }
