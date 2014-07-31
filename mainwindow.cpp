@@ -78,7 +78,9 @@ void MainWindow::on_actionOpenDICOM_triggered()
         /* Extract the raw pixel data from the DICOM file */
         unsigned char *pRawPixelData =
                 pDicomFile->getCompressedData();
-        pMyGLWidget->loadTextureFile2(pRawPixelData);
+        unsigned int width = pDicomFile->getWidth();
+        unsigned int height = pDicomFile->getHeight();
+        pMyGLWidget->loadTextureFile2(pRawPixelData, width, height);
 
         /* Add widget to UI */
         ui->verticalLayout->addWidget(pMyGLWidget);

@@ -29,8 +29,7 @@ DicomFile::DicomFile(QWidget *parent) :
      */
     int x0 = ui->tableWidget->pos().rx();
     int y0 = ui->tableWidget->pos().ry();
-    ui->tableWidget->setMinimumSize(
-                this->width()-x0, this->height()-y0);
+    ui->tableWidget->setMinimumSize(this->width()-x0, this->height()-y0);
 
     /* Allocate memory for list */
     this->list = new QList< QMap<QString, QString> >();
@@ -195,20 +194,31 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
     Q_ASSERT(length > 0);
 
     this->rawBlob = new Magick::Blob(pixelData, sizeof(Uint8) * length);
-
+    Magick::Image image;
     try {
-        Magick::Image image;
-        std::cout << image.columns();
         image.magick("RGB");
         image.read(*this->rawBlob);
-        unsigned char *p = (unsigned char *) this->rawBlob->data();
-        for (int i = 0; i < 200; i++)
-            std::cout << (int)p[i] << " ";
-        std::cout << std::endl << std::endl;
 
+        this->rows = image.rows();
+        this->cols = image.columns();
+        qDebug() << "columns =" << image.columns()
+                 << "rows =" << image.rows();
     } catch (Magick::Exception &error) {
         qDebug() << "Caught exception: " << error.what();
         return NULL;
     }
-    return (unsigned char*)this->rawBlob->data();
+    /* This returns data in 16bit grayscale format! */
+    /* return (unsigned char*)this->rawBlob->data(); */
+
+    int w = this->cols;
+    int h = this->rows;
+    unsigned char *myPixels = new unsigned char[3*w*h];
+        Magick::PixelPacket *pp = image.getPixels(0, 0, w, h);
+        for (int i = 0; i < w*h; i++) {
+            myPixels[3*(i+1) - 3] = pp[i].red;
+            myPixels[3*(i+1) - 2] = pp[i].green;
+            myPixels[3*(i+1) - 1] = pp[i].blue;
+        }
+
+        return myPixels;
 }

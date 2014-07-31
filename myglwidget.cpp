@@ -33,7 +33,7 @@ void MyGLWidget::resizeGL(int width, int height)
     glViewport (0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, 1, 0, 1, 0, 1);
+    glOrtho(0, 1, 1, 0, 0, 1);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -92,7 +92,7 @@ void MyGLWidget::loadTextureFile(QString filename)
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel)
+void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, unsigned int height)
 {
     qDebug() << Q_FUNC_INFO;
     this->makeCurrent();
@@ -113,10 +113,9 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel)
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                 512,
-                 512, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 width,
+                 height, 0, GL_RGB, GL_UNSIGNED_BYTE,
                  this->rawPixel);
-    qDebug() << glGetError();
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     /* Set texture stretching parameters */

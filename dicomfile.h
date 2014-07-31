@@ -32,6 +32,9 @@ public:
 
     unsigned char *getCompressedData();
 
+    unsigned int getWidth() const { return this->cols; }
+    unsigned int getHeight() const { return this->rows; }
+
 private:
     Ui::DicomFile *ui;
     QString filename;
@@ -39,8 +42,8 @@ private:
 
     /* Image data */
     Magick::Blob *rawBlob;
-    unsigned int width;
-    unsigned int height;
+    unsigned int rows;
+    unsigned int cols;
 
     QList< QMap<QString, QString> > *list;
     QMap<QString, QString> parseDicomFromXml(const char *s);
