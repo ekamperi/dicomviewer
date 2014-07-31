@@ -1,15 +1,11 @@
 #include <sstream>
 #include <QDebug>
 #include <QFile>
-#include <QHeaderView>
-#include <QTableWidgetItem>
-#include <QTemporaryFile>
 #include <QXmlStreamReader>
 
 #include "Magick++.h"
 
 #include "dicomfile.h"
-#include "ui_dicomfile.h"
 
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H
@@ -18,26 +14,14 @@
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/dcmdata/dcpxitem.h"
 
-DicomFile::DicomFile(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::DicomFile)
+DicomFile::DicomFile()
 {
-    ui->setupUi(this);
-
-    /* XXX: Temporary hack until we find out how to make the
-     * table widget to expand into full form width.
-     */
-    int x0 = ui->tableWidget->pos().rx();
-    int y0 = ui->tableWidget->pos().ry();
-    ui->tableWidget->setMinimumSize(this->width()-x0, this->height()-y0);
-
     /* Allocate memory for list */
     this->list = new QList< QMap<QString, QString> >();
 }
 
 DicomFile::~DicomFile()
 {
-    delete ui;
     delete list;
 }
 
@@ -76,25 +60,16 @@ void DicomFile::parseDicomFile(QString filename)
         i++;
     }
 
-    /* Populate table */
-    ui->tableWidget->setRowCount(2*pDcmDataset->card());
-    ui->tableWidget->setColumnCount(5);
-
-    i = 0;
-    while (!this->list->isEmpty()) {
-        QMap<QString, QString> e = this->list->takeFirst();
-        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(e["name"]));
-        ui->tableWidget->setItem(i, 1, new QTableWidgetItem(e["tag"]));
-        ui->tableWidget->setItem(i, 2, new QTableWidgetItem(e["len"]));
-        ui->tableWidget->setItem(i, 3, new QTableWidgetItem(e["vr"]));
-        ui->tableWidget->setItem(i, 4, new QTableWidgetItem(e["text"]));
-        i++;
-    }
-
-    /* Set header labels
-     * This must follow the table population */
-    ui->tableWidget->setHorizontalHeaderLabels(
-                QStringList() << "Name" << "Tag" << "Len" << "VR" << "Value");
+//    i = 0;
+//    while (!this->list->isEmpty()) {
+//        QMap<QString, QString> e = this->list->takeFirst();
+//        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(e["name"]));
+//        ui->tableWidget->setItem(i, 1, new QTableWidgetItem(e["tag"]));
+//        ui->tableWidget->setItem(i, 2, new QTableWidgetItem(e["len"]));
+//        ui->tableWidget->setItem(i, 3, new QTableWidgetItem(e["vr"]));
+//        ui->tableWidget->setItem(i, 4, new QTableWidgetItem(e["text"]));
+//        i++;
+//    }
 }
 
 QMap<QString, QString> DicomFile::parseDicomFromXml(const char *s)

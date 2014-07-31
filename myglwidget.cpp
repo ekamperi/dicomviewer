@@ -98,9 +98,9 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, 
     this->makeCurrent();
 
     this->rawPixel = pRawPixel;
-    for (int i = 0; i < 200; i++)
-        std::cout << (int)this->rawPixel[i] << " ";
-    std::cout << std::endl << std::endl;
+//    for (int i = 0; i < 200; i++)
+//        std::cout << (int)this->rawPixel[i] << " ";
+//    std::cout << std::endl << std::endl;
 
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);

@@ -5,7 +5,6 @@
 
 #include <QMap>
 #include <QString>
-#include <QWidget>
 
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H
@@ -13,16 +12,10 @@
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dctk.h"
 
-namespace Ui {
-class DicomFile;
-}
-
-class DicomFile : public QWidget
+class DicomFile
 {
-    Q_OBJECT
-
 public:
-    explicit DicomFile(QWidget *parent = 0);
+    explicit DicomFile();
     ~DicomFile();
 
     void loadDicomFile(QString filename);
@@ -37,7 +30,6 @@ public:
     unsigned int getHeight() const { return this->rows; }
 
 private:
-    Ui::DicomFile *ui;
     QString filename;
     DcmFileFormat dcmFileFormat;
     DcmDataset *dcmDataset;

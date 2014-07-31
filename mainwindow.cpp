@@ -1,7 +1,9 @@
 #include <QDebug>
 #include <QFileDialog>
+#include <QProgressDialog>
 
 #include "dicomfile.h"
+#include "loaddicomworker.h"
 #include "mainwindow.h"
 #include "myglwidget.h"
 #include "ui_mainwindow.h"
@@ -9,7 +11,6 @@
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H
 
-#include "dcmtk/dcmimgle/dcmimage.h"
 #include "dcmtk/dcmimgle/dcmimage.h"
 #include "dcmtk/dcmimage/diregist.h"   // Support for color images
 #include "dcmtk/dcmdata/dcrledrg.h"    // Support for RLE images
@@ -26,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
      * It may not be needed in newer versions of it.
      */
     Magick::InitializeMagick(NULL);
-
-
 
     /* Register decompression codecs */
     DcmRLEDecoderRegistration::registerCodecs();
@@ -62,32 +61,39 @@ void MainWindow::on_actionOpenDICOM_triggered()
     if (dialog.exec())
         fileNames = dialog.selectedFiles();
 
-//    DicomViewer *pDicomViewer = new DicomViewer;
-//    pDicomViewer->loadDicomFile(filename);
-//    pDicomViewer->setAttribute(Qt::WA_DeleteOnClose);
-//    pDicomViewer->show();
+    this->progressDialog = new QProgressDialog(
+                "Loading DICOM files...",
+                "Abort operation", 0, fileNames.size(), this);
+    this->progressDialog->setWindowModality(Qt::WindowModal);
+    this->progressDialog->show();
 
-    for (int i = 0; i < fileNames.size(); i++) {
-        /* Create a new GL Widget for every file/slice */
-        MyGLWidget *pMyGLWidget = new MyGLWidget();
+    loadDicomThread = new LoadDicomThread(fileNames, this);
+    connect(loadDicomThread, SIGNAL(finished()),
+            loadDicomThread, SLOT(deleteLater()));
+    connect(loadDicomThread, SIGNAL(reportProgress(unsigned int)),
+            this, SLOT(getProgress(unsigned int)));
+    connect(progressDialog, SIGNAL(canceled()),
+            this, SLOT(progressDialogCanceled()));
 
-        /* Create a DicomFile object to dissect the input file */
-        DicomFile *pDicomFile = new DicomFile();
-        pDicomFile->loadDicomFile(fileNames[i]);
+    loadDicomThread->start();
 
-        pMyGLWidget->setPatient(pDicomFile->getPatient()->toStdString().c_str());
+//        /* Add widget to UI */
+//        ui->verticalLayout->addWidget(pMyGLWidget);
+}
 
-        /* Extract the raw pixel data from the DICOM file */
-        unsigned char *pRawPixelData =
-                pDicomFile->getCompressedData();
-        unsigned int width = pDicomFile->getWidth();
-        unsigned int height = pDicomFile->getHeight();
-        pMyGLWidget->loadTextureFile2(pRawPixelData, width, height);
+void MainWindow::getProgress(unsigned int cnt)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "cnt =" << cnt;
 
-        /* Add widget to UI */
-        ui->verticalLayout->addWidget(pMyGLWidget);
-
-        /* Add to list */
-        this->dicomWidgets.push_back(pMyGLWidget);
+    if (!this->progressDialog->wasCanceled()) {
+        this->progressDialog->setValue(cnt + 1);
     }
+}
+
+void MainWindow::progressDialogCanceled()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    loadDicomThread->abortOperation();
 }

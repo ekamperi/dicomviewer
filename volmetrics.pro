@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     myglwidget.cpp \
-    dicomfile.cpp
+    dicomfile.cpp \
+    loaddicomworker.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
-    dicomfile.h
+    dicomfile.h \
+    loaddicomworker.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \
@@ -28,3 +30,7 @@ FORMS    += mainwindow.ui \
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
 -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
 -ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm -lgomp -lpthread
+
+#CONFIG  += qt warn_off release
+#DEFINES += QT_NO_DEBUG_OUTPUT
+#DEFINES += QT_NO_DEBUG
