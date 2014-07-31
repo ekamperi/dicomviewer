@@ -18,10 +18,12 @@ public:
 
 protected:
      virtual void initializeGL();
-     virtual void resizeGL(int w, int h);
-     virtual void paintGL();
+     //virtual void resizeGL(int w, int h);
+     //virtual void paintGL();
 
      void mouseMoveEvent(QMouseEvent *event);
+
+     void paintEvent(QPaintEvent *event);
 
      void png2raw(QString string);
      int texWidth;

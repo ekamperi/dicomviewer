@@ -25,38 +25,38 @@ void MyGLWidget::initializeGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void MyGLWidget::resizeGL(int width, int height)
-{
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "width = " << width << "height = " << height;
+//void MyGLWidget::resizeGL(int width, int height)
+//{
+//    qDebug() << Q_FUNC_INFO;
+//    qDebug() << "width = " << width << "height = " << height;
 
-    glViewport (0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, 1, 1, 0, 0, 1);
-    glMatrixMode(GL_MODELVIEW);
-}
+//    glViewport (0, 0, width, height);
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glOrtho(0, 1, 1, 0, 0, 1);
+//    glMatrixMode(GL_MODELVIEW);
+//}
 
-void MyGLWidget::paintGL() {
-    qDebug() << Q_FUNC_INFO;
+//void MyGLWidget::paintGL() {
+//    qDebug() << Q_FUNC_INFO;
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glActiveTexture(GL_TEXTURE0);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
+//    glActiveTexture(GL_TEXTURE0);
+//    Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    glBindTexture(GL_TEXTURE_2D, this->textureID);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
+//    glBindTexture(GL_TEXTURE_2D, this->textureID);
+//    Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-        glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
-        glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
-        glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
-        glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-}
+//    glEnable(GL_TEXTURE_2D);
+//    glBegin(GL_QUADS);
+//        glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
+//        glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
+//        glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
+//        glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
+//    glEnd();
+//    glDisable(GL_TEXTURE_2D);
+//}
 
 void MyGLWidget::loadTextureFile(QString filename)
 {
@@ -148,6 +148,46 @@ void MyGLWidget::png2raw(QString filename)
 void MyGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     qDebug() << Q_FUNC_INFO;
+}
 
-    this->updateGL();
+void MyGLWidget::paintEvent(QPaintEvent *event)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->makeCurrent();
+
+    QPainter painter;
+    painter.begin(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    // XXX
+    glViewport(0, 0, this->width(), this->height());
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 1, 1, 0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+
+    // Classical 3D drawing, usually performed by paintGL().
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glActiveTexture(GL_TEXTURE0);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    glBindTexture(GL_TEXTURE_2D, this->textureID);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
+        glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
+        glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
+        glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+    painter.setPen(Qt::yellow);
+    painter.drawText(rect(), Qt::AlignCenter, "This is a test");
+
+    painter.end();
+
 }
