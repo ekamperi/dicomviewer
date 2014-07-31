@@ -5,6 +5,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
+#include "myglwidget.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -19,11 +21,11 @@ public:
 
 private slots:
     void on_actionAbout_triggered();
-
     void on_actionOpenDICOM_triggered();
 
 private:
     Ui::MainWindow *ui;
+    std::vector<MyGLWidget*> dicomWidgets;
 };
 
 #endif // MAINWINDOW_H

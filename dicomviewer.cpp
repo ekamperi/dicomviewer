@@ -191,12 +191,6 @@ void DicomViewer::jp2k_to_png(Uint8* pixelData, Uint32 length)
         return;
     }
 
-    /*
-     * Initialize library or else it will abort.
-     * It may not be needed in newer versions of it.
-     */
-	Magick::InitializeMagick(NULL);
-
     Magick::Blob blob(pixelData, length);
     Magick::Image image(blob);
 

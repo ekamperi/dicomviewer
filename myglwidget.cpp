@@ -41,7 +41,6 @@ void MyGLWidget::paintGL() {
     qDebug() << Q_FUNC_INFO;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glColor3f(1.0, 0.5, 0.5);
 
     glActiveTexture(GL_TEXTURE0);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
