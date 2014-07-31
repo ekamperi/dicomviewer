@@ -92,6 +92,44 @@ void MyGLWidget::loadTextureFile(QString filename)
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
 
+void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel)
+{
+    qDebug() << Q_FUNC_INFO;
+    this->makeCurrent();
+
+    this->rawPixel = pRawPixel;
+    for (int i = 0; i < 200; i++)
+        std::cout << (int)this->rawPixel[i] << " ";
+    std::cout << std::endl << std::endl;
+
+    glEnable(GL_TEXTURE_2D);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    /* Obtain an id for the texture */
+    glGenTextures(1, &this->textureID);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    glBindTexture(GL_TEXTURE_2D, this->textureID);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 512,
+                 512, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 this->rawPixel);
+    qDebug() << glGetError();
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    /* Set texture stretching parameters */
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    glDisable(GL_TEXTURE_2D);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+}
+
 void MyGLWidget::png2raw(QString filename)
 {
     qDebug() << Q_FUNC_INFO;

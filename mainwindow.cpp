@@ -1,7 +1,7 @@
 #include <QDebug>
 #include <QFileDialog>
 
-#include "dicomviewer.h"
+#include "dicomfile.h"
 #include "mainwindow.h"
 #include "myglwidget.h"
 #include "ui_mainwindow.h"
@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    for (int i = 0; i < this->dicomWidgets.size(); i++) {
+    for (unsigned int i = 0; i < this->dicomWidgets.size(); i++) {
         delete this->dicomWidgets[i];
     }
     delete ui;
@@ -52,6 +52,8 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionOpenDICOM_triggered()
 {
+    qDebug() << Q_FUNC_INFO;
+
     QFileDialog dialog(this);
     dialog.setDirectory(QDir::homePath());
     dialog.setFileMode(QFileDialog::ExistingFiles);
@@ -66,8 +68,22 @@ void MainWindow::on_actionOpenDICOM_triggered()
 //    pDicomViewer->show();
 
     for (int i = 0; i < fileNames.size(); i++) {
-        this->dicomWidgets.push_back(new MyGLWidget());
-        this->dicomWidgets[i]->loadTextureFile("/home/stathis/Desktop/audit1.png");
-        ui->verticalLayout->addWidget(this->dicomWidgets[i]);
+        /* Create a new GL Widget for every file/slice */
+        MyGLWidget *pMyGLWidget = new MyGLWidget();
+
+        /* Create a DicomFile object to dissect the input file */
+        DicomFile *pDicomFile = new DicomFile();
+        pDicomFile->setFileName(fileNames[i]);
+
+        /* Extract the raw pixel data from the DICOM file */
+        unsigned char *pRawPixelData =
+                pDicomFile->getCompressedData();
+        pMyGLWidget->loadTextureFile2(pRawPixelData);
+
+        /* Add widget to UI */
+        ui->verticalLayout->addWidget(pMyGLWidget);
+
+        /* Add to list */
+        this->dicomWidgets.push_back(pMyGLWidget);
     }
 }

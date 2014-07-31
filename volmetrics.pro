@@ -14,16 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dicomviewer.cpp \
-    myglwidget.cpp
+    myglwidget.cpp \
+    dicomfile.cpp
 
 HEADERS  += mainwindow.h \
-    dicomviewer.h \
-    myglwidget.h
+    myglwidget.h \
+    dicomfile.h
 
 FORMS    += mainwindow.ui \
-    dicomviewer.ui \
-    myglwidget.ui
+    myglwidget.ui \
+    dicomfile.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
 -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \

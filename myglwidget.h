@@ -14,6 +14,7 @@ public:
      ~MyGLWidget();
 
      void loadTextureFile(QString filename);
+     void loadTextureFile2(unsigned char *pRawData);
 
 protected:
      virtual void initializeGL();

@@ -8,8 +8,8 @@
 
 #include "Magick++.h"
 
-#include "dicomviewer.h"
-#include "ui_dicomviewer.h"
+#include "dicomfile.h"
+#include "ui_dicomfile.h"
 
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H
@@ -18,9 +18,9 @@
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/dcmdata/dcpxitem.h"
 
-DicomViewer::DicomViewer(QWidget *parent) :
+DicomFile::DicomFile(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::DicomViewer)
+    ui(new Ui::DicomFile)
 {
     ui->setupUi(this);
 
@@ -36,35 +36,30 @@ DicomViewer::DicomViewer(QWidget *parent) :
     this->list = new QList< QMap<QString, QString> >();
 }
 
-DicomViewer::~DicomViewer()
+DicomFile::~DicomFile()
 {
     delete ui;
     delete list;
 }
 
-void DicomViewer::loadDicomFile(QString filename)
+void DicomFile::setFileName(QString filename)
+{
+    this->filename = filename;
+}
+
+void DicomFile::loadDicomFile(QString filename)
 {
     DcmFileFormat dcmFile;
     OFCondition status = dcmFile.loadFile(filename.toStdString().c_str());
-    if (status.good()) {
-        OFString patientName;
-        status = dcmFile.getDataset()->findAndGetOFString(
-                    DCM_PatientName, patientName);
-        if (status.good()) {
-            qDebug() << "Patient name:" << patientName.c_str();
-        } else {
-            qWarning() << status.text();
-        }
-    } else {
-        qWarning() << status.text();
+    if (!status.good()) {
+        qDebug() << status.text();
+        return;
     }
 
     /* Iterate over all objects */
     DcmDataset *pDcmDataset = dcmFile.getDataset();
     DcmStack stack;
     DcmObject *obj = NULL;
-
-    getCompressedData(pDcmDataset);
 
     int i = 0;
     while (pDcmDataset->nextObject(stack, /* Depth-first */ OFTrue).good()) {
@@ -96,7 +91,7 @@ void DicomViewer::loadDicomFile(QString filename)
                 QStringList() << "Name" << "Tag" << "Len" << "VR" << "Value");
 }
 
-QMap<QString, QString> DicomViewer::parseDicomFromXml(const char *s)
+QMap<QString, QString> DicomFile::parseDicomFromXml(const char *s)
 {
     QXmlStreamReader xml(s);
     QMap<QString, QString> dicomObject;
@@ -124,14 +119,24 @@ QMap<QString, QString> DicomViewer::parseDicomFromXml(const char *s)
     return dicomObject;
 }
 
-void DicomViewer::getCompressedData(DcmDataset *pDcmDataset)
+unsigned char *DicomFile::getCompressedData()
 {
+    qDebug() << Q_FUNC_INFO;
+
+    DcmFileFormat dcmFile;
+    OFCondition status = dcmFile.loadFile(this->filename.toStdString().c_str());
+    if (!status.good()) {
+        qDebug() << status.text();
+        return NULL;
+    }
+
+    DcmDataset *pDcmDataset = dcmFile.getDataset();
     OFCondition cond = EC_Normal;
     DcmElement* element = NULL;
 
     cond = pDcmDataset->findAndGetElement(DCM_PixelData, element);
     if (cond.bad() || element == NULL)
-        return;
+        return NULL;
 
     DcmPixelData *dpix = NULL;
     dpix = OFstatic_cast(DcmPixelData*, element);
@@ -161,42 +166,49 @@ void DicomViewer::getCompressedData(DcmDataset *pDcmDataset)
 		/* Access first frame (skipping offset table) */
         dseq->getItem(pixitem, 1);
         if (pixitem == NULL)
-			return;
+            return NULL;
 
         /*
          * Get the length of this pixel item (i.e. fragment, i.e. most of
          * the time, the length of the frame).
          */
 		Uint32 length = pixitem->getLength();
-        if (length == 0) return;
+        if (length == 0) return NULL;
 
         /* Finally, get the compressed data for this pixel item */
         Uint8 *pixData = NULL;
         cond = pixitem->getUint8Array(pixData);
 
         /* Convert jpeg2000 to png */
-        jp2k_to_png(pixData, length);
+        qDebug() << "About to call jp2k_to_png()";
+        return jp2k_to_png(pixData, length);
     }
+    return NULL;
 }
 
-void DicomViewer::jp2k_to_png(Uint8* pixelData, Uint32 length)
+unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
 {
-    /* Write data to a temporary file */
-    QTemporaryFile tmpFile;
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "pixelData = " << pixelData << "length = " << length;
 
-    if (tmpFile.open())  {
-        tmpFile.write((char *)pixelData, length * sizeof(Uint8));
-    } else {
-        qDebug() << "Error creating temporary file";
-        return;
+    Q_ASSERT(pixelData != NULL);
+    Q_ASSERT(length > 0);
+
+    this->rawBlob = new Magick::Blob(pixelData, sizeof(Uint8) * length);
+
+    try {
+        Magick::Image image;
+        std::cout << image.columns();
+        image.magick("RGB");
+        image.read(*this->rawBlob);
+        unsigned char *p = (unsigned char *) this->rawBlob->data();
+        for (int i = 0; i < 200; i++)
+            std::cout << (int)p[i] << " ";
+        std::cout << std::endl << std::endl;
+
+    } catch (Magick::Exception &error) {
+        qDebug() << "Caught exception: " << error.what();
+        return NULL;
     }
-
-    Magick::Blob blob(pixelData, length);
-    Magick::Image image(blob);
-
-    image.magick("PNG");
-    image.write(&blob);
-
-    Magick::Image image2(blob);
-    image2.write("/home/stathis/kaka.png");
+    return (unsigned char*)this->rawBlob->data();
 }
