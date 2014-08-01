@@ -11,19 +11,23 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = volmetrics
 TEMPLATE = app
 
+QMAKE_CXXFLAGS += -std=c++0x
+
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     myglwidget.cpp \
     dicomfile.cpp \
     loaddicomworker.cpp \
-    slice.cpp
+    slice.cpp \
+    examdetails.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
     dicomfile.h \
     loaddicomworker.h \
-    slice.h
+    slice.h \
+    examdetails.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

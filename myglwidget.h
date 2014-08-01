@@ -3,6 +3,7 @@
 
 #include <qt5/QtOpenGL/QGLWidget>
 
+#include "examdetails.h"
 #include "Magick++.h"
 
 class MyGLWidget : public QGLWidget
@@ -16,7 +17,7 @@ public:
      void loadTextureFile(QString filename);
      void loadTextureFile2(unsigned char *pRawData, unsigned int width, unsigned int height);
 
-     void setPatient(const char *patientName);
+     void setExamDetails(ExamDetails details);
 
 
 protected:
@@ -34,9 +35,9 @@ protected:
      Magick::Image *pMagickImage;
      Magick::Blob blob;
 
-    GLuint textureID;
-    unsigned char *rawPixel;
-    QString patientName;
+     GLuint textureID;
+     unsigned char *rawPixel;
+     ExamDetails examDetails;
 };
 
 #endif // MYGLWIDGET_H

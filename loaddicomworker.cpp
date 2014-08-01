@@ -45,8 +45,14 @@ void LoadDicomThread::run()
         unsigned int width = pDicomFile->getWidth();
         unsigned int height = pDicomFile->getHeight();
 
+        /* Also extract examination details */
+        ExamDetails examDetails = pDicomFile->getExamDetails();
+
         /* Save result */
-        this->results->push_back(new Slice(pRawPixelData, width, height));
+        this->results->push_back(
+                    new Slice(
+                        pRawPixelData, width, height,
+                        examDetails));
 
         emit this->reportProgress(i);
     }

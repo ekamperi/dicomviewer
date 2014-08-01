@@ -106,12 +106,13 @@ void MainWindow::filesLoaded()
     qDebug() << this->slices.size();
 
     for (int i = 0; i < qMin((int)this->slices.size(), 4); i++) {
-         MyGLWidget *pMyGLWidget = new MyGLWidget();
          Slice *s = this->slices.at(i);
+         MyGLWidget *pMyGLWidget = new MyGLWidget();
          pMyGLWidget->loadTextureFile2(
                      s->getRawPixelData(),
                      s->getWidth(),
                      s->getHeight());
+         pMyGLWidget->setExamDetails(s->getExamDetails());
          ui->verticalLayout->addWidget(pMyGLWidget);
     }
 }

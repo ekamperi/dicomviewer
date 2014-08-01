@@ -1,6 +1,7 @@
 #ifndef DICOMVIEWER_H
 #define DICOMVIEWER_H
 
+#include "examdetails.h"
 #include "Magick++.h"
 
 #include <QMap>
@@ -24,10 +25,12 @@ public:
     void getRawPixel(QString filename);
 
     unsigned char *getCompressedData();
-    const QString *getPatient();
+    ExamDetails getExamDetails(void);
 
     unsigned int getWidth() const { return this->cols; }
     unsigned int getHeight() const { return this->rows; }
+
+
 
 private:
     QString filename;
@@ -39,7 +42,8 @@ private:
     unsigned int rows;
     unsigned int cols;
 
-    QString patientName;
+    QString getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey);
+    QMap<QString, QString> examDetails;
 
     QList< QMap<QString, QString> > *list;
     QMap<QString, QString> parseDicomFromXml(const char *s);

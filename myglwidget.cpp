@@ -1,3 +1,4 @@
+#include "examdetails.h"
 #include "myglwidget.h"
 
 #include <iostream>
@@ -187,17 +188,23 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
 
     /* Native drawing */
     QFont font = painter.font();
-    font.setPointSize(9);
+    font.setPointSize(7);
     painter.setFont(font);
     painter.setPen(Qt::yellow);
-    painter.drawText(QPoint(20,20), this->patientName);
+    painter.drawText(
+                QRect(0, 0, this->width(), this->height()),
+                Qt::TextWordWrap,
+                "Name: "   + this->examDetails.getPatientName()
+                + ", ID: " + this->examDetails.getPatientID() + "\n"
+                + "Age: "  + this->examDetails.getPatientAge() + "\n"
+                + "Sex: "  + this->examDetails.getPatientSex());
 
     painter.end();
 }
 
-void MyGLWidget::setPatient(const char *patientName)
+void MyGLWidget::setExamDetails(ExamDetails details)
 {
-    qDebug() << patientName;
+    qDebug() << Q_FUNC_INFO;
 
-    this->patientName = QString(patientName);
+    this->examDetails = details;
 }

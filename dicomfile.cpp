@@ -205,18 +205,47 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
         return myPixels;
 }
 
-
-const QString *DicomFile::getPatient()
+QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
 {
     qDebug() << Q_FUNC_INFO;
 
-    OFString patientName;
-    OFCondition status = this->dcmDataset->findAndGetOFString(DCM_PatientName, patientName);
+    /* Retrieve name */
+    OFString result;
+    OFCondition status = this->dcmDataset->findAndGetOFString(
+                dcmTagKey, result);
     if (status.good()) {
-        this->patientName = QString(patientName.c_str());
-        return &this->patientName;
+        return QString(result.c_str());
     } else {
         qDebug() << status.text();
+        return QString("NOTAVAIL");
     }
-    return NULL;
+}
+
+ExamDetails DicomFile::getExamDetails(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    struct {
+        DcmTagKey key;
+        const char *desc;
+    } details[] = {
+    { DCM_PatientName,      "patientName"      },
+    { DCM_PatientID,        "patientID"        },
+    { DCM_PatientAge,       "patientAge"       },
+    { DCM_PatientSex,       "patientSex"       },
+    { DCM_PatientBirthDate, "patientBirthDate" },
+};
+
+    /* Calculate size of array */
+    size_t len = sizeof(details) / sizeof(details[0]);
+
+    /* Retrieve values for keys and populate the map */
+    for (unsigned int i = 0; i < len; i++) {
+        QString result = getDcmTagKeyAsQString(details[i].key);
+        this->examDetails.insert(details[i].desc, result);
+
+        qDebug() << details[i].desc << " =" << result;
+    }
+
+    return ExamDetails(this->examDetails);
 }
