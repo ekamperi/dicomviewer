@@ -219,7 +219,10 @@ QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* Retrieve name */
+    /*
+     * Retrieve the value of 'dcmTagKey', e.g. 'dcmTagKey' may be
+     * DCM_PatientName.
+    */
     OFString result;
     OFCondition status = this->dcmDataset->findAndGetOFString(
                 dcmTagKey, result);
