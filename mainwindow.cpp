@@ -36,9 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    for (unsigned int i = 0; i < this->dicomWidgets.size(); i++) {
-        delete this->dicomWidgets[i];
-    }
     delete ui;
 
     /* Deregister decompression codecs */
