@@ -36,7 +36,7 @@ protected:
      Magick::Blob blob;
 
      GLuint textureID;
-     unsigned char *rawPixel;
+     unsigned char *pRawPixel;
      ExamDetails examDetails;
 };
 

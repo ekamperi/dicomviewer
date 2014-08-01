@@ -12,7 +12,7 @@ LoadDicomThread::LoadDicomThread(
 {
     qDebug() << Q_FUNC_INFO;
 
-    this->results = results;
+    this->pResults = results;
     this->fileNames = fileNames;
 }
 
@@ -50,7 +50,7 @@ void LoadDicomThread::run()
         ExamDetails examDetails = pDicomFile->getExamDetails();
 
         /* Save result */
-        this->results->push_back(
+        this->pResults->push_back(
                     new Slice(
                         pRawPixelData, width, height, format,
                         examDetails));

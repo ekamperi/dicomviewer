@@ -37,10 +37,10 @@ public:
 private:
     QString filename;
     DcmFileFormat dcmFileFormat;
-    DcmDataset *dcmDataset;
+    DcmDataset *pDcmDataset;
 
     /* Image data */
-    Magick::Blob *rawBlob;
+    Magick::Blob *pRawBlob;
     unsigned int rows;
     unsigned int cols;
     GLint format;
@@ -48,7 +48,7 @@ private:
     QString getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey);
     QMap<QString, QString> examDetails;
 
-    QList< QMap<QString, QString> > *list;
+    QList< QMap<QString, QString> > *pList;
     QMap<QString, QString> parseDicomFromXml(const char *s);
 
     unsigned char *jp2k_to_png(Uint8* pixelData, Uint32 length);

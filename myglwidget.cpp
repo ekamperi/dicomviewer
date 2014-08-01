@@ -79,7 +79,7 @@ void MyGLWidget::loadTextureFile(QString filename)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
                  this->texWidth,
                  this->texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                 this->rawPixel);
+                 this->pRawPixel);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     /* Set texture stretching parameters */
@@ -100,9 +100,9 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, 
 
     this->makeCurrent();
 
-    this->rawPixel = pRawPixel;
+    this->pRawPixel = pRawPixel;
     for (int i = 0; i < 200; i++)
-        std::cout << (int)this->rawPixel[i] << " ";
+        std::cout << (int)this->pRawPixel[i] << " ";
     std::cout << std::endl << std::endl;
 
     glEnable(GL_TEXTURE_2D);
@@ -122,7 +122,7 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, 
     glTexImage2D(GL_TEXTURE_2D, 0, format,
                  width,
                  height, 0, format, GL_UNSIGNED_BYTE,
-                 this->rawPixel);
+                 this->pRawPixel);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     /* Set texture stretching parameters */
@@ -144,7 +144,7 @@ void MyGLWidget::png2raw(QString filename)
         pMagickImage = new Magick::Image(filename.toStdString().c_str());
         pMagickImage->write(&this->blob, "RGB");
 
-        this->rawPixel = (unsigned char *)this->blob.data();
+        this->pRawPixel = (unsigned char *)this->blob.data();
         this->texWidth  = this->pMagickImage->columns();
         this->texHeight = this->pMagickImage->rows();
     } catch (Magick::Exception &error) {

@@ -19,12 +19,12 @@
 DicomFile::DicomFile()
 {
     /* Allocate memory for list */
-    this->list = new QList< QMap<QString, QString> >();
+    this->pList = new QList< QMap<QString, QString> >();
 }
 
 DicomFile::~DicomFile()
 {
-    delete list;
+    delete pList;
 }
 
 void DicomFile::loadDicomFile(QString filename)
@@ -36,7 +36,7 @@ void DicomFile::loadDicomFile(QString filename)
     if (!status.good()) {
         qDebug() << status.text();
     }
-    this->dcmDataset = this->dcmFileFormat.getDataset();
+    this->pDcmDataset = this->dcmFileFormat.getDataset();
 }
 
 void DicomFile::parseDicomFile(QString filename)
@@ -58,7 +58,7 @@ void DicomFile::parseDicomFile(QString filename)
         obj = stack.top();
         std::stringstream ss;
         obj->writeXML(ss);
-        this->list->append(parseDicomFromXml(ss.str().c_str()));
+        this->pList->append(parseDicomFromXml(ss.str().c_str()));
         i++;
     }
 
@@ -219,11 +219,11 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
     Q_ASSERT(pixelData != NULL);
     Q_ASSERT(length > 0);
 
-    this->rawBlob = new Magick::Blob(pixelData, sizeof(Uint8) * length);
+    this->pRawBlob = new Magick::Blob(pixelData, sizeof(Uint8) * length);
     Magick::Image image;
     try {
         image.magick("RGB");
-        image.read(*this->rawBlob);
+        image.read(*this->pRawBlob);
 
         this->rows = image.rows();
         this->cols = image.columns();
@@ -260,7 +260,7 @@ QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
      * DCM_PatientName.
     */
     OFString result;
-    OFCondition status = this->dcmDataset->findAndGetOFString(
+    OFCondition status = this->pDcmDataset->findAndGetOFString(
                 dcmTagKey, result);
     if (status.good()) {
         return QString(result.c_str());

@@ -24,7 +24,7 @@ private:
     QMutex mutex;
     bool abort;
 
-    std::vector<Slice *> *results;
+    std::vector<Slice *> *pResults;
 };
 
 #endif // LOADDICOMWORKER_H
