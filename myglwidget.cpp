@@ -200,10 +200,11 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     painter.drawText(
                 QRect(0, 0, this->width(), this->height()),
                 Qt::TextWordWrap,
-                "Name: "   + this->examDetails.getPatientName()
-                + ", ID: " + this->examDetails.getPatientID() + "\n"
-                + "Age: "  + this->examDetails.getPatientAge() + "\n"
-                + "Sex: "  + this->examDetails.getPatientSex());
+                  "Name: " + this->examDetails.getPatientName()
+                + ", ID: " + this->examDetails.getPatientID()  + "\n"
+                +  "Age: " + this->examDetails.getPatientAge() + "\n"
+                +  "Sex: " + this->examDetails.getPatientSex() + "\n"
+                + "Date: " + this->examDetails.getStudyDate());
 
     painter.end();
 }
