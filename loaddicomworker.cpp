@@ -41,9 +41,10 @@ void LoadDicomThread::run()
 
         /* Extract the raw pixel data from the DICOM file */
         unsigned char *pRawPixelData =
-                pDicomFile->getCompressedData();
+                pDicomFile->getUncompressedData();
         unsigned int width = pDicomFile->getWidth();
         unsigned int height = pDicomFile->getHeight();
+        GLint format = pDicomFile->getFormat();
 
         /* Also extract examination details */
         ExamDetails examDetails = pDicomFile->getExamDetails();
@@ -51,7 +52,7 @@ void LoadDicomThread::run()
         /* Save result */
         this->results->push_back(
                     new Slice(
-                        pRawPixelData, width, height,
+                        pRawPixelData, width, height, format,
                         examDetails));
 
         emit this->reportProgress(i);

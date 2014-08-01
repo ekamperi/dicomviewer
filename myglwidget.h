@@ -15,7 +15,7 @@ public:
      ~MyGLWidget();
 
      void loadTextureFile(QString filename);
-     void loadTextureFile2(unsigned char *pRawData, unsigned int width, unsigned int height);
+     void loadTextureFile2(unsigned char *pRawData, unsigned int width, unsigned int height, GLint format);
 
      void setExamDetails(ExamDetails details);
 

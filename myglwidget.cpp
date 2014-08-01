@@ -93,15 +93,17 @@ void MyGLWidget::loadTextureFile(QString filename)
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, unsigned int height)
+void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, unsigned int height, GLint format)
 {
     qDebug() << Q_FUNC_INFO;
+    qDebug() << "width =" << width << "height =" << height << "format =" << format;
+
     this->makeCurrent();
 
     this->rawPixel = pRawPixel;
-//    for (int i = 0; i < 200; i++)
-//        std::cout << (int)this->rawPixel[i] << " ";
-//    std::cout << std::endl << std::endl;
+    for (int i = 0; i < 200; i++)
+        std::cout << (int)this->rawPixel[i] << " ";
+    std::cout << std::endl << std::endl;
 
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
@@ -110,12 +112,16 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, 
     glGenTextures(1, &this->textureID);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
+    /* Select texture */
     glBindTexture(GL_TEXTURE_2D, this->textureID);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+    /* XXX: Just a sanity check */
+    Q_ASSERT((format == GL_LUMINANCE) || (format == GL_RGB));
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format,
                  width,
-                 height, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                 height, 0, format, GL_UNSIGNED_BYTE,
                  this->rawPixel);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
@@ -190,7 +196,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     QFont font = painter.font();
     font.setPointSize(7);
     painter.setFont(font);
-    painter.setPen(Qt::yellow);
+    painter.setPen(Qt::red);
     painter.drawText(
                 QRect(0, 0, this->width(), this->height()),
                 Qt::TextWordWrap,

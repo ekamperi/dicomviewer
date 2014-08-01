@@ -14,6 +14,8 @@
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/dcmdata/dcpxitem.h"
 
+#include "dcmtk/dcmimgle/dcmimage.h"
+
 DicomFile::DicomFile()
 {
     /* Allocate memory for list */
@@ -98,6 +100,38 @@ QMap<QString, QString> DicomFile::parseDicomFromXml(const char *s)
         }
     }
     return dicomObject;
+}
+
+unsigned char *DicomFile::getUncompressedData()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    DicomImage *pDicomImage = new DicomImage(this->filename.toStdString().c_str());
+    if ((pDicomImage == NULL) || (pDicomImage->getStatus() != EIS_Normal)) {
+        qDebug() << pDicomImage->getStatus();
+        return NULL;
+    }
+
+    this->cols = pDicomImage->getWidth();
+    this->rows = pDicomImage->getHeight();
+    this->format = GL_LUMINANCE;
+
+    if (pDicomImage->isMonochrome()) {
+        qDebug() << "Image is monochrome!";
+        pDicomImage->setMinMaxWindow();
+        /* Get 8-bit data regardless of the pixel depth stored! */
+        pDicomImage->setNoDisplayFunction();
+        pDicomImage->setNoVoiTransformation();
+        pDicomImage->hideAllOverlays();
+        Uint8 *pixelData = (Uint8 *)(pDicomImage->getOutputData(8));
+        if  (pixelData == NULL) {
+            qDebug() << pixelData;
+            return NULL;
+        }
+        return pixelData;
+    }
+    return NULL;
+    //delete dimage;
 }
 
 unsigned char *DicomFile::getCompressedData()
@@ -193,6 +227,8 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
 
         this->rows = image.rows();
         this->cols = image.columns();
+        this->format = GL_RGB;
+
         qDebug() << "columns =" << image.columns()
                  << "rows =" << image.rows();
     } catch (Magick::Exception &error) {

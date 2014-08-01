@@ -111,7 +111,8 @@ void MainWindow::filesLoaded()
          pMyGLWidget->loadTextureFile2(
                      s->getRawPixelData(),
                      s->getWidth(),
-                     s->getHeight());
+                     s->getHeight(),
+                     s->getFormat());
          pMyGLWidget->setExamDetails(s->getExamDetails());
          ui->verticalLayout->addWidget(pMyGLWidget);
     }

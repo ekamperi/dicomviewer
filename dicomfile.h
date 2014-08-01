@@ -3,6 +3,7 @@
 
 #include "examdetails.h"
 #include "Magick++.h"
+#include "GL/gl.h"
 
 #include <QMap>
 #include <QString>
@@ -24,13 +25,14 @@ public:
     void parseDicomFile(QString filename);
     void getRawPixel(QString filename);
 
+    unsigned char *getUncompressedData();
     unsigned char *getCompressedData();
+
     ExamDetails getExamDetails(void);
 
     unsigned int getWidth() const { return this->cols; }
     unsigned int getHeight() const { return this->rows; }
-
-
+    GLint getFormat() const { return this->format; }
 
 private:
     QString filename;
@@ -41,6 +43,7 @@ private:
     Magick::Blob *rawBlob;
     unsigned int rows;
     unsigned int cols;
+    GLint format;
 
     QString getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey);
     QMap<QString, QString> examDetails;
