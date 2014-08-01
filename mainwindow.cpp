@@ -36,6 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    /*
+     * There is no need to manually delete the dynamically allocated
+     * MyGLWidget's. Qt will do that for us when the parent layout will
+     * be destroyed!
+     */
     delete ui;
 
     /* Deregister decompression codecs */

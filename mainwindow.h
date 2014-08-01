@@ -30,7 +30,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::vector<MyGLWidget*> dicomWidgets;
+
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
     std::vector<Slice *> slices;
