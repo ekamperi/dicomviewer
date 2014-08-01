@@ -112,12 +112,14 @@ unsigned char *DicomFile::getCompressedData()
     }
 
     DcmDataset *pDcmDataset = dcmFile.getDataset();
-    OFCondition cond = EC_Normal;
+    status = EC_Normal;
     DcmElement* element = NULL;
 
-    cond = pDcmDataset->findAndGetElement(DCM_PixelData, element);
-    if (cond.bad() || element == NULL)
+    status = pDcmDataset->findAndGetElement(DCM_PixelData, element);
+    if (status.bad() || element == NULL) {
+        qDebug() << status.text();
         return NULL;
+    }
 
     DcmPixelData *dpix = NULL;
     dpix = OFstatic_cast(DcmPixelData*, element);
@@ -140,8 +142,8 @@ unsigned char *DicomFile::getCompressedData()
      * Access original data representation and get result within
      * pixel sequence.
      */
-    cond = dpix->getEncapsulatedRepresentation(xferSyntax, rep, dseq);
-    if (cond == EC_Normal) {
+    status = dpix->getEncapsulatedRepresentation(xferSyntax, rep, dseq);
+    if (status == EC_Normal) {
         DcmPixelItem* pixitem = NULL;
 
 		/* Access first frame (skipping offset table) */
@@ -154,16 +156,24 @@ unsigned char *DicomFile::getCompressedData()
          * the time, the length of the frame).
          */
 		Uint32 length = pixitem->getLength();
-        if (length == 0) return NULL;
+        if (length == 0) {
+            qDebug() << "length = 0";
+            return NULL;
+        }
 
         /* Finally, get the compressed data for this pixel item */
         Uint8 *pixData = NULL;
-        cond = pixitem->getUint8Array(pixData);
+        status = pixitem->getUint8Array(pixData);
+        if (status.bad()) {
+            qDebug() << status.text();
+            return NULL;
+        }
 
         /* Convert jpeg2000 to png */
         qDebug() << "About to call jp2k_to_png()";
         return jp2k_to_png(pixData, length);
     }
+    qDebug() << status.text();
     return NULL;
 }
 
