@@ -9,6 +9,9 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
     qDebug() << Q_FUNC_INFO;
+
+    /* This is used to implement a hover like effect */
+    this->weAreIn = false;
 }
 
 MyGLWidget::~MyGLWidget()
@@ -206,6 +209,16 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
                 +  "Sex: " + this->examDetails.getPatientSex() + "\n"
                 + "Date: " + this->examDetails.getStudyDate());
 
+    if (this->weAreIn) {
+        QPen oldPen, myPen;
+        oldPen = painter.pen();
+        myPen.setWidth(8);
+        myPen.setColor(Qt::red);
+        painter.setPen(myPen);
+        painter.drawRect(QRect(1, 1, this->width(), this->height()));
+        painter.setPen(oldPen);
+    }
+
     painter.end();
 }
 
@@ -214,4 +227,20 @@ void MyGLWidget::setExamDetails(ExamDetails details)
     qDebug() << Q_FUNC_INFO;
 
     this->examDetails = details;
+}
+
+void MyGLWidget::enterEvent(QEvent * event)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->weAreIn = true;
+    this->update();
+}
+
+void MyGLWidget::leaveEvent(QEvent * event)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->weAreIn = false;
+    this->update();
 }

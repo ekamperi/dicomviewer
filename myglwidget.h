@@ -28,6 +28,13 @@ protected:
      void mouseMoveEvent(QMouseEvent *event);
      void paintEvent(QPaintEvent *event);
 
+     /* These events are used for implement a hover effect */
+     virtual void enterEvent(QEvent *event);
+     virtual void leaveEvent(QEvent *event);
+
+     bool weAreIn;
+
+     /* Custom stuff */
      void png2raw(QString string);
      int texWidth;
      int texHeight;
