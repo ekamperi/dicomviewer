@@ -23,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->gridLayout = new QGridLayout;
+    this->containerWidget = new QWidget;
+
     /*
      * Initialize library or else it will abort.
      * It may not be needed in newer versions of it.
@@ -42,6 +45,8 @@ MainWindow::~MainWindow()
      * be destroyed!
      */
     delete ui;
+    delete this->gridLayout;
+    delete this->containerWidget;
 
     /* Deregister decompression codecs */
     DcmRLEDecoderRegistration::cleanup();
@@ -104,18 +109,32 @@ void MainWindow::filesLoaded()
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* Add widget to UI */
-    qDebug() << this->slices.size();
+    int howMany = qMin((int)this->slices.size(), 30);
+    for (int i = 0, row = 0, col = 0; i < howMany; i++, col++) {
+        if (col > 2) {
+            row++;
+            col = 0;
+        }
 
-    for (int i = 0; i < qMin((int)this->slices.size(), 4); i++) {
-         Slice *s = this->slices.at(i);
-         MyGLWidget *pMyGLWidget = new MyGLWidget();
-         pMyGLWidget->loadTextureFile2(
-                     s->getRawPixelData(),
-                     s->getWidth(),
-                     s->getHeight(),
-                     s->getFormat());
-         pMyGLWidget->setExamDetails(s->getExamDetails());
-         ui->verticalLayout->addWidget(pMyGLWidget);
+        Slice *s = this->slices.at(i);
+        MyGLWidget *pMyGLWidget = new MyGLWidget();
+        pMyGLWidget->loadTextureFile2(
+                    s->getRawPixelData(),
+                    s->getWidth(),
+                    s->getHeight(),
+                    s->getFormat());
+        pMyGLWidget->setExamDetails(s->getExamDetails());
+
+        /* Set a minimum size on the widget or else it will be squeezed to
+         * fit into the container and the scrollbars won't appear!
+         * XXX: Minimum size should be calculated based on the application
+         * size, no ?
+         */
+        pMyGLWidget->setMinimumSize(200, 200);
+
+        /* Add the slice to the grid layout */
+        this->gridLayout->addWidget(pMyGLWidget, row, col);
     }
+    containerWidget->setLayout(gridLayout);
+    ui->scrollArea->setWidget(containerWidget);
 }

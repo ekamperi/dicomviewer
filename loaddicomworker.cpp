@@ -41,7 +41,7 @@ void LoadDicomThread::run()
 
         /* Extract the raw pixel data from the DICOM file */
         unsigned char *pRawPixelData =
-                pDicomFile->getUncompressedData();
+                pDicomFile->getCompressedData();
         unsigned int width = pDicomFile->getWidth();
         unsigned int height = pDicomFile->getHeight();
         GLint format = pDicomFile->getFormat();

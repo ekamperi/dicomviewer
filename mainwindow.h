@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QGridLayout>
 #include <QProgressDialog>
 
 #include "loaddicomworker.h"
@@ -30,6 +31,14 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    /* Slices are arranged into a grid layout */
+    QGridLayout *gridLayout;
+
+    /* This container widget contains the grid layout and is in turn put
+     * into the scroll area. QScrollarea needs a QWidget.
+     */
+    QWidget *containerWidget;
 
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
