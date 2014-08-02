@@ -212,10 +212,10 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     if (this->weAreIn) {
         QPen oldPen, myPen;
         oldPen = painter.pen();
-        myPen.setWidth(8);
+        myPen.setWidth(6);
         myPen.setColor(Qt::red);
         painter.setPen(myPen);
-        painter.drawRect(QRect(1, 1, this->width(), this->height()));
+        painter.drawRect(QRect(0, 0, this->width(), this->height()));
         painter.setPen(oldPen);
     }
 
@@ -235,6 +235,8 @@ void MyGLWidget::enterEvent(QEvent * event)
 
     this->weAreIn = true;
     this->update();
+
+    QWidget::enterEvent(event);
 }
 
 void MyGLWidget::leaveEvent(QEvent * event)
@@ -243,4 +245,6 @@ void MyGLWidget::leaveEvent(QEvent * event)
 
     this->weAreIn = false;
     this->update();
+
+    QWidget::leaveEvent(event);
 }
