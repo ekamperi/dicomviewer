@@ -26,6 +26,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->gridLayout = new QGridLayout;
     this->containerWidget = new QWidget;
 
+    /* The first time ::statusBar() is called, it creates a status bar. */
+    this->statusBar();
+    this->statusBar()->showMessage("Ready.");
+
     /*
      * Initialize library or else it will abort.
      * It may not be needed in newer versions of it.
@@ -137,4 +141,6 @@ void MainWindow::filesLoaded()
     }
     containerWidget->setLayout(gridLayout);
     ui->scrollArea->setWidget(containerWidget);
+
+    this->statusBar()->showMessage(QString::number(this->slices.size()) + " files were loaded succesfully.");
 }
