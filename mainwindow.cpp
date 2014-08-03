@@ -30,6 +30,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
 
+    /* XXX: This is a temporary hack or else Unity won't show any menu
+     * at all (if the indicator-appmenus is removed.
+     */
+    this->menuBar()->setNativeMenuBar(false);
+
     /*
      * Initialize library or else it will abort.
      * It may not be needed in newer versions of it.
