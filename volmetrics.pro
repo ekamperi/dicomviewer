@@ -17,14 +17,16 @@ SOURCES += main.cpp\
     dicomfile.cpp \
     loaddicomworker.cpp \
     slice.cpp \
-    examdetails.cpp
+    examdetails.cpp \
+    flowlayout.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
     dicomfile.h \
     loaddicomworker.h \
     slice.h \
-    examdetails.h
+    examdetails.h \
+    flowlayout.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

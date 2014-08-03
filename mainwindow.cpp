@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->gridLayout = new QGridLayout;
+    this->flowLayout = new FlowLayout;
     this->containerWidget = new QWidget;
 
     /* The first time ::statusBar() is called, it creates a status bar. */
@@ -49,7 +49,7 @@ MainWindow::~MainWindow()
      * be destroyed!
      */
     delete ui;
-    delete this->gridLayout;
+    delete this->flowLayout;
     delete this->containerWidget;
 
     /* Deregister decompression codecs */
@@ -114,12 +114,7 @@ void MainWindow::filesLoaded()
     qDebug() << Q_FUNC_INFO;
 
     int howMany = qMin((int)this->slices.size(), 30);
-    for (int i = 0, row = 0, col = 0; i < howMany; i++, col++) {
-        if (col > 2) {
-            row++;
-            col = 0;
-        }
-
+    for (int i = 0; i < howMany; i++) {
         Slice *s = this->slices.at(i);
         MyGLWidget *pMyGLWidget = new MyGLWidget();
         pMyGLWidget->loadTextureFile2(
@@ -134,13 +129,15 @@ void MainWindow::filesLoaded()
          * XXX: Minimum size should be calculated based on the application
          * size, no ?
          */
-        pMyGLWidget->setMinimumSize(200, 200);
+        pMyGLWidget->setMinimumSize(256, 256);
 
         /* Add the slice to the grid layout */
-        this->gridLayout->addWidget(pMyGLWidget, row, col);
+        this->flowLayout->addWidget(pMyGLWidget);
     }
-    containerWidget->setLayout(gridLayout);
+    containerWidget->setLayout(flowLayout);
     ui->scrollArea->setWidget(containerWidget);
 
-    this->statusBar()->showMessage(QString::number(this->slices.size()) + " files were loaded succesfully.");
+    this->statusBar()->showMessage(
+                QString::number(this->slices.size()) +
+                " files were loaded succesfully.");
 }

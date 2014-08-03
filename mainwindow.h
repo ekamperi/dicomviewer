@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QProgressDialog>
 
+#include "flowlayout.h"
 #include "loaddicomworker.h"
 #include "myglwidget.h"
 
@@ -33,7 +34,7 @@ private:
     Ui::MainWindow *ui;
 
     /* Slices are arranged into a grid layout */
-    QGridLayout *gridLayout;
+    FlowLayout *flowLayout;
 
     /* This container widget contains the grid layout and is in turn put
      * into the scroll area. QScrollarea needs a QWidget.
