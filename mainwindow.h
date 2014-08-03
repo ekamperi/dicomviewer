@@ -30,6 +30,8 @@ private slots:
     void progressDialogCanceled();
     void filesLoaded();
 
+    void on_actionExit_triggered();
+
 private:
     Ui::MainWindow *ui;
 

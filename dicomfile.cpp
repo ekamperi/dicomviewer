@@ -266,7 +266,7 @@ QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
         return QString(result.c_str());
     } else {
         qDebug() << status.text();
-        return QString("NOTAVAIL");
+        return QString("N/A");
     }
 }
 

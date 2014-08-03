@@ -146,3 +146,10 @@ void MainWindow::filesLoaded()
                 QString::number(this->slices.size()) +
                 " files were loaded succesfully.");
 }
+
+void MainWindow::on_actionExit_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QCoreApplication::exit(0);
+}
