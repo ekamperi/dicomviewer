@@ -104,12 +104,17 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, 
     qDebug() << Q_FUNC_INFO;
     qDebug() << "width =" << width << "height =" << height << "format =" << format;
 
+    /* From the QGLWiedget official documentation:
+     *
+     * If you need to call the standard OpenGL API functions from other places
+     * (e.g. in your widget's constructor or in your own paint functions), you
+     * must call makeCurrent() first.
+     *
+     * makeCurrent() makes this widget the current widget for OpenGL operations,
+     * i.e. makes the widget's rendering context the current OpenGL rendering
+     * context.
+     */
     this->makeCurrent();
-
-    this->pRawPixel = pRawPixel;
-    for (int i = 0; i < 200; i++)
-        std::cout << (int)this->pRawPixel[i] << " ";
-    std::cout << std::endl << std::endl;
 
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
