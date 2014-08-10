@@ -32,39 +32,6 @@ void MyGLWidget::initializeGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-//void MyGLWidget::resizeGL(int width, int height)
-//{
-//    qDebug() << Q_FUNC_INFO;
-//    qDebug() << "width = " << width << "height = " << height;
-
-//    glViewport (0, 0, width, height);
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glOrtho(0, 1, 1, 0, 0, 1);
-//    glMatrixMode(GL_MODELVIEW);
-//}
-
-//void MyGLWidget::paintGL() {
-//    qDebug() << Q_FUNC_INFO;
-
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//    glActiveTexture(GL_TEXTURE0);
-//    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-//    glBindTexture(GL_TEXTURE_2D, this->textureID);
-//    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-//    glEnable(GL_TEXTURE_2D);
-//    glBegin(GL_QUADS);
-//        glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
-//        glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
-//        glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
-//        glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
-//    glEnd();
-//    glDisable(GL_TEXTURE_2D);
-//}
-
 void MyGLWidget::loadTextureFile(QString filename)
 {
     qDebug() << Q_FUNC_INFO;
@@ -99,7 +66,10 @@ void MyGLWidget::loadTextureFile(QString filename)
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
 
-void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel, unsigned int width, unsigned int height, GLint format)
+void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel,
+                                  unsigned int width,
+                                  unsigned int height,
+                                  GLint format)
 {
     qDebug() << Q_FUNC_INFO;
     qDebug() << "width =" << width << "height =" << height << "format =" << format;
