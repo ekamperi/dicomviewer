@@ -17,6 +17,9 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 MyGLWidget::~MyGLWidget()
 {
     qDebug() << Q_FUNC_INFO;
+
+    if (this->pMagickImage)
+        delete this->pMagickImage;
 }
 
 void MyGLWidget::initializeGL()
@@ -152,6 +155,7 @@ void MyGLWidget::png2raw(QString filename)
         this->texHeight = this->pMagickImage->rows();
     } catch (Magick::Exception &error) {
         qDebug() << "Caught exception: " << error.what();
+        this->pMagickImage = NULL;
     }
 }
 
