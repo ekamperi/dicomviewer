@@ -70,13 +70,21 @@ void MainWindow::on_actionOpenDICOM_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* Select DICOM files to open */
     QFileDialog dialog(this);
     dialog.setDirectory(QDir::homePath());
     dialog.setFileMode(QFileDialog::ExistingFiles);
     dialog.setNameFilter(trUtf8("DICOM files (*.dcm)"));
     QStringList fileNames;
-    if (dialog.exec())
+    if (dialog.exec()) {
         fileNames = dialog.selectedFiles();
+    }
+
+    /* If user clicked cancel, just return */
+    if (fileNames.isEmpty()) {
+        qDebug() << "fileNames is empty!";
+        return;
+    }
 
     this->progressDialog = new QProgressDialog(
                 "Loading DICOM files...",
