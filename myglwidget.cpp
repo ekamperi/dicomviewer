@@ -12,14 +12,18 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
+
+    pMagickImage = NULL;
 }
 
 MyGLWidget::~MyGLWidget()
 {
     qDebug() << Q_FUNC_INFO;
-
-    if (this->pMagickImage)
+    qDebug() << this->pMagickImage;
+    if (this->pMagickImage) {
         delete this->pMagickImage;
+        this->pMagickImage = NULL;
+    }
 }
 
 void MyGLWidget::initializeGL()
@@ -74,6 +78,9 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel,
     qDebug() << Q_FUNC_INFO;
     qDebug() << "width =" << width << "height =" << height << "format =" << format;
 
+    // XXX
+    this->pRawPixel = pRawPixel;
+
     /* From the QGLWiedget official documentation:
      *
      * If you need to call the standard OpenGL API functions from other places
@@ -99,6 +106,7 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel,
 
     /* XXX: Just a sanity check */
     Q_ASSERT((format == GL_LUMINANCE) || (format == GL_RGB));
+    Q_ASSERT(this->pRawPixel);
 
     glTexImage2D(GL_TEXTURE_2D, 0, format,
                  width,
@@ -210,7 +218,7 @@ void MyGLWidget::setExamDetails(ExamDetails details)
 
 void MyGLWidget::enterEvent(QEvent * event)
 {
-    qDebug() << Q_FUNC_INFO;
+    // qDebug() << Q_FUNC_INFO;
 
     this->weAreIn = true;
     this->update();
@@ -220,7 +228,7 @@ void MyGLWidget::enterEvent(QEvent * event)
 
 void MyGLWidget::leaveEvent(QEvent * event)
 {
-    qDebug() << Q_FUNC_INFO;
+    // qDebug() << Q_FUNC_INFO;
 
     this->weAreIn = false;
     this->update();

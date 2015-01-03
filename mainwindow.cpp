@@ -126,9 +126,9 @@ void MainWindow::filesLoaded()
 {
     qDebug() << Q_FUNC_INFO;
 
-    int howMany = qMin((int)this->slices.size(), 30);
+    int howMany = (int)this->slices.size();
     for (int i = 0; i < howMany; i++) {
-        Slice *s = this->slices.at(i);
+        const Slice *s = this->slices.at(i);
         MyGLWidget *pMyGLWidget = new MyGLWidget();
         pMyGLWidget->loadTextureFile2(
                     s->getRawPixelData(),
@@ -160,4 +160,23 @@ void MainWindow::on_actionExit_triggered()
     qDebug() << Q_FUNC_INFO;
 
     QCoreApplication::exit(0);
+}
+
+void MainWindow::on_actionClose_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Remove all slices */
+    std::vector<Slice *>::iterator it;
+
+    for (it = slices.begin(); it != slices.end(); it++) {
+        delete *it;
+    }
+    slices.clear();
+
+    /* Remove all GL Widgets from the flow layout */
+    QLayoutItem *p;
+    while (p = this->flowLayout->takeAt(0)) {
+        delete p->widget();
+    };
 }

@@ -124,14 +124,11 @@ unsigned char *DicomFile::getUncompressedData()
         pDicomImage->setNoVoiTransformation();
         pDicomImage->hideAllOverlays();
         Uint8 *pixelData = (Uint8 *)(pDicomImage->getOutputData(8));
-        if  (pixelData == NULL) {
-            qDebug() << pixelData;
-            return NULL;
-        }
         return pixelData;
+    } else {
+        qDebug() << "Image is NOT monochrome! We will return NULL!";
     }
     return NULL;
-    //delete dimage;
 }
 
 unsigned char *DicomFile::getCompressedData()
