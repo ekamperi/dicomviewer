@@ -39,6 +39,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    /* XXX */
+    QVBoxLayout *verticalLayout;
+
     /* Slices are arranged into a grid layout */
     FlowLayout *flowLayout;
 

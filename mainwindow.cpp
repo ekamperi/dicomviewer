@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->verticalLayout = new QVBoxLayout;
     this->flowLayout = new FlowLayout;
     this->containerWidget = new QWidget;
 
@@ -54,6 +55,7 @@ MainWindow::~MainWindow()
      * be destroyed!
      */
     delete ui;
+    delete this->verticalLayout;
     delete this->flowLayout;
     delete this->containerWidget;
 
@@ -185,5 +187,15 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     qDebug() << Q_FUNC_INFO;
     qDebug() << "Slice " << pSlice->getIndex() << " was double clicked";
 
+    MyGLWidget *pMyGLWidget = new MyGLWidget();
+    pMyGLWidget->setSlice(pSlice);
 
+    /* Quoting from the docs: If there already is a layout manager installed
+     * on this widget, QWidget won't let you install another. You must first
+     * delete the existing layout manager (returned by layout()) before you
+     * can call setLayout() with the new layout.
+     */
+    this->verticalLayout->addWidget(pMyGLWidget);
+    delete this->containerWidget->layout();
+    containerWidget->setLayout(this->verticalLayout);
 }
