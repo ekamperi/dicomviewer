@@ -128,14 +128,9 @@ void MainWindow::filesLoaded()
 
     int howMany = (int)this->slices.size();
     for (int i = 0; i < howMany; i++) {
-        const Slice *s = this->slices.at(i);
+        Slice *pSlice = this->slices.at(i);
         MyGLWidget *pMyGLWidget = new MyGLWidget();
-        pMyGLWidget->loadTextureFile2(
-                    s->getRawPixelData(),
-                    s->getWidth(),
-                    s->getHeight(),
-                    s->getFormat());
-        pMyGLWidget->setExamDetails(s->getExamDetails());
+        pMyGLWidget->setSlice(pSlice);
 
         /* Set a minimum size on the widget or else it will be squeezed to
          * fit into the container and the scrollbars won't appear!

@@ -26,6 +26,19 @@ MyGLWidget::~MyGLWidget()
     }
 }
 
+void MyGLWidget::setSlice(Slice *pSlice)
+{
+    qDebug() << Q_FUNC_INFO;
+    Q_ASSERT(pSlice);
+
+    this->pSlice = pSlice;
+    this->loadTextureFile2(
+                pSlice->getRawPixelData(),
+                pSlice->getWidth(),
+                pSlice->getHeight(),
+                pSlice->getFormat());
+}
+
 void MyGLWidget::initializeGL()
 {
     qDebug() << Q_FUNC_INFO;
@@ -186,15 +199,16 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     QFont font = painter.font();
     font.setPointSize(7);
     painter.setFont(font);
-    painter.setPen(Qt::red);
+    painter.setPen(Qt::yellow);
+    ExamDetails examDetails = this->pSlice->getExamDetails();
     painter.drawText(
-                QRect(0, 0, this->width(), this->height()),
+                QRect(5, 5, this->width(), this->height()),
                 Qt::TextWordWrap,
-                  "Name: " + this->examDetails.getPatientName()
-                + ", ID: " + this->examDetails.getPatientID()  + "\n"
-                +  "Age: " + this->examDetails.getPatientAge() + "\n"
-                +  "Sex: " + this->examDetails.getPatientSex() + "\n"
-                + "Date: " + this->examDetails.getStudyDate());
+                  "Name: " + examDetails.getPatientName()
+                + ", ID: " + examDetails.getPatientID()  + "\n"
+                +  "Age: " + examDetails.getPatientAge() + "\n"
+                +  "Sex: " + examDetails.getPatientSex() + "\n"
+                + "Date: " + examDetails.getStudyDate());
 
     if (this->weAreIn) {
         QPen oldPen, myPen;
@@ -209,16 +223,11 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void MyGLWidget::setExamDetails(ExamDetails details)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    this->examDetails = details;
-}
-
 void MyGLWidget::enterEvent(QEvent * event)
 {
     // qDebug() << Q_FUNC_INFO;
+
+    qDebug() << this->getSlice()->getIndex();
 
     this->weAreIn = true;
     this->update();
@@ -234,4 +243,9 @@ void MyGLWidget::leaveEvent(QEvent * event)
     this->update();
 
     QWidget::leaveEvent(event);
+}
+
+const Slice * MyGLWidget::getSlice() const
+{
+    return this->pSlice;
 }

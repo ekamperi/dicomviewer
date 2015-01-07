@@ -1,13 +1,19 @@
 #ifndef SLICE_H
 #define SLICE_H
 
+#include "dicomfile.h"
 #include "examdetails.h"
 #include "GL/gl.h"
 
 class Slice
 {
 public:
-    Slice(unsigned char *pRawPixelData, unsigned int width, unsigned int height, GLint format, ExamDetails examDetails);
+    Slice(QString filename, unsigned int index);
+    ~Slice();
+
+    unsigned int getIndex() const {
+        return this->index;
+    }
 
     unsigned char *getRawPixelData() const {
         return this->pRawPixelData;
@@ -30,6 +36,9 @@ public:
     }
 
 private:
+    DicomFile *pDicomFile;
+    unsigned int index;
+
     unsigned char *pRawPixelData;
     unsigned int width;
     unsigned int height;

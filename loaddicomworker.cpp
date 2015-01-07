@@ -35,25 +35,9 @@ void LoadDicomThread::run()
             /* NEVER REACHED */
         }
 
-        /* Create a DicomFile object to dissect the input file */
-        DicomFile *pDicomFile = new DicomFile();
-        pDicomFile->loadDicomFile(fileNames[i]);
-
-        /* Extract the raw pixel data from the DICOM file */
-        unsigned char *pRawPixelData =
-                pDicomFile->getUncompressedData();
-        unsigned int width = pDicomFile->getWidth();
-        unsigned int height = pDicomFile->getHeight();
-        GLint format = pDicomFile->getFormat();
-
-        /* Also extract examination details */
-        ExamDetails examDetails = pDicomFile->getExamDetails();
-
         /* Save result */
         this->pResults->push_back(
-                    new Slice(
-                        pRawPixelData, width, height, format,
-                        examDetails));
+                    new Slice(fileNames[i], i));
 
         emit this->reportProgress(i);
     }

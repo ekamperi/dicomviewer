@@ -4,6 +4,7 @@
 #include <qt5/QtOpenGL/QGLWidget>
 
 #include "examdetails.h"
+#include "slice.h"
 #include "Magick++.h"
 
 class MyGLWidget : public QGLWidget
@@ -17,8 +18,8 @@ public:
      void loadTextureFile(QString filename);
      void loadTextureFile2(unsigned char *pRawData, unsigned int width, unsigned int height, GLint format);
 
-     void setExamDetails(ExamDetails details);
-
+     void setSlice(Slice *pSlice);
+     const Slice * getSlice() const;
 
 protected:
      virtual void initializeGL();
@@ -44,7 +45,8 @@ protected:
 
      GLuint textureID;
      unsigned char *pRawPixel;
-     ExamDetails examDetails;
+
+     Slice *pSlice;
 };
 
 #endif // MYGLWIDGET_H
