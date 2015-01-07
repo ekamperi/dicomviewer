@@ -33,9 +33,12 @@ FORMS    += mainwindow.ui \
     dicomfile.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
--lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
+-lMagick++ -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
 -ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm -lgomp -lpthread
 
 #CONFIG  += qt warn_off release
 #DEFINES += QT_NO_DEBUG_OUTPUT
 #DEFINES += QT_NO_DEBUG
+
+INCLUDEPATH+=/usr/include/ImageMagick
+
