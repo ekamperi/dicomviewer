@@ -227,8 +227,6 @@ void MyGLWidget::enterEvent(QEvent * event)
 {
     // qDebug() << Q_FUNC_INFO;
 
-    qDebug() << this->getSlice()->getIndex();
-
     this->weAreIn = true;
     this->update();
 
@@ -243,6 +241,13 @@ void MyGLWidget::leaveEvent(QEvent * event)
     this->update();
 
     QWidget::leaveEvent(event);
+}
+
+void MyGLWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    emit sliceDoubleClicked(this->pSlice);
 }
 
 const Slice * MyGLWidget::getSlice() const

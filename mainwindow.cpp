@@ -139,6 +139,10 @@ void MainWindow::filesLoaded()
          */
         pMyGLWidget->setMinimumSize(256, 256);
 
+        /* XXX */
+        connect(pMyGLWidget, SIGNAL(sliceDoubleClicked(Slice*)),
+                this, SLOT(sliceDoubleClicked(Slice*)));
+
         /* Add the slice to the grid layout */
         this->flowLayout->addWidget(pMyGLWidget);
     }
@@ -174,4 +178,12 @@ void MainWindow::on_actionClose_triggered()
     while (p = this->flowLayout->takeAt(0)) {
         delete p->widget();
     };
+}
+
+void MainWindow::sliceDoubleClicked(Slice *pSlice)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "Slice " << pSlice->getIndex() << " was double clicked";
+
+
 }

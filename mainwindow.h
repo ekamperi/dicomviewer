@@ -26,6 +26,8 @@ public:
 private slots:
     void on_actionAbout_triggered();
     void on_actionOpenDICOM_triggered();
+    void sliceDoubleClicked(Slice *pSlice);
+
     void getProgress(unsigned int cnt);
     void progressDialogCanceled();
     void filesLoaded();

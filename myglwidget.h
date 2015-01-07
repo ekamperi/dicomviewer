@@ -21,6 +21,9 @@ public:
      void setSlice(Slice *pSlice);
      const Slice * getSlice() const;
 
+signals:
+    void sliceDoubleClicked(Slice *pSlice);
+
 protected:
      virtual void initializeGL();
      //virtual void resizeGL(int w, int h);
@@ -33,7 +36,10 @@ protected:
      virtual void enterEvent(QEvent *event);
      virtual void leaveEvent(QEvent *event);
 
-     bool weAreIn;
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
+
+    /* Whether we are inside a slice or not */
+    bool weAreIn;
 
      /* Custom stuff */
      void png2raw(QString string);
