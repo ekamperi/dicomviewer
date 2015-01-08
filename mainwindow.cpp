@@ -134,6 +134,7 @@ void MainWindow::filesLoaded()
     for (int i = 0; i < howMany; i++) {
         Slice *pSlice = this->slices.at(i);
         MyGLWidget *pMyGLWidget = new MyGLWidget();
+        pSlice->setGLWidget(pMyGLWidget);
         pMyGLWidget->setSlice(pSlice);
 
         /* Set a minimum size on the widget or else it will be squeezed to
@@ -141,7 +142,7 @@ void MainWindow::filesLoaded()
          * XXX: Minimum size should be calculated based on the application
          * size, no ?
          */
-        pMyGLWidget->setMinimumSize(256, 256);
+        pMyGLWidget->setMinimumSize(192, 192);
 
         /* XXX */
         connect(pMyGLWidget, SIGNAL(sliceDoubleClicked(Slice*)),
@@ -218,8 +219,24 @@ bool MainWindow::event(QEvent *pEvent)
         if (pke->key() == Qt::Key_Escape) {
             this->on_actionClose_triggered();
             return true;
+        } else if (pke->key() == Qt::Key_A
+                   && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+            selectAllSlices();
         }
     }
 
     return QWidget::event(pEvent);
+}
+
+void MainWindow::selectAllSlices(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    std::vector<Slice *>::iterator it;
+    for (it = slices.begin(); it != slices.end(); it++) {
+        Slice *pSlice = *it;
+        bool isSelected = pSlice->isSelected();
+        pSlice->setSelected(!isSelected);
+        pSlice->getGLWidget()->update();
+    }
 }

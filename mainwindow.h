@@ -57,6 +57,8 @@ private:
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
     std::vector<Slice *> slices;
+
+    void selectAllSlices(void);
 };
 
 #endif // MAINWINDOW_H

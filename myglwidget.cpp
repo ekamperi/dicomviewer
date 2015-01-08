@@ -214,10 +214,10 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
                 +  "Sex: " + examDetails.getPatientSex() + "\n"
                 + "Date: " + examDetails.getStudyDate());
 
-    if (this->weAreIn) {
+    if (this->weAreIn || this->pSlice->isSelected()) {
         QPen oldPen, myPen;
         oldPen = painter.pen();
-        myPen.setWidth(6);
+        myPen.setWidth(4);
         myPen.setColor(Qt::red);
         painter.setPen(myPen);
         painter.drawRect(QRect(0, 0, this->width(), this->height()));
@@ -258,3 +258,4 @@ const Slice * MyGLWidget::getSlice() const
 {
     return this->pSlice;
 }
+

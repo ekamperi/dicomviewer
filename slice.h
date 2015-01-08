@@ -3,7 +3,10 @@
 
 #include "dicomfile.h"
 #include "examdetails.h"
+#include "myglwidget.h"
 #include "GL/gl.h"
+
+class MyGLWidget;
 
 class Slice
 {
@@ -35,6 +38,22 @@ public:
         return this->examDetails;
     }
 
+    bool isSelected(void) const {
+        return this->m_isSelected;
+    }
+
+    void setSelected(bool selected) {
+        this->m_isSelected = selected;
+    }
+
+    void setGLWidget(MyGLWidget *pMyGLWidget) {
+        this->pMyGLWidget = pMyGLWidget;
+    }
+
+    MyGLWidget *getGLWidget(void) const {
+        return this->pMyGLWidget;
+    }
+
 private:
     DicomFile *pDicomFile;
     unsigned int index;
@@ -45,6 +64,11 @@ private:
     GLint format;
 
     ExamDetails examDetails;
+
+    /* Whether this slice was selected by user */
+    bool m_isSelected;
+
+    MyGLWidget *pMyGLWidget;
 };
 
 #endif // SLICE_H

@@ -7,6 +7,8 @@
 #include "slice.h"
 #include "Magick++.h"
 
+class Slice;
+
 class MyGLWidget : public QGLWidget
 {
     Q_OBJECT
