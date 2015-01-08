@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->verticalLayout = new QVBoxLayout;
     this->flowLayout = new FlowLayout;
     this->containerWidget = new QWidget;
+    this->containerWidget2 = new QWidget;
 
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
@@ -167,19 +168,25 @@ void MainWindow::on_actionClose_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* Remove all slices */
-    std::vector<Slice *>::iterator it;
-
-    for (it = slices.begin(); it != slices.end(); it++) {
-        delete *it;
+    if (this->containerWidget->isHidden()) {
+        ui->scrollArea->takeWidget();
+        this->containerWidget->show();
+        ui->scrollArea->setWidget(this->containerWidget);
     }
-    slices.clear();
+//    /* Remove all slices */
+//    std::vector<Slice *>::iterator it;
 
-    /* Remove all GL Widgets from the flow layout */
-    QLayoutItem *p;
-    while (p = this->flowLayout->takeAt(0)) {
-        delete p->widget();
-    };
+//    for (it = slices.begin(); it != slices.end(); it++) {
+//        delete *it;
+//    }
+//    slices.clear();
+
+//    /* Remove all GL Widgets from the flow layout */
+//    QLayoutItem *p;
+//    while (p = this->flowLayout->takeAt(0)) {
+//        delete p->widget();
+//    };
+//    ui->scrollArea->setWidget(containerWidget);
 }
 
 void MainWindow::sliceDoubleClicked(Slice *pSlice)
@@ -190,12 +197,13 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     MyGLWidget *pMyGLWidget = new MyGLWidget();
     pMyGLWidget->setSlice(pSlice);
 
-    /* Quoting from the docs: If there already is a layout manager installed
-     * on this widget, QWidget won't let you install another. You must first
-     * delete the existing layout manager (returned by layout()) before you
-     * can call setLayout() with the new layout.
-     */
     this->verticalLayout->addWidget(pMyGLWidget);
-    delete this->containerWidget->layout();
-    containerWidget->setLayout(this->verticalLayout);
+    containerWidget2->setLayout(this->verticalLayout);
+
+    /* Removes the scroll area's widget, and passes ownership of the widget to the caller */
+    ui->scrollArea->takeWidget();
+    //this->containerWidget->setParent(0);
+    this->containerWidget->hide();
+
+    ui->scrollArea->setWidget(containerWidget2);
 }

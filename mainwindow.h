@@ -49,6 +49,7 @@ private:
      * into the scroll area. QScrollarea needs a QWidget.
      */
     QWidget *containerWidget;
+    QWidget *containerWidget2;
 
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
