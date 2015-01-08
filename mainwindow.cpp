@@ -172,6 +172,7 @@ void MainWindow::on_actionClose_triggered()
         ui->scrollArea->takeWidget();
         this->containerWidget->show();
         ui->scrollArea->setWidget(this->containerWidget);
+        this->verticalLayout->takeAt(0);
     }
 //    /* Remove all slices */
 //    std::vector<Slice *>::iterator it;
