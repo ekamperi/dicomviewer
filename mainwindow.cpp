@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QFileDialog>
+#include <QKeyEvent>
 #include <QtGlobal>
 #include <QProgressDialog>
 
@@ -207,4 +208,18 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     this->containerWidget->hide();
 
     ui->scrollArea->setWidget(containerWidget2);
+}
+
+bool MainWindow::event(QEvent *pEvent)
+{
+    if (pEvent->type() == QEvent::KeyPress) {
+        qDebug() << Q_FUNC_INFO;
+        QKeyEvent *pke = static_cast<QKeyEvent *>(pEvent);
+        if (pke->key() == Qt::Key_Escape) {
+            this->on_actionClose_triggered();
+            return true;
+        }
+    }
+
+    return QWidget::event(pEvent);
 }

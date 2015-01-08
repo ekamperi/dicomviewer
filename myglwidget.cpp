@@ -19,10 +19,14 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 MyGLWidget::~MyGLWidget()
 {
     qDebug() << Q_FUNC_INFO;
-    qDebug() << this->pMagickImage;
+
     if (this->pMagickImage) {
         delete this->pMagickImage;
         this->pMagickImage = NULL;
+    }
+    if (this->pRawPixel) {
+        delete this->pRawPixel;
+        this->pRawPixel = NULL;
     }
 }
 

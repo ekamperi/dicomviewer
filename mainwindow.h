@@ -23,6 +23,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    bool event(QEvent *pEvent);
+
 private slots:
     void on_actionAbout_triggered();
     void on_actionOpenDICOM_triggered();
