@@ -130,6 +130,8 @@ void MainWindow::filesLoaded()
 {
     qDebug() << Q_FUNC_INFO;
 
+    this->setCursor(Qt::WaitCursor);
+
     int howMany = (int)this->slices.size();
     for (int i = 0; i < howMany; i++) {
         Slice *pSlice = this->slices.at(i);
@@ -153,6 +155,8 @@ void MainWindow::filesLoaded()
     }
     containerWidget->setLayout(flowLayout);
     ui->scrollArea->setWidget(containerWidget);
+
+    this->setCursor(Qt::ArrowCursor);
 
     this->statusBar()->showMessage(
                 QString::number(this->slices.size()) +
@@ -207,7 +211,7 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
         delete this->verticalLayout;
 
     this->verticalLayout = new QVBoxLayout();
-    this->verticalLayout->setContentsMargins(QMargins(100,100,100,100));
+    this->verticalLayout->setContentsMargins(QMargins(5,5,5,5));
     this->verticalLayout->addWidget(pMyGLWidget);
     this->verticalLayout->update();
 
