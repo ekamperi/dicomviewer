@@ -64,6 +64,7 @@ private:
     void gotoSlice(SliceDirection::is dir);
     void gotoNextSlice();
     void gotoPrevSlice();
+    void updateStatusBarForSlice(void) const;
 };
 
 #endif // MAINWINDOW_H

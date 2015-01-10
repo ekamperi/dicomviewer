@@ -224,6 +224,7 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     QWidget *p = ui->scrollArea->takeWidget();
     p->hide();
     ui->scrollArea->setWidget(containerWidget2);
+    updateStatusBarForSlice();
 }
 
 bool MainWindow::event(QEvent *pEvent)
@@ -313,6 +314,20 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     }
     this->verticalLayout->addWidget(pMyNewGLWidget);
     delete pMyGLWidget;
+    updateStatusBarForSlice();
 
     qDebug() << Q_FUNC_INFO;
+}
+
+void MainWindow::updateStatusBarForSlice(void) const
+{
+    qDebug() << Q_FUNC_INFO;
+
+    MyGLWidget *pMyGLWidget = (MyGLWidget *)
+            this->verticalLayout->itemAt(0)->widget();
+    unsigned int idx = pMyGLWidget->getSliceIndex() + 1;
+    qDebug() << "idx = " << idx;
+
+    this->statusBar()->showMessage(
+                QString("Slice: %1").arg(idx));
 }
