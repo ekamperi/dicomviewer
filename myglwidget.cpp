@@ -10,6 +10,11 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
+//    this->setAttribute(Qt::WA_NoSystemBackground);
+//    this->setAttribute(Qt::WA_OpaquePaintEvent);
+//    this->setBackgroundRole(QPalette::Dark);
+//    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
 
@@ -20,14 +25,14 @@ MyGLWidget::~MyGLWidget()
 {
     qDebug() << Q_FUNC_INFO;
 
-    if (this->pMagickImage) {
-        delete this->pMagickImage;
-        this->pMagickImage = NULL;
-    }
-    if (this->pRawPixel) {
-        delete this->pRawPixel;
-        this->pRawPixel = NULL;
-    }
+//    if (this->pMagickImage) {
+//        delete this->pMagickImage;
+//        this->pMagickImage = NULL;
+//    }
+//    if (this->pRawPixel) {
+//        delete this->pRawPixel;
+//        this->pRawPixel = NULL;
+//    }
 }
 
 void MyGLWidget::setSlice(Slice *pSlice)
@@ -256,6 +261,12 @@ void MyGLWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 const Slice * MyGLWidget::getSlice() const
 {
+    Q_ASSERT(this->pSlice);
     return this->pSlice;
 }
 
+unsigned int MyGLWidget::getSliceIndex() const
+{
+    Q_ASSERT(this->pSlice);
+    return this->pSlice->getIndex();
+}

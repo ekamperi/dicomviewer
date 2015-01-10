@@ -59,6 +59,11 @@ private:
     std::vector<Slice *> slices;
 
     void selectAllSlices(void);
+
+    struct SliceDirection { enum is { Prev, Next }; };
+    void gotoSlice(SliceDirection::is dir);
+    void gotoNextSlice();
+    void gotoPrevSlice();
 };
 
 #endif // MAINWINDOW_H

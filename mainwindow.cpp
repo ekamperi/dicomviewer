@@ -142,7 +142,7 @@ void MainWindow::filesLoaded()
          * XXX: Minimum size should be calculated based on the application
          * size, no ?
          */
-        pMyGLWidget->setMinimumSize(192, 192);
+        pMyGLWidget->setMinimumSize(256, 256);
 
         /* XXX */
         connect(pMyGLWidget, SIGNAL(sliceDoubleClicked(Slice*)),
@@ -199,15 +199,30 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
 
     MyGLWidget *pMyGLWidget = new MyGLWidget();
     pMyGLWidget->setSlice(pSlice);
+    pMyGLWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    pMyGLWidget->updateGeometry();
+    pMyGLWidget->show();
 
+    if (this->verticalLayout)
+        delete this->verticalLayout;
+
+    this->verticalLayout = new QVBoxLayout();
+    this->verticalLayout->setContentsMargins(QMargins(100,100,100,100));
     this->verticalLayout->addWidget(pMyGLWidget);
+    this->verticalLayout->update();
+
+    if (this->containerWidget2)
+        delete this->containerWidget2;
+
+    containerWidget2 = new QWidget();
     containerWidget2->setLayout(this->verticalLayout);
+    containerWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    containerWidget2->updateGeometry();
+    containerWidget2->show();
 
     /* Removes the scroll area's widget, and passes ownership of the widget to the caller */
-    ui->scrollArea->takeWidget();
-    //this->containerWidget->setParent(0);
-    this->containerWidget->hide();
-
+    QWidget *p = ui->scrollArea->takeWidget();
+    p->hide();
     ui->scrollArea->setWidget(containerWidget2);
 }
 
@@ -216,12 +231,20 @@ bool MainWindow::event(QEvent *pEvent)
     if (pEvent->type() == QEvent::KeyPress) {
         qDebug() << Q_FUNC_INFO;
         QKeyEvent *pke = static_cast<QKeyEvent *>(pEvent);
-        if (pke->key() == Qt::Key_Escape) {
+        int key = pke->key();
+        if (key == Qt::Key_Escape) {
             this->on_actionClose_triggered();
             return true;
-        } else if (pke->key() == Qt::Key_A
+        } else if (key == Qt::Key_A
                    && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             selectAllSlices();
+            return true;
+        } else if (key == Qt::Key_PageUp) {
+            gotoPrevSlice();
+            return true;
+        } else if (key == Qt::Key_PageDown || key == Qt::Key_Space) {
+            gotoNextSlice();
+            return true;
         }
     }
 
@@ -239,4 +262,57 @@ void MainWindow::selectAllSlices(void)
         pSlice->setSelected(!isSelected);
         pSlice->getGLWidget()->update();
     }
+}
+
+void MainWindow::gotoNextSlice()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->gotoSlice(SliceDirection::Next);
+
+}
+
+void MainWindow::gotoPrevSlice()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->gotoSlice(SliceDirection::Prev);
+}
+
+void MainWindow::gotoSlice(SliceDirection::is dir)
+{
+    qDebug() << Q_FUNC_INFO;
+    Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
+
+    if (this->verticalLayout == NULL || this->verticalLayout->isEmpty()) {
+        return;
+    }
+
+    /* Get current slice and index */
+    MyGLWidget *pMyGLWidget = (MyGLWidget *)this->verticalLayout->takeAt(0)->widget();
+    Q_ASSERT(pMyGLWidget);
+    unsigned int idx = pMyGLWidget->getSliceIndex();
+
+    MyGLWidget *pMyNewGLWidget = new MyGLWidget();
+    Q_ASSERT(pMyNewGLWidget);
+
+    if (dir == SliceDirection::Next) {
+        /* We have reached the end */
+        if (idx == slices.size()-1) {
+            delete pMyNewGLWidget;
+            return;
+        }
+        pMyNewGLWidget->setSlice(slices[idx + 1]);
+    } else {
+        /* We heave reached the beginning */
+        if (idx == 0) {
+            delete pMyNewGLWidget;
+            return;
+        }
+        pMyNewGLWidget->setSlice(slices[idx - 1]);
+    }
+    this->verticalLayout->addWidget(pMyNewGLWidget);
+    delete pMyGLWidget;
+
+    qDebug() << Q_FUNC_INFO;
 }

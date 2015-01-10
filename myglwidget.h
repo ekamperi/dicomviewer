@@ -22,6 +22,7 @@ public:
 
      void setSlice(Slice *pSlice);
      const Slice * getSlice() const;
+     unsigned int getSliceIndex() const;
 
 signals:
     void sliceDoubleClicked(Slice *pSlice);
