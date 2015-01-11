@@ -290,12 +290,8 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     qDebug() << Q_FUNC_INFO;
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
-    if (this->verticalLayout == NULL || this->verticalLayout->isEmpty()) {
-        return;
-    }
-
     /* Get current slice and index */
-    MyGLWidget *pMyGLWidget = (MyGLWidget *)this->verticalLayout->takeAt(0)->widget();
+    MyGLWidget *pMyGLWidget = (MyGLWidget *)this->verticalLayout->itemAt(0)->widget();
     Q_ASSERT(pMyGLWidget);
     unsigned int idx = pMyGLWidget->getSliceIndex();
 
@@ -317,6 +313,9 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
         }
         pMyNewGLWidget->setSlice(slices[idx - 1]);
     }
+
+    Q_ASSERT(this->verticalLayout);
+    this->verticalLayout->takeAt(0)->widget();
     this->verticalLayout->addWidget(pMyNewGLWidget);
     delete pMyGLWidget;
     updateStatusBarForSlice();
@@ -335,4 +334,18 @@ void MainWindow::updateStatusBarForSlice(void) const
 
     this->statusBar()->showMessage(
                 QString("Slice: %1").arg(idx));
+}
+
+void MainWindow::wheelEvent(QWheelEvent *pEvent)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    int delta = pEvent->delta();
+    if (delta > 0) {
+        this->gotoPrevSlice();
+    } else {
+        this->gotoNextSlice();
+    }
+
+    pEvent->accept();
 }
