@@ -290,6 +290,11 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     qDebug() << Q_FUNC_INFO;
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
+    if (this->verticalLayout == NULL || this->verticalLayout->isEmpty()) {
+        qDebug() << "verticalLayout is NULL or EMPTY! (no worries)";
+        return;
+    }
+
     /* Get current slice and index */
     MyGLWidget *pMyGLWidget = (MyGLWidget *)this->verticalLayout->itemAt(0)->widget();
     Q_ASSERT(pMyGLWidget);
