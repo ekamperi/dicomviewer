@@ -36,6 +36,7 @@ unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
 -lMagick++ -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
 -ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm -lgomp -lpthread
 
+CONFIG += debug
 #CONFIG  += qt warn_off release
 #DEFINES += QT_NO_DEBUG_OUTPUT
 #DEFINES += QT_NO_DEBUG

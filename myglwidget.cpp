@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <QDebug>
+#include <QtGlobal>
 #include <QtOpenGL/QGLWidget>
 
 MyGLWidget::MyGLWidget(QWidget *parent) :
@@ -25,14 +26,10 @@ MyGLWidget::~MyGLWidget()
 {
     qDebug() << Q_FUNC_INFO;
 
-//    if (this->pMagickImage) {
-//        delete this->pMagickImage;
-//        this->pMagickImage = NULL;
-//    }
-//    if (this->pRawPixel) {
-//        delete this->pRawPixel;
-//        this->pRawPixel = NULL;
-//    }
+    if (this->pMagickImage) {
+        delete this->pMagickImage;
+        this->pMagickImage = NULL;
+    }
 }
 
 void MyGLWidget::setSlice(Slice *pSlice)

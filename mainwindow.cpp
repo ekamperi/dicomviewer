@@ -174,26 +174,27 @@ void MainWindow::on_actionClose_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* Check whether we are returning from full screen */
     if (this->containerWidget->isHidden()) {
         ui->scrollArea->takeWidget();
         this->containerWidget->show();
         ui->scrollArea->setWidget(this->containerWidget);
         this->verticalLayout->takeAt(0);
+    } else {
+        /* Remove all GL widgets from the flow layout */
+        QLayoutItem *pLayoutItem;
+        while (pLayoutItem = this->flowLayout->takeAt(0)) {
+            delete pLayoutItem->widget();
+        }
+
+        /* Also remove the slices */
+        std::vector<Slice *>::iterator it;
+        for (it = slices.begin(); it != slices.end(); it++) {
+            delete *it;
+        }
+        slices.clear();
     }
-//    /* Remove all slices */
-//    std::vector<Slice *>::iterator it;
-
-//    for (it = slices.begin(); it != slices.end(); it++) {
-//        delete *it;
-//    }
-//    slices.clear();
-
-//    /* Remove all GL Widgets from the flow layout */
-//    QLayoutItem *p;
-//    while (p = this->flowLayout->takeAt(0)) {
-//        delete p->widget();
-//    };
-//    ui->scrollArea->setWidget(containerWidget);
+    this->statusBar()->showMessage("Ready.");
 }
 
 void MainWindow::sliceDoubleClicked(Slice *pSlice)

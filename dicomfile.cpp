@@ -1,6 +1,7 @@
 #include <sstream>
 #include <QDebug>
 #include <QFile>
+#include <QtGlobal>
 #include <QXmlStreamReader>
 
 #include "Magick++.h"
@@ -20,11 +21,19 @@ DicomFile::DicomFile()
 {
     /* Allocate memory for list */
     this->pList = new QList< QMap<QString, QString> >();
+    Q_ASSERT(this->pList);
+
+    this->pRawBlob = NULL;
 }
 
 DicomFile::~DicomFile()
 {
+    Q_ASSERT(this->pList);
     delete pList;
+
+    if (this->pRawBlob) {
+        delete this->pRawBlob;
+    }
 }
 
 void DicomFile::loadDicomFile(QString filename)
