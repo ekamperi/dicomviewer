@@ -29,17 +29,21 @@ signals:
 
 protected:
      virtual void initializeGL();
-     //virtual void resizeGL(int w, int h);
+     virtual void resizeGL(int w, int h);
      //virtual void paintGL();
 
      void mouseMoveEvent(QMouseEvent *event);
      void paintEvent(QPaintEvent *event);
 
-     /* These events are used for implement a hover effect */
+     /* These events are used for implementing a hover effect */
      virtual void enterEvent(QEvent *event);
      virtual void leaveEvent(QEvent *event);
 
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
+
+private:
+     void drawDetails(QPainter *pPainter);
+     void drawOutline(QPainter *pPainter);
 
     /* Whether we are inside a slice or not */
     bool weAreIn;

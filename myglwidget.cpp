@@ -11,10 +11,9 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
-//    this->setAttribute(Qt::WA_NoSystemBackground);
-//    this->setAttribute(Qt::WA_OpaquePaintEvent);
-//    this->setBackgroundRole(QPalette::Dark);
-//    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    this->setAttribute(Qt::WA_NoSystemBackground, true);
+    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
+    this->setAttribute(Qt::WA_StaticContents);
 
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
@@ -47,46 +46,12 @@ void MyGLWidget::setSlice(Slice *pSlice)
 
 void MyGLWidget::initializeGL()
 {
-//    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 //    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
 //    qDebug() << "Driver Version String:" << versionString;
 //    qDebug() << "Current Context:" << format();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void MyGLWidget::loadTextureFile(QString filename)
-{
-    qDebug() << Q_FUNC_INFO;
-    this->makeCurrent();
-
-    png2raw(filename);
-
-    glEnable(GL_TEXTURE_2D);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-    /* Obtain an id for the texture */
-    glGenTextures(1, &this->textureID);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-    glBindTexture(GL_TEXTURE_2D, this->textureID);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-                 this->texWidth,
-                 this->texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                 this->pRawPixel);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-    /* Set texture stretching parameters */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-    glDisable(GL_TEXTURE_2D);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
 
 void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel,
@@ -97,7 +62,6 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel,
     qDebug() << Q_FUNC_INFO;
     qDebug() << "width =" << width << "height =" << height << "format =" << format;
 
-    // XXX
     this->pRawPixel = pRawPixel;
 
     /* From the QGLWiedget official documentation:
@@ -123,7 +87,7 @@ void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel,
     glBindTexture(GL_TEXTURE_2D, this->textureID);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    /* XXX: Just a sanity check */
+    /* Just a sanity check */
     Q_ASSERT((format == GL_LUMINANCE) || (format == GL_RGB));
     Q_ASSERT(this->pRawPixel);
 
@@ -163,12 +127,18 @@ void MyGLWidget::png2raw(QString filename)
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    // qDebug() << Q_FUNC_INFO;
+}
+
+void MyGLWidget::resizeGL(int w, int h)
+{
     qDebug() << Q_FUNC_INFO;
+    qDebug() << "width =" << w << "height =" << h;
 }
 
 void MyGLWidget::paintEvent(QPaintEvent *event)
 {
-//    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
     this->makeCurrent();
 
@@ -201,13 +171,22 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
-    /* Native drawing */
-    QFont font = painter.font();
+    this->drawDetails(&painter);
+    this->drawOutline(&painter);
+
+    painter.end();
+}
+
+void MyGLWidget::drawDetails(QPainter *pPainter)
+{
+    Q_ASSERT(pPainter);
+
+    QFont font = pPainter->font();
     font.setPointSize(7);
-    painter.setFont(font);
-    painter.setPen(Qt::yellow);
+    pPainter->setFont(font);
+    pPainter->setPen(Qt::yellow);
     ExamDetails examDetails = this->pSlice->getExamDetails();
-    painter.drawText(
+    pPainter->drawText(
                 QRect(5, 5, this->width(), this->height()),
                 Qt::TextWordWrap,
                   "Name: " + examDetails.getPatientName()
@@ -216,17 +195,21 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
                 +  "Sex: " + examDetails.getPatientSex() + "\n"
                 + "Date: " + examDetails.getStudyDate());
 
+}
+
+void MyGLWidget::drawOutline(QPainter *pPainter)
+{
+    Q_ASSERT(pPainter);
+
     if (this->weAreIn || this->pSlice->isSelected()) {
         QPen oldPen, myPen;
-        oldPen = painter.pen();
+        oldPen = pPainter->pen();
         myPen.setWidth(4);
         myPen.setColor(Qt::red);
-        painter.setPen(myPen);
-        painter.drawRect(QRect(0, 0, this->width(), this->height()));
-        painter.setPen(oldPen);
+        pPainter->setPen(myPen);
+        pPainter->drawRect(QRect(0, 0, this->width(), this->height()));
+        pPainter->setPen(oldPen);
     }
-
-    painter.end();
 }
 
 void MyGLWidget::enterEvent(QEvent * event)

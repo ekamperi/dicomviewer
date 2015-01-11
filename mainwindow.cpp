@@ -29,6 +29,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->containerWidget = new QWidget;
     this->containerWidget2 = new QWidget;
 
+    // XXX
+    ui->scrollArea->setAttribute(Qt::WA_NoSystemBackground, true);
+    ui->scrollArea->setAttribute(Qt::WA_OpaquePaintEvent, true);
+    this->containerWidget2->setAttribute(Qt::WA_NoSystemBackground, true);
+    this->containerWidget2->setAttribute(Qt::WA_OpaquePaintEvent, true);
+
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
@@ -214,7 +220,7 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     this->verticalLayout = new QVBoxLayout();
     this->verticalLayout->setContentsMargins(QMargins(5,5,5,5));
     this->verticalLayout->addWidget(pMyGLWidget);
-    this->verticalLayout->update();
+    //this->verticalLayout->update();
 
     if (this->containerWidget2)
         delete this->containerWidget2;
@@ -288,6 +294,7 @@ void MainWindow::gotoPrevSlice()
 void MainWindow::gotoSlice(SliceDirection::is dir)
 {
     qDebug() << Q_FUNC_INFO;
+    qDebug() << "WTF...";
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
     if (this->verticalLayout == NULL || this->verticalLayout->isEmpty()) {
@@ -321,6 +328,7 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
 
     Q_ASSERT(this->verticalLayout);
     this->verticalLayout->takeAt(0)->widget();
+    qDebug() << "ABOUT TO ADD WIDGET TO V LAYOUT";
     this->verticalLayout->addWidget(pMyNewGLWidget);
     delete pMyGLWidget;
     updateStatusBarForSlice();
