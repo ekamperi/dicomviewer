@@ -37,34 +37,25 @@ void MyGLWidget::setSlice(Slice *pSlice)
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;
-    this->loadTextureFile2(
+    this->loadTexture(
                 pSlice->getRawPixelData(),
                 pSlice->getWidth(),
                 pSlice->getHeight(),
                 pSlice->getFormat());
+    this->updateGL();
 }
 
-void MyGLWidget::initializeGL()
-{
-    qDebug() << Q_FUNC_INFO;
-//    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-//    qDebug() << "Driver Version String:" << versionString;
-//    qDebug() << "Current Context:" << format();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void MyGLWidget::loadTextureFile2(unsigned char *pRawPixel,
-                                  unsigned int width,
-                                  unsigned int height,
-                                  GLint format)
+void MyGLWidget::loadTexture(unsigned char *pRawPixel,
+                             unsigned int width,
+                             unsigned int height,
+                             GLint format)
 {
     qDebug() << Q_FUNC_INFO;
     qDebug() << "width =" << width << "height =" << height << "format =" << format;
 
     this->pRawPixel = pRawPixel;
 
-    /* From the QGLWiedget official documentation:
+    /* From the QGLWidget official documentation:
      *
      * If you need to call the standard OpenGL API functions from other places
      * (e.g. in your widget's constructor or in your own paint functions), you
@@ -130,31 +121,36 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *event)
     // qDebug() << Q_FUNC_INFO;
 }
 
+
+void MyGLWidget::initializeGL()
+{
+    qDebug() << Q_FUNC_INFO;
+//    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
+//    qDebug() << "Driver Version String:" << versionString;
+//    qDebug() << "Current Context:" << format();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void MyGLWidget::resizeGL(int w, int h)
 {
     qDebug() << Q_FUNC_INFO;
     qDebug() << "width =" << w << "height =" << h;
+
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 1, 1, 0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 void MyGLWidget::paintEvent(QPaintEvent *event)
 {
     qDebug() << Q_FUNC_INFO;
 
-    this->makeCurrent();
-
     QPainter painter;
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
-    /* Classical 3D drawing, usually performed by resizeGL */
-    glViewport(0, 0, this->width(), this->height());
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, 1, 1, 0, 0, 1);
-    glMatrixMode(GL_MODELVIEW);
-
-    /* Classical 3D drawing, usually performed by paintGL() */
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glActiveTexture(GL_TEXTURE0);
     Q_ASSERT(glGetError() == GL_NO_ERROR);

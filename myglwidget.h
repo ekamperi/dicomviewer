@@ -17,9 +17,6 @@ public:
     explicit MyGLWidget(QWidget *parent = 0);
      ~MyGLWidget();
 
-     void loadTextureFile(QString filename);
-     void loadTextureFile2(unsigned char *pRawData, unsigned int width, unsigned int height, GLint format);
-
      void setSlice(Slice *pSlice);
      const Slice * getSlice() const;
      unsigned int getSliceIndex() const;
@@ -42,6 +39,7 @@ protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
+     void loadTexture(unsigned char *pRawData, unsigned int width, unsigned int height, GLint format);
      void drawDetails(QPainter *pPainter);
      void drawOutline(QPainter *pPainter);
 
