@@ -11,9 +11,10 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
-    this->setAttribute(Qt::WA_NoSystemBackground, true);
-    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
-    this->setAttribute(Qt::WA_StaticContents);
+//    this->setAutoFillBackground(false);
+//    this->setAutoBufferSwap(false);
+//    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
+//    this->setAttribute(Qt::WA_NoSystemBackground, true);
 
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
@@ -42,7 +43,7 @@ void MyGLWidget::setSlice(Slice *pSlice)
                 pSlice->getWidth(),
                 pSlice->getHeight(),
                 pSlice->getFormat());
-    this->updateGL();
+    this->update();
 }
 
 void MyGLWidget::loadTexture(unsigned char *pRawPixel,
@@ -128,8 +129,6 @@ void MyGLWidget::initializeGL()
 //    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
 //    qDebug() << "Driver Version String:" << versionString;
 //    qDebug() << "Current Context:" << format();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void MyGLWidget::resizeGL(int w, int h)
@@ -150,7 +149,6 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
 
     QPainter painter;
     painter.begin(this);
-    painter.setRenderHint(QPainter::Antialiasing);
 
     glActiveTexture(GL_TEXTURE0);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
@@ -166,6 +164,11 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
         glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
     glEnd();
     glDisable(GL_TEXTURE_2D);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::TextAntialiasing);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
     this->drawDetails(&painter);
     this->drawOutline(&painter);
@@ -195,6 +198,7 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
 
 void MyGLWidget::drawOutline(QPainter *pPainter)
 {
+    qDebug() << Q_FUNC_INFO << this->width() << this->height();
     Q_ASSERT(pPainter);
 
     if (this->weAreIn || this->pSlice->isSelected()) {

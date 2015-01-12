@@ -29,12 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->containerWidget = new QWidget;
     this->containerWidget2 = new QWidget;
 
-    // XXX
-    ui->scrollArea->setAttribute(Qt::WA_NoSystemBackground, true);
-    ui->scrollArea->setAttribute(Qt::WA_OpaquePaintEvent, true);
-    this->containerWidget2->setAttribute(Qt::WA_NoSystemBackground, true);
-    this->containerWidget2->setAttribute(Qt::WA_OpaquePaintEvent, true);
-
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
