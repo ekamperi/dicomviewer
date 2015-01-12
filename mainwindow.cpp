@@ -176,10 +176,13 @@ void MainWindow::on_actionClose_triggered()
 
     /* Check whether we are returning from full screen */
     if (this->containerWidget->isHidden()) {
-        ui->scrollArea->takeWidget();
-        this->containerWidget->show();
-        ui->scrollArea->setWidget(this->containerWidget);
-        this->verticalLayout->takeAt(0);
+        this->containerWidget2->hide();
+        this->containerWidget2->show();
+        //this->setCentralWidget(this->containerWidget);
+//        ui->scrollArea->takeWidget();
+//        this->containerWidget->show();
+//        ui->scrollArea->setWidget(this->containerWidget);
+//        this->verticalLayout->takeAt(0);
     } else {
         /* Remove all GL widgets from the flow layout */
         QLayoutItem *pLayoutItem;
@@ -226,9 +229,11 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     containerWidget2->show();
 
     /* Removes the scroll area's widget, and passes ownership of the widget to the caller */
-    QWidget *p = ui->scrollArea->takeWidget();
-    p->hide();
-    ui->scrollArea->setWidget(containerWidget2);
+    this->containerWidget->hide();
+    this->containerWidget2->show();
+//    QWidget *p = ui->scrollArea->takeWidget();
+//    p->hide();
+//    ui->scrollArea->setWidget(containerWidget2);
     updateStatusBarForSlice();
 }
 

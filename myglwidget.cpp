@@ -11,11 +11,6 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
-//    this->setAutoFillBackground(false);
-//    this->setAutoBufferSwap(false);
-//    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
-//    this->setAttribute(Qt::WA_NoSystemBackground, true);
-
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
 
@@ -129,6 +124,11 @@ void MyGLWidget::initializeGL()
 //    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
 //    qDebug() << "Driver Version String:" << versionString;
 //    qDebug() << "Current Context:" << format();
+
+    this->setAutoFillBackground(false);
+    this->setAutoBufferSwap(false);
+    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
+    this->setAttribute(Qt::WA_NoSystemBackground, true);
 }
 
 void MyGLWidget::resizeGL(int w, int h)
@@ -149,6 +149,9 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
 
     QPainter painter;
     painter.begin(this);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 
     glActiveTexture(GL_TEXTURE0);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
@@ -171,9 +174,9 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
     this->drawDetails(&painter);
-    this->drawOutline(&painter);
-
+    this->drawOutline(&painter);    
     painter.end();
+    swapBuffers();
 }
 
 void MyGLWidget::drawDetails(QPainter *pPainter)
