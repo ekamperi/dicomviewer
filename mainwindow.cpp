@@ -24,10 +24,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->scrollArea = new QScrollArea;
     this->verticalLayout = new QVBoxLayout;
     this->flowLayout = new FlowLayout;
     this->containerWidget = new QWidget;
     this->containerWidget2 = new QWidget;
+    ui->stackedWidget->addWidget(containerWidget);
+    ui->stackedWidget->addWidget(containerWidget2);
+    ui->stackedWidget->setCurrentWidget(containerWidget);
 
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
@@ -154,7 +158,6 @@ void MainWindow::filesLoaded()
         this->flowLayout->addWidget(pMyGLWidget);
     }
     containerWidget->setLayout(flowLayout);
-    ui->scrollArea->setWidget(containerWidget);
 
     this->setCursor(Qt::ArrowCursor);
 
@@ -175,14 +178,9 @@ void MainWindow::on_actionClose_triggered()
     qDebug() << Q_FUNC_INFO;
 
     /* Check whether we are returning from full screen */
-    if (this->containerWidget->isHidden()) {
-        this->containerWidget2->hide();
-        this->containerWidget2->show();
-        //this->setCentralWidget(this->containerWidget);
-//        ui->scrollArea->takeWidget();
-//        this->containerWidget->show();
-//        ui->scrollArea->setWidget(this->containerWidget);
-//        this->verticalLayout->takeAt(0);
+    QWidget *ww = ui->stackedWidget->currentWidget();
+    if (ui->stackedWidget->currentWidget() == this->containerWidget2) {
+        ui->stackedWidget->setCurrentWidget(this->containerWidget);
     } else {
         /* Remove all GL widgets from the flow layout */
         QLayoutItem *pLayoutItem;
@@ -211,29 +209,17 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     pMyGLWidget->updateGeometry();
     pMyGLWidget->show();
 
-    if (this->verticalLayout)
+    if (this->verticalLayout) {
         delete this->verticalLayout;
-
+    }
     this->verticalLayout = new QVBoxLayout();
     this->verticalLayout->setContentsMargins(QMargins(5,5,5,5));
     this->verticalLayout->addWidget(pMyGLWidget);
-    //this->verticalLayout->update();
+    this->verticalLayout->update();
 
-    if (this->containerWidget2)
-        delete this->containerWidget2;
-
-    containerWidget2 = new QWidget();
     containerWidget2->setLayout(this->verticalLayout);
-    containerWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    containerWidget2->updateGeometry();
-    containerWidget2->show();
+    ui->stackedWidget->setCurrentWidget(containerWidget2);
 
-    /* Removes the scroll area's widget, and passes ownership of the widget to the caller */
-    this->containerWidget->hide();
-    this->containerWidget2->show();
-//    QWidget *p = ui->scrollArea->takeWidget();
-//    p->hide();
-//    ui->scrollArea->setWidget(containerWidget2);
     updateStatusBarForSlice();
 }
 

@@ -44,6 +44,7 @@ private:
     Ui::MainWindow *ui;
 
     /* XXX */
+    QScrollArea *scrollArea;
     QVBoxLayout *verticalLayout;
 
     /* Slices are arranged into a grid layout */

@@ -125,10 +125,10 @@ void MyGLWidget::initializeGL()
 //    qDebug() << "Driver Version String:" << versionString;
 //    qDebug() << "Current Context:" << format();
 
-    this->setAutoFillBackground(false);
-    this->setAutoBufferSwap(false);
-    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
-    this->setAttribute(Qt::WA_NoSystemBackground, true);
+//    this->setAutoFillBackground(false);
+//    this->setAutoBufferSwap(true);
+//    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
+//    this->setAttribute(Qt::WA_NoSystemBackground, true);
 }
 
 void MyGLWidget::resizeGL(int w, int h)
@@ -176,7 +176,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     this->drawDetails(&painter);
     this->drawOutline(&painter);    
     painter.end();
-    swapBuffers();
+    //swapBuffers();
 }
 
 void MyGLWidget::drawDetails(QPainter *pPainter)
