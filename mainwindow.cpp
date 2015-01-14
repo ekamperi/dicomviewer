@@ -25,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->scrollArea = new QScrollArea;
-    this->verticalLayout = new QVBoxLayout;
     this->flowLayout = new FlowLayout;
     this->containerWidget = new QWidget;
     this->containerWidget2 = new QWidget;
@@ -61,7 +60,6 @@ MainWindow::~MainWindow()
      * be destroyed!
      */
     delete ui;
-    delete this->verticalLayout;
     delete this->flowLayout;
     delete this->containerWidget;
 
@@ -206,18 +204,15 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     MyGLWidget *pMyGLWidget = new MyGLWidget();
     pMyGLWidget->setSlice(pSlice);
     pMyGLWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    pMyGLWidget->updateGeometry();
+    pMyGLWidget->update();
     pMyGLWidget->show();
 
-    if (this->verticalLayout) {
-        delete this->verticalLayout;
-    }
-    this->verticalLayout = new QVBoxLayout();
-    this->verticalLayout->setContentsMargins(QMargins(5,5,5,5));
-    this->verticalLayout->addWidget(pMyGLWidget);
-    this->verticalLayout->update();
+    QVBoxLayout *verticalLayout = new QVBoxLayout();
+    verticalLayout->setContentsMargins(QMargins(0,0,0,0));
+    verticalLayout->addWidget(pMyGLWidget);
+    verticalLayout->update();
+    containerWidget2->setLayout(verticalLayout);
 
-    containerWidget2->setLayout(this->verticalLayout);
     ui->stackedWidget->setCurrentWidget(containerWidget2);
 
     updateStatusBarForSlice();
@@ -282,40 +277,33 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     qDebug() << "WTF...";
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
-    if (this->verticalLayout == NULL || this->verticalLayout->isEmpty()) {
-        qDebug() << "verticalLayout is NULL or EMPTY! (no worries)";
+    /* Get current slice and index */
+    QLayout *pLayout = containerWidget2->layout();
+    if (!pLayout) {
+        qDebug() << "pLayout is NULL! returning! (no worries)";
         return;
     }
-
-    /* Get current slice and index */
-    MyGLWidget *pMyGLWidget = (MyGLWidget *)this->verticalLayout->itemAt(0)->widget();
+    MyGLWidget *pMyGLWidget = (MyGLWidget *)pLayout->itemAt(0)->widget();
     Q_ASSERT(pMyGLWidget);
     unsigned int idx = pMyGLWidget->getSliceIndex();
-
-    MyGLWidget *pMyNewGLWidget = new MyGLWidget();
-    Q_ASSERT(pMyNewGLWidget);
 
     if (dir == SliceDirection::Next) {
         /* We have reached the end */
         if (idx == slices.size()-1) {
-            delete pMyNewGLWidget;
             return;
         }
-        pMyNewGLWidget->setSlice(slices[idx + 1]);
+        pMyGLWidget->setSlice(slices[idx + 1]);
     } else {
         /* We heave reached the beginning */
         if (idx == 0) {
-            delete pMyNewGLWidget;
             return;
         }
-        pMyNewGLWidget->setSlice(slices[idx - 1]);
+        pMyGLWidget->setSlice(slices[idx - 1]);
     }
 
-    Q_ASSERT(this->verticalLayout);
-    this->verticalLayout->takeAt(0)->widget();
-    qDebug() << "ABOUT TO ADD WIDGET TO V LAYOUT";
-    this->verticalLayout->addWidget(pMyNewGLWidget);
-    delete pMyGLWidget;
+    pMyGLWidget->update();
+    pLayout->update();
+    containerWidget2->update();
     updateStatusBarForSlice();
 
     qDebug() << Q_FUNC_INFO;
@@ -325,8 +313,10 @@ void MainWindow::updateStatusBarForSlice(void) const
 {
     qDebug() << Q_FUNC_INFO;
 
+    QLayout *pLayout = containerWidget2->layout();
+    Q_ASSERT(pLayout);
     MyGLWidget *pMyGLWidget = (MyGLWidget *)
-            this->verticalLayout->itemAt(0)->widget();
+            pLayout->itemAt(0)->widget();
     unsigned int idx = pMyGLWidget->getSliceIndex() + 1;
     qDebug() << "idx = " << idx;
 

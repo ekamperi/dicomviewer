@@ -45,7 +45,6 @@ private:
 
     /* XXX */
     QScrollArea *scrollArea;
-    QVBoxLayout *verticalLayout;
 
     /* Slices are arranged into a grid layout */
     FlowLayout *flowLayout;
