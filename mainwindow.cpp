@@ -155,7 +155,10 @@ void MainWindow::filesLoaded()
         /* Add the slice to the grid layout */
         this->flowLayout->addWidget(pMyGLWidget);
     }
-    containerWidget->setLayout(flowLayout);
+    containerWidget->setLayout(this->flowLayout);
+    scrollArea->setBackgroundRole(QPalette::Dark);
+    scrollArea->setWidget(containerWidget);
+    ui->stackedWidget->addWidget(scrollArea);
 
     this->setCursor(Qt::ArrowCursor);
 
@@ -205,7 +208,6 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
     pMyGLWidget->setSlice(pSlice);
     pMyGLWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     pMyGLWidget->update();
-    pMyGLWidget->show();
 
     QVBoxLayout *verticalLayout = new QVBoxLayout();
     verticalLayout->setContentsMargins(QMargins(0,0,0,0));
