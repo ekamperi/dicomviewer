@@ -62,6 +62,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete this->flowLayout;
     delete this->containerWidget;
+    delete this->containerWidget2;
 
     /* Deregister decompression codecs */
     DcmRLEDecoderRegistration::cleanup();
@@ -156,9 +157,13 @@ void MainWindow::filesLoaded()
         this->flowLayout->addWidget(pMyGLWidget);
     }
     containerWidget->setLayout(this->flowLayout);
+    containerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(containerWidget);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->stackedWidget->addWidget(scrollArea);
+    ui->stackedWidget->setCurrentWidget(scrollArea);
 
     this->setCursor(Qt::ArrowCursor);
 
