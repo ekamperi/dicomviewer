@@ -23,6 +23,8 @@ DicomFile::DicomFile()
     this->pList = new QList< QMap<QString, QString> >();
     Q_ASSERT(this->pList);
 
+    /* */
+
     this->pRawBlob = NULL;
 }
 
@@ -46,6 +48,14 @@ void DicomFile::loadDicomFile(QString filename)
         qDebug() << status.text();
     }
     this->pDcmDataset = this->dcmFileFormat.getDataset();
+
+    Float64 rescaleSlope;
+    Float64 rescaleIntercept;
+    if (pDcmDataset->findAndGetFloat64(DCM_RescaleSlope, rescaleSlope).good() &&
+        pDcmDataset->findAndGetFloat64(DCM_RescaleIntercept, rescaleIntercept).good()) {
+        qDebug() << "RescaleSlope/Intercept: "
+                 << rescaleSlope << " / " << rescaleIntercept;
+    }
 }
 
 void DicomFile::parseDicomFile(QString filename)
@@ -120,6 +130,8 @@ unsigned char *DicomFile::getUncompressedData()
         qDebug() << pDicomImage->getStatus();
         return NULL;
     }
+    /* Mediastinal window */
+    pDicomImage->setWindow(70, 450);
 
     this->cols = pDicomImage->getWidth();
     this->rows = pDicomImage->getHeight();
@@ -127,11 +139,8 @@ unsigned char *DicomFile::getUncompressedData()
 
     if (pDicomImage->isMonochrome()) {
         qDebug() << "Image is monochrome!";
-        pDicomImage->setMinMaxWindow();
         /* Get 8-bit data regardless of the pixel depth stored! */
         pDicomImage->setNoDisplayFunction();
-        pDicomImage->setNoVoiTransformation();
-        pDicomImage->hideAllOverlays();
         Uint8 *pixelData = (Uint8 *)(pDicomImage->getOutputData(8));
         return pixelData;
     } else {

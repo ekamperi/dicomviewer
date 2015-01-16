@@ -23,6 +23,7 @@ public:
 
 signals:
     void sliceDoubleClicked(Slice *pSlice);
+    void windowChanged(int x);
 
 protected:
      virtual void initializeGL();

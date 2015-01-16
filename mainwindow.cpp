@@ -186,7 +186,7 @@ void MainWindow::on_actionClose_triggered()
     /* Check whether we are returning from full screen */
     QWidget *ww = ui->stackedWidget->currentWidget();
     if (ui->stackedWidget->currentWidget() == this->containerWidget2) {
-        ui->stackedWidget->setCurrentWidget(this->containerWidget);
+        ui->stackedWidget->setCurrentWidget(this->scrollArea);
     } else {
         /* Remove all GL widgets from the flow layout */
         QLayoutItem *pLayoutItem;
@@ -201,6 +201,7 @@ void MainWindow::on_actionClose_triggered()
         }
         slices.clear();
     }
+    ui->stackedWidget->update();
     this->statusBar()->showMessage("Ready.");
 }
 
@@ -281,7 +282,6 @@ void MainWindow::gotoPrevSlice()
 void MainWindow::gotoSlice(SliceDirection::is dir)
 {
     qDebug() << Q_FUNC_INFO;
-    qDebug() << "WTF...";
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
     /* Get current slice and index */
@@ -328,7 +328,7 @@ void MainWindow::updateStatusBarForSlice(void) const
     qDebug() << "idx = " << idx;
 
     this->statusBar()->showMessage(
-                QString("Slice: %1").arg(idx));
+                QString("Slice: %1 / %2").arg(idx).arg(slices.size()));
 }
 
 void MainWindow::wheelEvent(QWheelEvent *pEvent)

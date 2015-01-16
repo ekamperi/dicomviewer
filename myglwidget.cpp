@@ -3,13 +3,14 @@
 
 #include <iostream>
 #include <QDebug>
+#include <QMouseEvent>
 #include <QtGlobal>
 #include <QtOpenGL/QGLWidget>
 
 MyGLWidget::MyGLWidget(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
@@ -19,7 +20,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 
 MyGLWidget::~MyGLWidget()
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     if (this->pMagickImage) {
         delete this->pMagickImage;
@@ -29,7 +30,7 @@ MyGLWidget::~MyGLWidget()
 
 void MyGLWidget::setSlice(Slice *pSlice)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;
@@ -46,8 +47,8 @@ void MyGLWidget::loadTexture(unsigned char *pRawPixel,
                              unsigned int height,
                              GLint format)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "width =" << width << "height =" << height << "format =" << format;
+//    qDebug() << Q_FUNC_INFO;
+//    qDebug() << "width =" << width << "height =" << height << "format =" << format;
 
     this->pRawPixel = pRawPixel;
 
@@ -112,15 +113,9 @@ void MyGLWidget::png2raw(QString filename)
     }
 }
 
-void MyGLWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    // qDebug() << Q_FUNC_INFO;
-}
-
-
 void MyGLWidget::initializeGL()
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 //    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
 //    qDebug() << "Driver Version String:" << versionString;
 //    qDebug() << "Current Context:" << format();
@@ -133,8 +128,8 @@ void MyGLWidget::initializeGL()
 
 void MyGLWidget::resizeGL(int w, int h)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "width =" << w << "height =" << h;
+//    qDebug() << Q_FUNC_INFO;
+//    qDebug() << "width =" << w << "height =" << h;
 
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
@@ -145,7 +140,7 @@ void MyGLWidget::resizeGL(int w, int h)
 
 void MyGLWidget::paintEvent(QPaintEvent *event)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     QPainter painter;
     painter.begin(this);
@@ -201,7 +196,7 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
 
 void MyGLWidget::drawOutline(QPainter *pPainter)
 {
-    qDebug() << Q_FUNC_INFO << this->width() << this->height();
+//    qDebug() << Q_FUNC_INFO << this->width() << this->height();
     Q_ASSERT(pPainter);
 
     if (this->weAreIn || this->pSlice->isSelected()) {
@@ -233,6 +228,14 @@ void MyGLWidget::leaveEvent(QEvent * event)
     this->update();
 
     QWidget::leaveEvent(event);
+}
+
+
+void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
+{
+    // qDebug() << Q_FUNC_INFO;
+    qDebug() << pEvent->pos().x();
+
 }
 
 void MyGLWidget::mouseDoubleClickEvent(QMouseEvent *event)
