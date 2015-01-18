@@ -10,8 +10,6 @@
 MyGLWidget::MyGLWidget(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-//    qDebug() << Q_FUNC_INFO;
-
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
 
@@ -20,8 +18,6 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 
 MyGLWidget::~MyGLWidget()
 {
-//    qDebug() << Q_FUNC_INFO;
-
     if (this->pMagickImage) {
         delete this->pMagickImage;
         this->pMagickImage = NULL;
@@ -30,7 +26,6 @@ MyGLWidget::~MyGLWidget()
 
 void MyGLWidget::setSlice(Slice *pSlice)
 {
-//    qDebug() << Q_FUNC_INFO;
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;
@@ -42,14 +37,11 @@ void MyGLWidget::setSlice(Slice *pSlice)
     this->update();
 }
 
-void MyGLWidget::loadTexture(unsigned char *pRawPixel,
+void MyGLWidget::loadTexture(float *pRawPixel,
                              unsigned int width,
                              unsigned int height,
                              GLint format)
 {
-//    qDebug() << Q_FUNC_INFO;
-//    qDebug() << "width =" << width << "height =" << height << "format =" << format;
-
     this->pRawPixel = pRawPixel;
 
     /* From the QGLWidget official documentation:
@@ -81,7 +73,7 @@ void MyGLWidget::loadTexture(unsigned char *pRawPixel,
 
     glTexImage2D(GL_TEXTURE_2D, 0, format,
                  width,
-                 height, 0, format, GL_UNSIGNED_BYTE,
+                 height, 0, GL_LUMINANCE, GL_FLOAT,
                  this->pRawPixel);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
@@ -98,13 +90,11 @@ void MyGLWidget::loadTexture(unsigned char *pRawPixel,
 
 void MyGLWidget::png2raw(QString filename)
 {
-    qDebug() << Q_FUNC_INFO;
-
     try {
         pMagickImage = new Magick::Image(filename.toStdString().c_str());
         pMagickImage->write(&this->blob, "RGB");
 
-        this->pRawPixel = (unsigned char *)this->blob.data();
+        this->pRawPixel = (float*)this->blob.data();
         this->texWidth  = this->pMagickImage->columns();
         this->texHeight = this->pMagickImage->rows();
     } catch (Magick::Exception &error) {
@@ -115,11 +105,6 @@ void MyGLWidget::png2raw(QString filename)
 
 void MyGLWidget::initializeGL()
 {
-//    qDebug() << Q_FUNC_INFO;
-//    QString versionString(QLatin1String(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-//    qDebug() << "Driver Version String:" << versionString;
-//    qDebug() << "Current Context:" << format();
-
 //    this->setAutoFillBackground(false);
 //    this->setAutoBufferSwap(true);
 //    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
@@ -128,9 +113,6 @@ void MyGLWidget::initializeGL()
 
 void MyGLWidget::resizeGL(int w, int h)
 {
-//    qDebug() << Q_FUNC_INFO;
-//    qDebug() << "width =" << w << "height =" << h;
-
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -140,8 +122,6 @@ void MyGLWidget::resizeGL(int w, int h)
 
 void MyGLWidget::paintEvent(QPaintEvent *event)
 {
-//    qDebug() << Q_FUNC_INFO;
-
     QPainter painter;
     painter.begin(this);
 
@@ -171,7 +151,6 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     this->drawDetails(&painter);
     this->drawOutline(&painter);    
     painter.end();
-    //swapBuffers();
 }
 
 void MyGLWidget::drawDetails(QPainter *pPainter)
@@ -196,7 +175,6 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
 
 void MyGLWidget::drawOutline(QPainter *pPainter)
 {
-//    qDebug() << Q_FUNC_INFO << this->width() << this->height();
     Q_ASSERT(pPainter);
 
     if (this->weAreIn || this->pSlice->isSelected()) {
@@ -212,8 +190,6 @@ void MyGLWidget::drawOutline(QPainter *pPainter)
 
 void MyGLWidget::enterEvent(QEvent * event)
 {
-    // qDebug() << Q_FUNC_INFO;
-
     this->weAreIn = true;
     this->update();
 
@@ -222,8 +198,6 @@ void MyGLWidget::enterEvent(QEvent * event)
 
 void MyGLWidget::leaveEvent(QEvent * event)
 {
-    // qDebug() << Q_FUNC_INFO;
-
     this->weAreIn = false;
     this->update();
 
@@ -233,15 +207,12 @@ void MyGLWidget::leaveEvent(QEvent * event)
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
 {
-    // qDebug() << Q_FUNC_INFO;
-    qDebug() << pEvent->pos().x();
-
+    unsigned int width = this->pSlice->getWidth();
+    unsigned int height = this->pSlice->getHeight();
 }
 
 void MyGLWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    qDebug() << Q_FUNC_INFO;
-
     emit sliceDoubleClicked(this->pSlice);
 }
 

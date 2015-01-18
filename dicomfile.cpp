@@ -7,6 +7,7 @@
 #include "Magick++.h"
 
 #include "dicomfile.h"
+#include "hounsfieldunit.h"
 
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H
@@ -23,8 +24,6 @@ DicomFile::DicomFile()
     this->pList = new QList< QMap<QString, QString> >();
     Q_ASSERT(this->pList);
 
-    /* */
-
     this->pRawBlob = NULL;
 }
 
@@ -40,8 +39,6 @@ DicomFile::~DicomFile()
 
 void DicomFile::loadDicomFile(QString filename)
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->filename = filename;
     OFCondition status = this->dcmFileFormat.loadFile(filename.toStdString().c_str());
     if (!status.good()) {
@@ -53,9 +50,9 @@ void DicomFile::loadDicomFile(QString filename)
     Float64 rescaleIntercept;
     if (pDcmDataset->findAndGetFloat64(DCM_RescaleSlope, rescaleSlope).good() &&
         pDcmDataset->findAndGetFloat64(DCM_RescaleIntercept, rescaleIntercept).good()) {
-        qDebug() << "RescaleSlope/Intercept: "
-                 << rescaleSlope << " / " << rescaleIntercept;
     }
+    this->slope = rescaleSlope;
+    this->intercept = rescaleIntercept;
 }
 
 void DicomFile::parseDicomFile(QString filename)
@@ -121,28 +118,53 @@ QMap<QString, QString> DicomFile::parseDicomFromXml(const char *s)
     return dicomObject;
 }
 
-unsigned char *DicomFile::getUncompressedData()
+float *DicomFile::getUncompressedData()
 {
-    qDebug() << Q_FUNC_INFO;
-
     DicomImage *pDicomImage = new DicomImage(this->filename.toStdString().c_str());
     if ((pDicomImage == NULL) || (pDicomImage->getStatus() != EIS_Normal)) {
         qDebug() << pDicomImage->getStatus();
         return NULL;
     }
-    /* Mediastinal window */
-    pDicomImage->setWindow(70, 450);
 
     this->cols = pDicomImage->getWidth();
     this->rows = pDicomImage->getHeight();
     this->format = GL_LUMINANCE;
 
     if (pDicomImage->isMonochrome()) {
-        qDebug() << "Image is monochrome!";
-        /* Get 8-bit data regardless of the pixel depth stored! */
-        pDicomImage->setNoDisplayFunction();
-        Uint8 *pixelData = (Uint8 *)(pDicomImage->getOutputData(8));
-        return pixelData;
+        /* Extract the 16bit raw pixel data */
+        const Uint16 *rawPixel;
+        unsigned long cnt;
+        OFCondition cond =
+                pDcmDataset->findAndGetUint16Array(
+                    DCM_PixelData, rawPixel, &cnt, OFFalse);
+        Q_ASSERT(cond.good());
+        Q_ASSERT(cnt > 0);
+
+        /* Extract the useful 12bit worth of data (0-11bit, Little Endian) */
+        Uint16 *pixel = (Uint16 *) malloc(cnt * sizeof(Uint16));
+        Q_ASSERT(pixel);
+        memcpy(pixel, rawPixel, cnt * sizeof(Uint16));
+        for (unsigned long i = 0; i < cnt; i++) {
+            pixel[i] = rawPixel[i] & 0x0FFF;
+        }
+
+        /* Setup a window/width level */
+        HounsFieldUnit hu(this->slope, this->intercept);
+        QPair<float, float> rawRange = hu.getRawRange(HUWindows::MEDIASTINUM);
+
+        /* Extract only the pixel data */
+        float *pixel3 = (float *)malloc(cnt * sizeof(float));
+        Q_ASSERT(pixel3);
+        for (unsigned long i = 0; i < cnt; i++) {
+            float A = rawRange.first;
+            float B = rawRange.second;
+            float val = (float)pixel[i];
+            pixel3[i] = (val - A)/(B-A);
+            if (pixel3[i] < 0.0) pixel3[i] = 0.0;
+            if (pixel3[i] > 1.0) pixel3[i] = 1.0;
+        }
+
+        return (float *)pixel3;
     } else {
         qDebug() << "Image is NOT monochrome! We will return NULL!";
     }
@@ -151,8 +173,6 @@ unsigned char *DicomFile::getUncompressedData()
 
 unsigned char *DicomFile::getCompressedData()
 {
-    qDebug() << Q_FUNC_INFO;
-
     DcmFileFormat dcmFile;
     OFCondition status = dcmFile.loadFile(this->filename.toStdString().c_str());
     if (!status.good()) {
@@ -219,18 +239,14 @@ unsigned char *DicomFile::getCompressedData()
         }
 
         /* Convert jpeg2000 to png */
-        qDebug() << "About to call jp2k_to_png()";
         return jp2k_to_png(pixData, length);
     }
-    qDebug() << status.text();
+
     return NULL;
 }
 
 unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "pixelData = " << pixelData << "length = " << length;
-
     Q_ASSERT(pixelData != NULL);
     Q_ASSERT(length > 0);
 
@@ -268,8 +284,6 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
 
 QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
 {
-    qDebug() << Q_FUNC_INFO;
-
     /*
      * Retrieve the value of 'dcmTagKey', e.g. 'dcmTagKey' may be
      * DCM_PatientName.
@@ -287,8 +301,6 @@ QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
 
 ExamDetails DicomFile::getExamDetails(void)
 {
-    qDebug() << Q_FUNC_INFO;
-
     struct {
         DcmTagKey key;
         const char *desc;
@@ -308,8 +320,6 @@ ExamDetails DicomFile::getExamDetails(void)
     for (unsigned int i = 0; i < len; i++) {
         QString result = getDcmTagKeyAsQString(details[i].key);
         this->examDetails.insert(details[i].desc, result);
-
-        qDebug() << details[i].desc << " =" << result;
     }
 
     return ExamDetails(this->examDetails);

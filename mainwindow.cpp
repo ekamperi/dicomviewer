@@ -75,8 +75,6 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionOpenDICOM_triggered()
 {
-    qDebug() << Q_FUNC_INFO;
-
     /* Select DICOM files to open */
     QFileDialog dialog(this);
     dialog.setDirectory(QDir::homePath());
@@ -114,9 +112,6 @@ void MainWindow::on_actionOpenDICOM_triggered()
 
 void MainWindow::getProgress(unsigned int cnt)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "cnt =" << cnt;
-
     if (!this->progressDialog->wasCanceled()) {
         this->progressDialog->setValue(cnt + 1);
     }
@@ -124,15 +119,11 @@ void MainWindow::getProgress(unsigned int cnt)
 
 void MainWindow::progressDialogCanceled()
 {
-    qDebug() << Q_FUNC_INFO;
-
     loadDicomThread->abortOperation();
 }
 
 void MainWindow::filesLoaded()
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->setCursor(Qt::WaitCursor);
 
     int howMany = (int)this->slices.size();
@@ -174,15 +165,11 @@ void MainWindow::filesLoaded()
 
 void MainWindow::on_actionExit_triggered()
 {
-    qDebug() << Q_FUNC_INFO;
-
     QCoreApplication::exit(0);
 }
 
 void MainWindow::on_actionClose_triggered()
 {
-    qDebug() << Q_FUNC_INFO;
-
     /* Check whether we are returning from full screen */
     QWidget *ww = ui->stackedWidget->currentWidget();
     if (ui->stackedWidget->currentWidget() == this->containerWidget2) {
@@ -207,9 +194,6 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::sliceDoubleClicked(Slice *pSlice)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "Slice " << pSlice->getIndex() << " was double clicked";
-
     MyGLWidget *pMyGLWidget = new MyGLWidget();
     pMyGLWidget->setSlice(pSlice);
     pMyGLWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -229,7 +213,6 @@ void MainWindow::sliceDoubleClicked(Slice *pSlice)
 bool MainWindow::event(QEvent *pEvent)
 {
     if (pEvent->type() == QEvent::KeyPress) {
-        qDebug() << Q_FUNC_INFO;
         QKeyEvent *pke = static_cast<QKeyEvent *>(pEvent);
         int key = pke->key();
         if (key == Qt::Key_Escape) {
@@ -253,8 +236,6 @@ bool MainWindow::event(QEvent *pEvent)
 
 void MainWindow::selectAllSlices(void)
 {
-    qDebug() << Q_FUNC_INFO;
-
     std::vector<Slice *>::iterator it;
     for (it = slices.begin(); it != slices.end(); it++) {
         Slice *pSlice = *it;
@@ -266,22 +247,17 @@ void MainWindow::selectAllSlices(void)
 
 void MainWindow::gotoNextSlice()
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->gotoSlice(SliceDirection::Next);
 
 }
 
 void MainWindow::gotoPrevSlice()
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->gotoSlice(SliceDirection::Prev);
 }
 
 void MainWindow::gotoSlice(SliceDirection::is dir)
 {
-    qDebug() << Q_FUNC_INFO;
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
     /* Get current slice and index */
@@ -312,20 +288,15 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     pLayout->update();
     containerWidget2->update();
     updateStatusBarForSlice();
-
-    qDebug() << Q_FUNC_INFO;
 }
 
 void MainWindow::updateStatusBarForSlice(void) const
 {
-    qDebug() << Q_FUNC_INFO;
-
     QLayout *pLayout = containerWidget2->layout();
     Q_ASSERT(pLayout);
     MyGLWidget *pMyGLWidget = (MyGLWidget *)
             pLayout->itemAt(0)->widget();
     unsigned int idx = pMyGLWidget->getSliceIndex() + 1;
-    qDebug() << "idx = " << idx;
 
     this->statusBar()->showMessage(
                 QString("Slice: %1 / %2").arg(idx).arg(slices.size()));
@@ -333,8 +304,6 @@ void MainWindow::updateStatusBarForSlice(void) const
 
 void MainWindow::wheelEvent(QWheelEvent *pEvent)
 {
-    qDebug() << Q_FUNC_INFO;
-
     int delta = pEvent->delta();
     if (delta > 0) {
         this->gotoPrevSlice();

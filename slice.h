@@ -18,7 +18,7 @@ public:
         return this->index;
     }
 
-    unsigned char *getRawPixelData() const {
+    float *getRawPixelData() const {
         return this->pRawPixelData;
     }
 
@@ -58,7 +58,7 @@ private:
     DicomFile *pDicomFile;
     unsigned int index;
 
-    unsigned char *pRawPixelData;
+    float *pRawPixelData;
     unsigned int width;
     unsigned int height;
     GLint format;

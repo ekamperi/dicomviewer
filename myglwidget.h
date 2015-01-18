@@ -1,7 +1,7 @@
 #ifndef MYGLWIDGET_H
 #define MYGLWIDGET_H
 
-#include <qt5/QtOpenGL/QGLWidget>
+#include <QtOpenGL>
 
 #include "examdetails.h"
 #include "slice.h"
@@ -40,7 +40,7 @@ protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
-     void loadTexture(unsigned char *pRawData, unsigned int width, unsigned int height, GLint format);
+     void loadTexture(float *pRawData, unsigned int width, unsigned int height, GLint format);
      void drawDetails(QPainter *pPainter);
      void drawOutline(QPainter *pPainter);
 
@@ -56,7 +56,7 @@ private:
      Magick::Blob blob;
 
      GLuint textureID;
-     unsigned char *pRawPixel;
+     float *pRawPixel;
 
      Slice *pSlice;
 };

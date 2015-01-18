@@ -25,7 +25,7 @@ public:
     void parseDicomFile(QString filename);
     void getRawPixel(QString filename);
 
-    unsigned char *getUncompressedData();
+    float *getUncompressedData();
     unsigned char *getCompressedData();
 
     ExamDetails getExamDetails(void);
@@ -38,6 +38,13 @@ private:
     QString filename;
     DcmFileFormat dcmFileFormat;
     DcmDataset *pDcmDataset;
+
+    /*
+     * Parameters for converting CT data to Hounsfield Units
+     * HU = pixelValue * slope + intercept
+     */
+    float slope;
+    float intercept;
 
     /* Image data */
     Magick::Blob *pRawBlob;

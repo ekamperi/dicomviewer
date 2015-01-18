@@ -4,9 +4,6 @@
 
 Slice::Slice(QString filename, unsigned int index)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "filename = " << filename;
-
     /* Index to numerically identify a slice */
     this->index = index;
 
@@ -29,7 +26,5 @@ Slice::Slice(QString filename, unsigned int index)
 
 Slice::~Slice()
 {
-    qDebug() << Q_FUNC_INFO;
-
     delete this->pDicomFile;
 }

@@ -10,16 +10,12 @@ LoadDicomThread::LoadDicomThread(
         QObject *parent)
     : QThread(parent)
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->pResults = results;
     this->fileNames = fileNames;
 }
 
 void LoadDicomThread::run()
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->mutex.lock();
     this->abort = false;
     this->mutex.unlock();
@@ -45,8 +41,6 @@ void LoadDicomThread::run()
 
 void LoadDicomThread::abortOperation()
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->mutex.lock();
     this->abort = true;
     this->mutex.unlock();
