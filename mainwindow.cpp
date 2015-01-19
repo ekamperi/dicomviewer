@@ -167,13 +167,12 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::on_actionClose_triggered()
 {
     /* Check whether we are returning from full screen */
-    QWidget *ww = ui->stackedWidget->currentWidget();
     if (ui->stackedWidget->currentWidget() == this->containerWidget2) {
         ui->stackedWidget->setCurrentWidget(this->scrollArea);
     } else {
         /* Remove all GL widgets from the flow layout */
         QLayoutItem *pLayoutItem;
-        while (pLayoutItem = this->flowLayout->takeAt(0)) {
+        while ((pLayoutItem = this->flowLayout->takeAt(0)) != NULL) {
             delete pLayoutItem->widget();
         }
 
@@ -248,7 +247,6 @@ void MainWindow::selectAllSlices(void)
 void MainWindow::gotoNextSlice()
 {
     this->gotoSlice(SliceDirection::Next);
-
 }
 
 void MainWindow::gotoPrevSlice()
@@ -277,10 +275,9 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     }
 }
 
-void MainWindow::gotoSlice(int sliceIndex)
+void MainWindow::gotoSlice(int idx)
 {
-    /* Check whether we are inside the bounds */
-    int idx = sliceIndex;
+    /* Check whether we are inside the bounds or we are recycling */
     if (idx < 0) {
         idx = slices.size() - 1;
     } else if (idx > slices.size()-1) {
@@ -294,12 +291,12 @@ void MainWindow::gotoSlice(int sliceIndex)
         return;
     }
 
+    /* Set new slice */
     MyGLWidget *pMyGLWidget = (MyGLWidget *)pLayout->itemAt(0)->widget();
     Q_ASSERT(pMyGLWidget);
-
     pMyGLWidget->setSlice(slices[idx]);
-    pMyGLWidget->update();
-    containerWidget2->update();;
+
+    /* Update the status bar accordingly */
     updateStatusBarForSlice();
 }
 

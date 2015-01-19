@@ -54,6 +54,9 @@ void MyGLWidget::loadTexture(Uint8 *pRawPixel,
      */
     this->makeCurrent();
 
+    glDeleteTextures(1, &this->textureID);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
