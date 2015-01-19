@@ -3,10 +3,10 @@
 
 #include "dicomfile.h"
 #include "examdetails.h"
-#include "myglwidget.h"
 #include "GL/gl.h"
 
 class MyGLWidget;
+class MyImageWidget;
 
 class Slice
 {
@@ -18,7 +18,7 @@ public:
         return this->index;
     }
 
-    float *getRawPixelData() const {
+    Uint8 *getRawPixelData() const {
         return this->pRawPixelData;
     }
 
@@ -46,19 +46,19 @@ public:
         this->m_isSelected = selected;
     }
 
-    void setGLWidget(MyGLWidget *pMyGLWidget) {
-        this->pMyGLWidget = pMyGLWidget;
+    void setImageWidget(MyImageWidget *pMyImageWidget) {
+        this->pMyImageWidget = pMyImageWidget;
     }
 
-    MyGLWidget *getGLWidget(void) const {
-        return this->pMyGLWidget;
+    MyImageWidget *getImageWidget(void) const {
+        return this->pMyImageWidget;
     }
 
 private:
     DicomFile *pDicomFile;
     unsigned int index;
 
-    float *pRawPixelData;
+    Uint8 *pRawPixelData;
     unsigned int width;
     unsigned int height;
     GLint format;
@@ -68,7 +68,7 @@ private:
     /* Whether this slice was selected by user */
     bool m_isSelected;
 
-    MyGLWidget *pMyGLWidget;
+    MyImageWidget *pMyImageWidget;
 };
 
 #endif // SLICE_H

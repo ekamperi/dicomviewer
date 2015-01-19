@@ -8,6 +8,7 @@
 #include "loaddicomworker.h"
 #include "mainwindow.h"
 #include "myglwidget.h"
+#include "myimagewidget.h"
 #include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */
@@ -45,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
      * Initialize library or else it will abort.
      * It may not be needed in newer versions of it.
      */
-    Magick::InitializeMagick(NULL);
+    //Magick::InitializeMagick(NULL);
 
     /* Register decompression codecs */
     DcmRLEDecoderRegistration::registerCodecs();
@@ -129,23 +130,18 @@ void MainWindow::filesLoaded()
     int howMany = (int)this->slices.size();
     for (int i = 0; i < howMany; i++) {
         Slice *pSlice = this->slices.at(i);
-        MyGLWidget *pMyGLWidget = new MyGLWidget();
-        pSlice->setGLWidget(pMyGLWidget);
-        pMyGLWidget->setSlice(pSlice);
-
-        /* Set a minimum size on the widget or else it will be squeezed to
-         * fit into the container and the scrollbars won't appear!
-         * XXX: Minimum size should be calculated based on the application
-         * size, no ?
-         */
-        pMyGLWidget->setMinimumSize(256, 256);
+        MyImageWidget *pMyImageWidget = new MyImageWidget();
+        pSlice->setImageWidget(pMyImageWidget);
+        pMyImageWidget->setSlice(pSlice);
 
         /* XXX */
-        connect(pMyGLWidget, SIGNAL(sliceDoubleClicked(Slice*)),
+        connect(pMyImageWidget, SIGNAL(sliceDoubleClicked(Slice*)),
                 this, SLOT(sliceDoubleClicked(Slice*)));
 
+        pMyImageWidget->setMinimumSize(256, 256);
+
         /* Add the slice to the grid layout */
-        this->flowLayout->addWidget(pMyGLWidget);
+        this->flowLayout->addWidget(pMyImageWidget);
     }
     containerWidget->setLayout(this->flowLayout);
     containerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -241,7 +237,7 @@ void MainWindow::selectAllSlices(void)
         Slice *pSlice = *it;
         bool isSelected = pSlice->isSelected();
         pSlice->setSelected(!isSelected);
-        pSlice->getGLWidget()->update();
+        pSlice->getImageWidget()->update();
     }
 }
 

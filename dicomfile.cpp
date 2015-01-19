@@ -4,7 +4,7 @@
 #include <QtGlobal>
 #include <QXmlStreamReader>
 
-#include "Magick++.h"
+//#include "Magick++.h"
 
 #include "dicomfile.h"
 #include "hounsfieldunit.h"
@@ -24,7 +24,7 @@ DicomFile::DicomFile()
     this->pList = new QList< QMap<QString, QString> >();
     Q_ASSERT(this->pList);
 
-    this->pRawBlob = NULL;
+    //this->pRawBlob = NULL;
 }
 
 DicomFile::~DicomFile()
@@ -32,9 +32,9 @@ DicomFile::~DicomFile()
     Q_ASSERT(this->pList);
     delete pList;
 
-    if (this->pRawBlob) {
-        delete this->pRawBlob;
-    }
+//    if (this->pRawBlob) {
+//        delete this->pRawBlob;
+//    }
 }
 
 void DicomFile::loadDicomFile(QString filename)
@@ -118,7 +118,7 @@ QMap<QString, QString> DicomFile::parseDicomFromXml(const char *s)
     return dicomObject;
 }
 
-float *DicomFile::getUncompressedData()
+Uint8 *DicomFile::getUncompressedData()
 {
     DicomImage *pDicomImage = new DicomImage(this->filename.toStdString().c_str());
     if ((pDicomImage == NULL) || (pDicomImage->getStatus() != EIS_Normal)) {
@@ -141,30 +141,14 @@ float *DicomFile::getUncompressedData()
         Q_ASSERT(cnt > 0);
 
         /* Extract the useful 12bit worth of data (0-11bit, Little Endian) */
-        Uint16 *pixel = (Uint16 *) malloc(cnt * sizeof(Uint16));
+        Uint8 *pixel = (Uint8 *) malloc(cnt * sizeof(Uint8));
         Q_ASSERT(pixel);
-        memcpy(pixel, rawPixel, cnt * sizeof(Uint16));
+        memcpy(pixel, rawPixel, cnt * sizeof(Uint8));
         for (unsigned long i = 0; i < cnt; i++) {
-            pixel[i] = rawPixel[i] & 0x0FFF;
+            pixel[i] = (rawPixel[i] & 0x0FFF) >> 4;
         }
 
-        /* Setup a window/width level */
-        HounsFieldUnit hu(this->slope, this->intercept);
-        QPair<float, float> rawRange = hu.getRawRange(HUWindows::MEDIASTINUM);
-
-        /* Extract only the pixel data */
-        float *pixel3 = (float *)malloc(cnt * sizeof(float));
-        Q_ASSERT(pixel3);
-        for (unsigned long i = 0; i < cnt; i++) {
-            float A = rawRange.first;
-            float B = rawRange.second;
-            float val = (float)pixel[i];
-            pixel3[i] = (val - A)/(B-A);
-            if (pixel3[i] < 0.0) pixel3[i] = 0.0;
-            if (pixel3[i] > 1.0) pixel3[i] = 1.0;
-        }
-
-        return (float *)pixel3;
+        return pixel;
     } else {
         qDebug() << "Image is NOT monochrome! We will return NULL!";
     }
@@ -247,39 +231,39 @@ unsigned char *DicomFile::getCompressedData()
 
 unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
 {
-    Q_ASSERT(pixelData != NULL);
-    Q_ASSERT(length > 0);
+//    Q_ASSERT(pixelData != NULL);
+//    Q_ASSERT(length > 0);
 
-    this->pRawBlob = new Magick::Blob(pixelData, sizeof(Uint8) * length);
-    Magick::Image image;
-    try {
-        image.magick("RGB");
-        image.read(*this->pRawBlob);
+//    this->pRawBlob = new Magick::Blob(pixelData, sizeof(Uint8) * length);
+//    Magick::Image image;
+//    try {
+//        image.magick("RGB");
+//        image.read(*this->pRawBlob);
 
-        this->rows = image.rows();
-        this->cols = image.columns();
-        this->format = GL_RGB;
+//        this->rows = image.rows();
+//        this->cols = image.columns();
+//        this->format = GL_RGB;
 
-        qDebug() << "columns =" << image.columns()
-                 << "rows =" << image.rows();
-    } catch (Magick::Exception &error) {
-        qDebug() << "Caught exception: " << error.what();
-        return NULL;
-    }
-    /* This returns data in 16bit grayscale format! */
-    /* return (unsigned char*)this->rawBlob->data(); */
+//        qDebug() << "columns =" << image.columns()
+//                 << "rows =" << image.rows();
+//    } catch (Magick::Exception &error) {
+//        qDebug() << "Caught exception: " << error.what();
+//        return NULL;
+//    }
+//    /* This returns data in 16bit grayscale format! */
+//    /* return (unsigned char*)this->rawBlob->data(); */
 
-    int w = this->cols;
-    int h = this->rows;
-    unsigned char *myPixels = new unsigned char[3*w*h];
-        Magick::PixelPacket *pp = image.getPixels(0, 0, w, h);
-        for (int i = 0; i < w*h; i++) {
-            myPixels[3*(i+1) - 3] = pp[i].red;
-            myPixels[3*(i+1) - 2] = pp[i].green;
-            myPixels[3*(i+1) - 1] = pp[i].blue;
-        }
+//    int w = this->cols;
+//    int h = this->rows;
+//    unsigned char *myPixels = new unsigned char[3*w*h];
+//        Magick::PixelPacket *pp = image.getPixels(0, 0, w, h);
+//        for (int i = 0; i < w*h; i++) {
+//            myPixels[3*(i+1) - 3] = pp[i].red;
+//            myPixels[3*(i+1) - 2] = pp[i].green;
+//            myPixels[3*(i+1) - 1] = pp[i].blue;
+//        }
 
-        return myPixels;
+//        return myPixels;
 }
 
 QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)

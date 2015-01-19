@@ -5,7 +5,8 @@
 
 #include "examdetails.h"
 #include "slice.h"
-#include "Magick++.h"
+
+//#include "Magick++.h"
 
 class Slice;
 
@@ -33,30 +34,26 @@ protected:
      void mouseMoveEvent(QMouseEvent *event);
      void paintEvent(QPaintEvent *event);
 
-     /* These events are used for implementing a hover effect */
-     virtual void enterEvent(QEvent *event);
-     virtual void leaveEvent(QEvent *event);
+
 
     virtual void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
-     void loadTexture(float *pRawData, unsigned int width, unsigned int height, GLint format);
+     void loadTexture(Uint8 *pRawData, unsigned int width, unsigned int height, GLint format);
      void drawDetails(QPainter *pPainter);
      void drawOutline(QPainter *pPainter);
 
-    /* Whether we are inside a slice or not */
-    bool weAreIn;
 
      /* Custom stuff */
      void png2raw(QString string);
      int texWidth;
      int texHeight;
 
-     Magick::Image *pMagickImage;
-     Magick::Blob blob;
+     //Magick::Image *pMagickImage;
+     //Magick::Blob blob;
 
      GLuint textureID;
-     float *pRawPixel;
+     Uint8 *pRawPixel;
 
      Slice *pSlice;
 };

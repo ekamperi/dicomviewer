@@ -1,4 +1,5 @@
 #include "examdetails.h"
+#include "slice.h"
 #include "myglwidget.h"
 
 #include <iostream>
@@ -10,18 +11,15 @@
 MyGLWidget::MyGLWidget(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    /* This is used to implement a hover like effect */
-    this->weAreIn = false;
-
-    pMagickImage = NULL;
+    //pMagickImage = NULL;
 }
 
 MyGLWidget::~MyGLWidget()
 {
-    if (this->pMagickImage) {
-        delete this->pMagickImage;
-        this->pMagickImage = NULL;
-    }
+//    if (this->pMagickImage) {
+//        delete this->pMagickImage;
+//        this->pMagickImage = NULL;
+//    }
 }
 
 void MyGLWidget::setSlice(Slice *pSlice)
@@ -37,7 +35,7 @@ void MyGLWidget::setSlice(Slice *pSlice)
     this->update();
 }
 
-void MyGLWidget::loadTexture(float *pRawPixel,
+void MyGLWidget::loadTexture(Uint8 *pRawPixel,
                              unsigned int width,
                              unsigned int height,
                              GLint format)
@@ -73,7 +71,7 @@ void MyGLWidget::loadTexture(float *pRawPixel,
 
     glTexImage2D(GL_TEXTURE_2D, 0, format,
                  width,
-                 height, 0, GL_LUMINANCE, GL_FLOAT,
+                 height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE,
                  this->pRawPixel);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
@@ -89,7 +87,7 @@ void MyGLWidget::loadTexture(float *pRawPixel,
 }
 
 void MyGLWidget::png2raw(QString filename)
-{
+{/*
     try {
         pMagickImage = new Magick::Image(filename.toStdString().c_str());
         pMagickImage->write(&this->blob, "RGB");
@@ -100,7 +98,7 @@ void MyGLWidget::png2raw(QString filename)
     } catch (Magick::Exception &error) {
         qDebug() << "Caught exception: " << error.what();
         this->pMagickImage = NULL;
-    }
+    }*/
 }
 
 void MyGLWidget::initializeGL()
@@ -149,7 +147,6 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
     this->drawDetails(&painter);
-    this->drawOutline(&painter);    
     painter.end();
 }
 
@@ -158,10 +155,11 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
     Q_ASSERT(pPainter);
 
     QFont font = pPainter->font();
-    font.setPointSize(7);
+    font.setPointSize(12);
     pPainter->setFont(font);
     pPainter->setPen(Qt::yellow);
     ExamDetails examDetails = this->pSlice->getExamDetails();
+
     pPainter->drawText(
                 QRect(5, 5, this->width(), this->height()),
                 Qt::TextWordWrap,
@@ -172,38 +170,6 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
                 + "Date: " + examDetails.getStudyDate());
 
 }
-
-void MyGLWidget::drawOutline(QPainter *pPainter)
-{
-    Q_ASSERT(pPainter);
-
-    if (this->weAreIn || this->pSlice->isSelected()) {
-        QPen oldPen, myPen;
-        oldPen = pPainter->pen();
-        myPen.setWidth(4);
-        myPen.setColor(Qt::red);
-        pPainter->setPen(myPen);
-        pPainter->drawRect(QRect(0, 0, this->width(), this->height()));
-        pPainter->setPen(oldPen);
-    }
-}
-
-void MyGLWidget::enterEvent(QEvent * event)
-{
-    this->weAreIn = true;
-    this->update();
-
-    QWidget::enterEvent(event);
-}
-
-void MyGLWidget::leaveEvent(QEvent * event)
-{
-    this->weAreIn = false;
-    this->update();
-
-    QWidget::leaveEvent(event);
-}
-
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
 {

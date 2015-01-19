@@ -2,7 +2,7 @@
 #define DICOMVIEWER_H
 
 #include "examdetails.h"
-#include "Magick++.h"
+//#include "Magick++.h"
 #include "GL/gl.h"
 
 #include <QMap>
@@ -25,7 +25,7 @@ public:
     void parseDicomFile(QString filename);
     void getRawPixel(QString filename);
 
-    float *getUncompressedData();
+    Uint8 *getUncompressedData();
     unsigned char *getCompressedData();
 
     ExamDetails getExamDetails(void);
@@ -47,7 +47,7 @@ private:
     float intercept;
 
     /* Image data */
-    Magick::Blob *pRawBlob;
+    //Magick::Blob *pRawBlob;
     unsigned int rows;
     unsigned int cols;
     GLint format;
