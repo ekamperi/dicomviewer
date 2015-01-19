@@ -224,6 +224,10 @@ bool MainWindow::event(QEvent *pEvent)
         } else if (key == Qt::Key_PageDown || key == Qt::Key_Space) {
             gotoNextSlice();
             return true;
+        } else if (key == Qt::Key_Home) {
+            gotoSlice(0);
+        } else if (key == Qt::Key_End) {
+            gotoSlice(slices.size() - 1);
         }
     }
 
@@ -267,22 +271,35 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     unsigned int idx = pMyGLWidget->getSliceIndex();
 
     if (dir == SliceDirection::Next) {
-        /* We have reached the end */
-        if (idx == slices.size()-1) {
-            return;
-        }
-        pMyGLWidget->setSlice(slices[idx + 1]);
+        gotoSlice(idx+1);
     } else {
-        /* We heave reached the beginning */
-        if (idx == 0) {
-            return;
-        }
-        pMyGLWidget->setSlice(slices[idx - 1]);
+        gotoSlice(idx-1);
+    }
+}
+
+void MainWindow::gotoSlice(int sliceIndex)
+{
+    /* Check whether we are inside the bounds */
+    int idx = sliceIndex;
+    if (idx < 0) {
+        idx = slices.size() - 1;
+    } else if (idx > slices.size()-1) {
+        idx = 0;
     }
 
+    /* Get current slice and index */
+    QLayout *pLayout = containerWidget2->layout();
+    if (!pLayout) {
+        qDebug() << "pLayout is NULL! returning! (no worries)";
+        return;
+    }
+
+    MyGLWidget *pMyGLWidget = (MyGLWidget *)pLayout->itemAt(0)->widget();
+    Q_ASSERT(pMyGLWidget);
+
+    pMyGLWidget->setSlice(slices[idx]);
     pMyGLWidget->update();
-    pLayout->update();
-    containerWidget2->update();
+    containerWidget2->update();;
     updateStatusBarForSlice();
 }
 

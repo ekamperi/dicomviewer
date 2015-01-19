@@ -63,6 +63,7 @@ private:
 
     struct SliceDirection { enum is { Prev, Next }; };
     void gotoSlice(SliceDirection::is dir);
+    void gotoSlice(int sliceIndex);
     void gotoNextSlice();
     void gotoPrevSlice();
     void updateStatusBarForSlice(void) const;

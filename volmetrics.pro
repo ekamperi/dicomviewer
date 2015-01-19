@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     slice.cpp \
     examdetails.cpp \
     flowlayout.cpp \
-    hounsfieldunit.cpp
+    hounsfieldunit.cpp \
+    myimagewidget.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -28,7 +29,8 @@ HEADERS  += mainwindow.h \
     slice.h \
     examdetails.h \
     flowlayout.h \
-    hounsfieldunit.h
+    hounsfieldunit.h \
+    myimagewidget.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \
