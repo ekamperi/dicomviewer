@@ -180,11 +180,6 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
     unsigned int height = this->pSlice->getHeight();
 }
 
-void MyGLWidget::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    emit sliceDoubleClicked(this->pSlice);
-}
-
 const Slice * MyGLWidget::getSlice() const
 {
     Q_ASSERT(this->pSlice);

@@ -23,7 +23,6 @@ public:
      unsigned int getSliceIndex() const;
 
 signals:
-    void sliceDoubleClicked(Slice *pSlice);
     void windowChanged(int x);
 
 protected:
@@ -34,15 +33,10 @@ protected:
      void mouseMoveEvent(QMouseEvent *event);
      void paintEvent(QPaintEvent *event);
 
-
-
-    virtual void mouseDoubleClickEvent(QMouseEvent *event);
-
 private:
      void loadTexture(Uint8 *pRawData, unsigned int width, unsigned int height, GLint format);
      void drawDetails(QPainter *pPainter);
      void drawOutline(QPainter *pPainter);
-
 
      /* Custom stuff */
      void png2raw(QString string);
