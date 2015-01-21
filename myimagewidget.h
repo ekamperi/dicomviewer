@@ -19,11 +19,15 @@ private:
     void loadTexture(Uint8 *pRawData, unsigned int width, unsigned int height, GLint format);
     void drawOutline(QPainter *pPainter);
 
-    /* Whether we are inside a slice or not */
+    /* Whether we are inside a slice or not, used in hover effect */
     bool weAreIn;
 
     Slice *pSlice;
     QImage *pImage;
+
+    /* This color table is used for converting a 4096 tones gray scale
+     * image to 256 color (8bit) gray scale image.
+     */
     QVector<QRgb> myColorTable;
 
 protected:
