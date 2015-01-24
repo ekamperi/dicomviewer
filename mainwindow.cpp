@@ -94,7 +94,7 @@ void MainWindow::on_actionOpenDICOM_triggered()
 
     this->progressDialog = new QProgressDialog(
                 "Loading DICOM files...",
-                "Abort operation", 0, fileNames.size(), this);
+                "Abort operation", 1, fileNames.size(), this);
     this->progressDialog->setWindowModality(Qt::WindowModal);
     this->progressDialog->show();
 
