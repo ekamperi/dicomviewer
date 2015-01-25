@@ -126,21 +126,23 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     QPainter painter;
     painter.begin(this);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    QGLShaderProgram program(this);
+    program.addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
+    program.addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
+
+    program.link();
+    program.bind();
+
+    // XXX
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
-
-    glActiveTexture(GL_TEXTURE0);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-    glBindTexture(GL_TEXTURE_2D, this->textureID);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
-        glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
-        glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
-        glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
-        glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
+    glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
+    glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
+    glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
+    glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
     glEnd();
     glDisable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
