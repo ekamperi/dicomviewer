@@ -46,6 +46,10 @@ void DicomFile::loadDicomFile(QString filename)
     }
     this->pDcmDataset = this->dcmFileFormat.getDataset();
 
+    /*
+     * Extract rescale slope and intercept values which are necessary
+     * for converting CT intensity values to HUs (Hounsfield Units).
+     */
     Float64 rescaleSlope;
     Float64 rescaleIntercept;
     if (pDcmDataset->findAndGetFloat64(DCM_RescaleSlope, rescaleSlope).good() &&
