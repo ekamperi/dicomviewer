@@ -313,7 +313,6 @@ void MainWindow::gotoSlice(int idx)
     containerWidget2->setLayout(pLayout);
     containerWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->stackedWidget->setCurrentWidget(containerWidget2);
-    ui->stackedWidget->update();
 
     /* Update the status bar accordingly */
     updateStatusBarForSlice();

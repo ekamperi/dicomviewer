@@ -286,6 +286,7 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
 //        }
 
 //        return myPixels;
+    return NULL;
 }
 
 QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
