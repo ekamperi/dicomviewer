@@ -120,10 +120,14 @@ void MyGLWidget::initializeGL()
     this->pProgram = new QGLShaderProgram(this);
     Q_ASSERT(this->pProgram);
 
-    this->pProgram->addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
-    this->pProgram->addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
+    bool rv;
+    rv = this->pProgram->addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
+    Q_ASSERT(rv);
+    rv = this->pProgram->addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
+    Q_ASSERT(rv);
 
-    this->pProgram->link();
+    rv = this->pProgram->link();
+    Q_ASSERT(rv);
 }
 
 void MyGLWidget::resizeGL(int w, int h)
