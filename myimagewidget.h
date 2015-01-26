@@ -16,7 +16,7 @@ public:
     void setSlice(Slice *pSlice);
 
 private:
-    void loadTexture(Uint8 *pRawData, unsigned int width, unsigned int height, GLint format);
+    void loadTexture(float *pRawData, unsigned int width, unsigned int height, GLint format);
     void drawOutline(QPainter *pPainter);
 
     /* Whether we are inside a slice or not, used in hover effect */

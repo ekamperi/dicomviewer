@@ -35,7 +35,7 @@ void MyGLWidget::setSlice(Slice *pSlice)
     this->update();
 }
 
-void MyGLWidget::loadTexture(Uint8 *pRawPixel,
+void MyGLWidget::loadTexture(float *pRawPixel,
                              unsigned int width,
                              unsigned int height,
                              GLint format)
@@ -74,7 +74,7 @@ void MyGLWidget::loadTexture(Uint8 *pRawPixel,
 
     glTexImage2D(GL_TEXTURE_2D, 0, format,
                  width,
-                 height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                 height, 0, GL_LUMINANCE, GL_FLOAT,
                  this->pRawPixel);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
@@ -134,6 +134,13 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     program.bind();
 
     // XXX
+    int tmin_loc = program.uniformLocation("tmin");
+    int tmax_loc = program.uniformLocation("tmax");
+    Q_ASSERT(tmin != -1);
+    Q_ASSERT(tmax != -1);
+    program.setUniformValue(tmin_loc, this->tmin);
+    program.setUniformValue(tmax_loc, this->tmax);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -177,8 +184,27 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
 {
-    unsigned int width = this->pSlice->getWidth();
-    unsigned int height = this->pSlice->getHeight();
+    if (pEvent->buttons() & Qt::RightButton) {
+        float x = pEvent->localPos().x();
+        float y = pEvent->localPos().y();
+
+        float width = y / ((float) this->height());
+        float center = x / ((float) this->width());
+
+        if (width < 0.0) width = 0.0;
+        if (width > 1.0) width = 1.0;
+        if (center < 0.0) center = 0.0;
+        if (center > 1.0) center = 1.0;
+
+        this->tmin = center - width/2;
+        this->tmax = center + width/2;
+
+        if (this->tmin < 0.0) this->tmin = 0.0;
+        if (this->tmax > 1.0) this->tmax = 1.0;
+
+        qDebug() << "tmin =" << this->tmin << "tmax =" << this->tmax;
+        this->update();
+    }
 }
 
 const Slice * MyGLWidget::getSlice() const

@@ -34,9 +34,13 @@ protected:
      void paintEvent(QPaintEvent *event);
 
 private:
-     void loadTexture(Uint8 *pRawData, unsigned int width, unsigned int height, GLint format);
+     void loadTexture(float *pRawData, unsigned int width, unsigned int height, GLint format);
      void drawDetails(QPainter *pPainter);
      void drawOutline(QPainter *pPainter);
+
+     // XXX
+     float tmin;
+     float tmax;
 
      /* Custom stuff */
      void png2raw(QString string);
@@ -47,7 +51,7 @@ private:
      //Magick::Blob blob;
 
      GLuint textureID;
-     Uint8 *pRawPixel;
+     float *pRawPixel;
 
      Slice *pSlice;
 };

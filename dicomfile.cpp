@@ -122,7 +122,7 @@ QMap<QString, QString> DicomFile::parseDicomFromXml(const char *s)
     return dicomObject;
 }
 
-Uint8 *DicomFile::getUncompressedData()
+float *DicomFile::getUncompressedData()
 {
     DicomImage *pDicomImage = new DicomImage(this->filename.toStdString().c_str());
     if ((pDicomImage == NULL) || (pDicomImage->getStatus() != EIS_Normal)) {
@@ -145,14 +145,19 @@ Uint8 *DicomFile::getUncompressedData()
         Q_ASSERT(cnt > 0);
 
         /* Extract the useful 12bit worth of data (0-11bit, Little Endian) */
-        Uint8 *pixel = (Uint8 *) malloc(cnt * sizeof(Uint8));
-        Q_ASSERT(pixel);
-        memcpy(pixel, rawPixel, cnt * sizeof(Uint8));
+        float *pixels = (float *) malloc(cnt * sizeof(float));
+        Q_ASSERT(pixels);
+        this->maxPixel = 0;
         for (unsigned long i = 0; i < cnt; i++) {
-            pixel[i] = (rawPixel[i] & 0x0FFF) >> 4;
+            Uint16 pixel = (rawPixel[i] & 0x0FFF) >> 4;
+            if (pixel > this->maxPixel) {
+                this->maxPixel = pixel;
+            }
+            pixels[i] = (float)pixel;
         }
+        Q_ASSERT(this->maxPixel > 0.0);
 
-        return pixel;
+        return pixels;
     } else {
         qDebug() << "Image is NOT monochrome! We will return NULL!";
     }
@@ -311,4 +316,15 @@ ExamDetails DicomFile::getExamDetails(void)
     }
 
     return ExamDetails(this->examDetails);
+}
+
+/*
+ * Return the maximum CT value for all pixels of the image in the current
+ * DICOM file. We need to find the maximum CT value among all DICOM files,
+ * so that we normalize correctly. Otherwise, if we do it on a per DICOM
+ * file basis, the images will have different colors and flickering will happen.
+ */
+float DicomFile::getMaxPixel(void) const
+{
+    return this->maxPixel;
 }

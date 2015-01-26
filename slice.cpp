@@ -16,6 +16,7 @@ Slice::Slice(QString filename, unsigned int index)
     this->width = pDicomFile->getWidth();
     this->height = pDicomFile->getHeight();
     this->format = pDicomFile->getFormat();
+    this->maxPixel = pDicomFile->getMaxPixel();
 
     /* Also extract the examination details (patients name, age, etc) */
     this->examDetails = pDicomFile->getExamDetails();
@@ -27,4 +28,13 @@ Slice::Slice(QString filename, unsigned int index)
 Slice::~Slice()
 {
     delete this->pDicomFile;
+}
+
+void Slice::normalizePixels(float maxPixel)
+{
+    Q_ASSERT(maxPixel > 0.0);
+
+    for (unsigned long i = 0; i < this->width * this->height; i++) {
+        this->pRawPixelData[i] = this->pRawPixelData[i] / maxPixel;
+    }
 }

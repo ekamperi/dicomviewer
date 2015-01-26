@@ -38,7 +38,7 @@ void MyImageWidget::setSlice(Slice *pSlice)
     this->update();
 }
 
-void MyImageWidget::loadTexture(Uint8* pRawPixel,
+void MyImageWidget::loadTexture(float* pRawPixel,
                              unsigned int width,
                              unsigned int height,
                              GLint format)

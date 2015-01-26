@@ -7,6 +7,7 @@ HounsFieldUnit::HounsFieldUnit(float slope, float intercept)
 {
     this->slope = slope;
     this->intercept = intercept;
+    //this->maxPixel = maxPixel;
 }
 
 QPair<float, float> HounsFieldUnit::getRawRange(float huCenter, float huWidth) const

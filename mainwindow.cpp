@@ -128,8 +128,17 @@ void MainWindow::filesLoaded()
     this->setCursor(Qt::WaitCursor);
 
     int howMany = (int)this->slices.size();
-    for (int i = 0; i < howMany; i++) {
+    float maxPixel = -1.0;
+
+    for (unsigned int i = 0; i < howMany; i++) {
         Slice *pSlice = this->slices.at(i);
+        Q_ASSERT(pSlice);
+
+        float val = pSlice->getMaxPixel();
+        if (val > maxPixel) {
+            maxPixel = val;
+        }
+
         MyImageWidget *pMyImageWidget = new MyImageWidget();
         pSlice->setImageWidget(pMyImageWidget);
         pMyImageWidget->setSlice(pSlice);
@@ -143,6 +152,16 @@ void MainWindow::filesLoaded()
         /* Add the slice to the grid layout */
         this->flowLayout->addWidget(pMyImageWidget);
     }
+
+    /* Normalize CT values across all slices */
+    for (unsigned int i = 0; i < howMany; i++) {
+        Slice *pSlice = this->slices.at(i);
+        Q_ASSERT(pSlice);
+        pSlice->normalizePixels(maxPixel);
+    }
+
+    /* Add a default window/width */
+
     containerWidget->setLayout(this->flowLayout);
     containerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     scrollArea->setBackgroundRole(QPalette::Dark);

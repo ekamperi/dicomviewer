@@ -3,6 +3,7 @@
 
 #include "dicomfile.h"
 #include "examdetails.h"
+#include "hounsfieldunit.h"
 #include "GL/gl.h"
 
 class MyGLWidget;
@@ -18,7 +19,7 @@ public:
         return this->index;
     }
 
-    Uint8 *getRawPixelData() const {
+    float *getRawPixelData() const {
         return this->pRawPixelData;
     }
 
@@ -54,14 +55,21 @@ public:
         return this->pMyImageWidget;
     }
 
+    float getMaxPixel(void) const {
+        return this->maxPixel;
+    }
+
+    void normalizePixels(float maxPixel);
+
 private:
     DicomFile *pDicomFile;
     unsigned int index;
 
-    Uint8 *pRawPixelData;
+    float *pRawPixelData;
     unsigned int width;
     unsigned int height;
     GLint format;
+    float maxPixel;
 
     ExamDetails examDetails;
 

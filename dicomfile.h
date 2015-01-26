@@ -25,7 +25,7 @@ public:
     void parseDicomFile(QString filename);
     void getRawPixel(QString filename);
 
-    Uint8 *getUncompressedData();
+    float *getUncompressedData();
     unsigned char *getCompressedData();
 
     ExamDetails getExamDetails(void);
@@ -33,6 +33,7 @@ public:
     unsigned int getWidth() const { return this->cols; }
     unsigned int getHeight() const { return this->rows; }
     GLint getFormat() const { return this->format; }
+    float getMaxPixel(void) const;
 
 private:
     QString filename;
@@ -45,6 +46,7 @@ private:
      */
     float slope;
     float intercept;
+    Uint16 maxPixel;
 
     /* Image data */
     //Magick::Blob *pRawBlob;

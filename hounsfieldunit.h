@@ -21,5 +21,6 @@ public:
 private:
     float slope;
     float intercept;
+    float maxPixel;
 };
 #endif // HOUNSFIELDUNIT_H
