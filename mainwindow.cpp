@@ -33,6 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(containerWidget2);
     ui->stackedWidget->setCurrentWidget(containerWidget);
 
+    // XXX
+    this->pLayout = new QVBoxLayout();
+    this->pLayout->addWidget(new MyGLWidget());
+
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
@@ -130,27 +134,14 @@ void MainWindow::filesLoaded()
     int howMany = (int)this->slices.size();
     float maxPixel = -1.0;
 
+    /* Keep track of maximum pixel value acros all slices */
     for (unsigned int i = 0; i < howMany; i++) {
         Slice *pSlice = this->slices.at(i);
         Q_ASSERT(pSlice);
-
         float val = pSlice->getMaxPixel();
         if (val > maxPixel) {
             maxPixel = val;
         }
-
-        MyImageWidget *pMyImageWidget = new MyImageWidget();
-        pSlice->setImageWidget(pMyImageWidget);
-        pMyImageWidget->setSlice(pSlice);
-
-        /* XXX */
-        connect(pMyImageWidget, SIGNAL(sliceDoubleClicked(Slice*)),
-                this, SLOT(sliceDoubleClicked(Slice*)));
-
-        pMyImageWidget->setMinimumSize(256, 256);
-
-        /* Add the slice to the grid layout */
-        this->flowLayout->addWidget(pMyImageWidget);
     }
 
     /* Normalize CT values across all slices */
@@ -160,7 +151,20 @@ void MainWindow::filesLoaded()
         pSlice->normalizePixels(maxPixel);
     }
 
-    /* Add a default window/width */
+    /* Populate the flow grid layout */
+    for (unsigned int i = 0; i < howMany; i++) {
+        Slice *pSlice = this->slices.at(i);
+        Q_ASSERT(pSlice);
+        MyImageWidget *pMyImageWidget = new MyImageWidget();
+        Q_ASSERT(pMyImageWidget);
+        pSlice->setImageWidget(pMyImageWidget);
+        pMyImageWidget->setSlice(pSlice);
+
+        connect(pMyImageWidget, SIGNAL(sliceDoubleClicked(Slice*)),
+                this, SLOT(sliceDoubleClicked(Slice*)));
+
+        this->flowLayout->addWidget(pMyImageWidget);
+    }
 
     containerWidget->setLayout(this->flowLayout);
     containerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -208,20 +212,10 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::sliceDoubleClicked(Slice *pSlice)
 {
-    MyGLWidget *pMyGLWidget = new MyGLWidget();
-    pMyGLWidget->setSlice(pSlice);
-    pMyGLWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    pMyGLWidget->update();
+    qDebug() << Q_FUNC_INFO;
 
-    QVBoxLayout *verticalLayout = new QVBoxLayout();
-    verticalLayout->setContentsMargins(QMargins(0,0,0,0));
-    verticalLayout->addWidget(pMyGLWidget);
-    verticalLayout->update();
-    containerWidget2->setLayout(verticalLayout);
-
-    ui->stackedWidget->setCurrentWidget(containerWidget2);
-
-    updateStatusBarForSlice();
+    Q_ASSERT(pSlice);
+    gotoSlice(pSlice->getIndex());
 }
 
 bool MainWindow::event(QEvent *pEvent)
@@ -277,12 +271,9 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
 {
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
-    /* Get current slice and index */
+    /* Get current slice and index */    
     QLayout *pLayout = containerWidget2->layout();
-    if (!pLayout) {
-        qDebug() << "pLayout is NULL! returning! (no worries)";
-        return;
-    }
+    Q_ASSERT(pLayout);
     MyGLWidget *pMyGLWidget = (MyGLWidget *)pLayout->itemAt(0)->widget();
     Q_ASSERT(pMyGLWidget);
     unsigned int idx = pMyGLWidget->getSliceIndex();
@@ -294,6 +285,7 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     }
 }
 
+// ΧΧΧΧΧΧΧΧΧΧΧΧ
 void MainWindow::gotoSlice(int idx)
 {
     /* Check whether we are inside the bounds or we are recycling */
@@ -306,14 +298,26 @@ void MainWindow::gotoSlice(int idx)
     /* Get current slice and index */
     QLayout *pLayout = containerWidget2->layout();
     if (!pLayout) {
-        qDebug() << "pLayout is NULL! returning! (no worries)";
-        return;
+        pLayout = new QVBoxLayout();
+        Q_ASSERT(pLayout);
+        pLayout->setContentsMargins(QMargins(0,0,0,0));
     }
 
     /* Set new slice */
-    MyGLWidget *pMyGLWidget = (MyGLWidget *)pLayout->itemAt(0)->widget();
+    QLayoutItem *pItem = pLayout->itemAt(0);
+    MyGLWidget *pMyGLWidget;
+    if (pItem) {
+        pMyGLWidget = (MyGLWidget *)pItem->widget();
+    } else {
+        pMyGLWidget = new MyGLWidget();
+    }
     Q_ASSERT(pMyGLWidget);
     pMyGLWidget->setSlice(slices[idx]);
+    pLayout->addWidget(pMyGLWidget);
+    containerWidget2->setLayout(pLayout);
+    containerWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->stackedWidget->setCurrentWidget(containerWidget2);
+    ui->stackedWidget->update();
 
     /* Update the status bar accordingly */
     updateStatusBarForSlice();

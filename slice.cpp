@@ -4,6 +4,8 @@
 
 Slice::Slice(QString filename, unsigned int index)
 {
+    qDebug() << Q_FUNC_INFO;
+
     /* Index to numerically identify a slice */
     this->index = index;
 
@@ -17,6 +19,9 @@ Slice::Slice(QString filename, unsigned int index)
     this->height = pDicomFile->getHeight();
     this->format = pDicomFile->getFormat();
     this->maxPixel = pDicomFile->getMaxPixel();
+
+    /* Extract current window/width */
+    this->defHUWindowWidth = pDicomFile->getDefaultHUF();
 
     /* Also extract the examination details (patients name, age, etc) */
     this->examDetails = pDicomFile->getExamDetails();
@@ -37,4 +42,12 @@ void Slice::normalizePixels(float maxPixel)
     for (unsigned long i = 0; i < this->width * this->height; i++) {
         this->pRawPixelData[i] = this->pRawPixelData[i] / maxPixel;
     }
+
+    /* Also normalize the window center/width */
+    this->defHUWindowWidth.normalize(maxPixel);
+}
+
+QPair<float, float> Slice::getDefaultWindowWidth(void) const
+{
+    return this->defHUWindowWidth.getDefaultNormalizedRange();
 }

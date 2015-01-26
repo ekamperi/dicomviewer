@@ -15,13 +15,16 @@ MyImageWidget::MyImageWidget(QWidget *parent) : QLabel(parent)
 
     /* Generate color table */
     for (unsigned int i = 0; i < 256; i++) {
-        myColorTable.push_back(qRgb(i,i,i));
+        myColorTable.append(qRgb(i,i,i));
     }
 }
 
 MyImageWidget::~MyImageWidget()
 {
     qDebug() << Q_FUNC_INFO;
+    Q_ASSERT(this->pData);
+
+    delete this->pData;
 }
 
 void MyImageWidget::setSlice(Slice *pSlice)
@@ -43,10 +46,20 @@ void MyImageWidget::loadTexture(float* pRawPixel,
                              unsigned int height,
                              GLint format)
 {
-    qDebug() << Q_FUNC_INFO;
+    /*
+     * Qt does not support floating QImages
+     */
+    unsigned long nPixels = width*height;
+    this->pData = new unsigned char[nPixels];
+    Q_ASSERT(this->pData);
 
-    this->pImage = new QImage((Uint8 *)pRawPixel, width, height, QImage::Format_Indexed8);
+    for (int i = 0; i < nPixels; i++) {
+        this->pData[i] = (unsigned char) (pRawPixel[i] * 255);
+    }
+
+    this->pImage = new QImage(this->pData, width, height, QImage::Format_Indexed8);
     Q_ASSERT(pImage);
+
     pImage->setColorTable(myColorTable);
     this->setPixmap(QPixmap::fromImage((this->pImage->scaled(256,256))));
 }

@@ -61,6 +61,8 @@ public:
 
     void normalizePixels(float maxPixel);
 
+    QPair<float, float> getDefaultWindowWidth(void) const;
+
 private:
     DicomFile *pDicomFile;
     unsigned int index;
@@ -72,6 +74,9 @@ private:
     float maxPixel;
 
     ExamDetails examDetails;
+
+    /* Default window/width in Hounsfield Units, e.g. 40/400 */
+    HounsFieldUnit defHUWindowWidth;
 
     /* Whether this slice was selected by user */
     bool m_isSelected;

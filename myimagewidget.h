@@ -29,6 +29,7 @@ private:
      * image to 256 color (8bit) gray scale image.
      */
     QVector<QRgb> myColorTable;
+    unsigned char *pData;   // 8bit data
 
 protected:
     void paintEvent(QPaintEvent *event);

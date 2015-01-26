@@ -11,7 +11,13 @@
 MyGLWidget::MyGLWidget(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
+    qDebug() << Q_FUNC_INFO;
+
     //pMagickImage = NULL;
+    setMouseTracking(true);
+
+    this->tmin = 0.0;
+    this->tmax = 0.4;
 }
 
 MyGLWidget::~MyGLWidget()
@@ -32,6 +38,7 @@ void MyGLWidget::setSlice(Slice *pSlice)
                 pSlice->getWidth(),
                 pSlice->getHeight(),
                 pSlice->getFormat());
+
     this->update();
 }
 
@@ -40,6 +47,7 @@ void MyGLWidget::loadTexture(float *pRawPixel,
                              unsigned int height,
                              GLint format)
 {
+    qDebug() << Q_FUNC_INFO;
     this->pRawPixel = pRawPixel;
 
     /* From the QGLWidget official documentation:
@@ -106,10 +114,6 @@ void MyGLWidget::png2raw(QString filename)
 
 void MyGLWidget::initializeGL()
 {
-//    this->setAutoFillBackground(false);
-//    this->setAutoBufferSwap(true);
-//    this->setAttribute(Qt::WA_OpaquePaintEvent, true);
-//    this->setAttribute(Qt::WA_NoSystemBackground, true);
 }
 
 void MyGLWidget::resizeGL(int w, int h)
@@ -123,9 +127,13 @@ void MyGLWidget::resizeGL(int w, int h)
 
 void MyGLWidget::paintEvent(QPaintEvent *event)
 {
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "tmin=" << this->tmin << "tmax=" << this->tmax;
+
     QPainter painter;
     painter.begin(this);
 
+    /* Construct the shaders */
     QGLShaderProgram program(this);
     program.addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
     program.addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
@@ -133,7 +141,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     program.link();
     program.bind();
 
-    // XXX
+    /* Setup the min, max values for transfer function */
     int tmin_loc = program.uniformLocation("tmin");
     int tmax_loc = program.uniformLocation("tmax");
     Q_ASSERT(tmin != -1);
@@ -141,6 +149,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     program.setUniformValue(tmin_loc, this->tmin);
     program.setUniformValue(tmax_loc, this->tmax);
 
+    /* Ready to do the drawing */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
@@ -154,6 +163,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     glDisable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
+    /* Proceed with native drawing */
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::TextAntialiasing);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
@@ -204,6 +214,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
 
         qDebug() << "tmin =" << this->tmin << "tmax =" << this->tmax;
         this->update();
+    } else {
     }
 }
 

@@ -2,6 +2,7 @@
 #define DICOMVIEWER_H
 
 #include "examdetails.h"
+#include "hounsfieldunit.h"
 //#include "Magick++.h"
 #include "GL/gl.h"
 
@@ -35,18 +36,15 @@ public:
     GLint getFormat() const { return this->format; }
     float getMaxPixel(void) const;
 
+    HounsFieldUnit getDefaultHUF(void) const { return this->defHUF; }
+
 private:
     QString filename;
     DcmFileFormat dcmFileFormat;
     DcmDataset *pDcmDataset;
 
-    /*
-     * Parameters for converting CT data to Hounsfield Units
-     * HU = pixelValue * slope + intercept
-     */
-    float slope;
-    float intercept;
     Uint16 maxPixel;
+    HounsFieldUnit defHUF;
 
     /* Image data */
     //Magick::Blob *pRawBlob;

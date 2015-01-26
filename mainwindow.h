@@ -48,6 +48,7 @@ private:
 
     /* Slices are arranged into a grid layout */
     FlowLayout *flowLayout;
+    QVBoxLayout *pLayout;
 
     /* This container widget contains the grid layout and is in turn put
      * into the scroll area. QScrollarea needs a QWidget.

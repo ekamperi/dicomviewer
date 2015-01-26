@@ -48,15 +48,16 @@ void DicomFile::loadDicomFile(QString filename)
 
     /*
      * Extract rescale slope and intercept values which are necessary
-     * for converting CT intensity values to HUs (Hounsfield Units).
+     * for converting CT intensity values to HUs (Hounsfield Units):
+     * HU = pixelValue * slope + intercept
      */
     Float64 rescaleSlope;
     Float64 rescaleIntercept;
     if (pDcmDataset->findAndGetFloat64(DCM_RescaleSlope, rescaleSlope).good() &&
         pDcmDataset->findAndGetFloat64(DCM_RescaleIntercept, rescaleIntercept).good()) {
     }
-    this->slope = rescaleSlope;
-    this->intercept = rescaleIntercept;
+
+    this->defHUF.setSlopeIntercept(rescaleSlope, rescaleIntercept);
 }
 
 void DicomFile::parseDicomFile(QString filename)
@@ -133,6 +134,18 @@ float *DicomFile::getUncompressedData()
     this->cols = pDicomImage->getWidth();
     this->rows = pDicomImage->getHeight();
     this->format = GL_LUMINANCE;
+
+    /*
+     * Extract the current windo center/width (units?)
+     * C.11.2.1.2.1 says that Window Center and Window Width
+     * specify a linear conversion from stored pixels after ... or
+     * Rescale Slope and Intercept specified. Thus, units are probably HUs.
+     */
+    double currWindowCenter;
+    double currWindowWidth ;
+    pDicomImage->setWindow(0);
+    pDicomImage->getWindow(currWindowCenter, currWindowWidth);
+    this->defHUF.setDefaultCenterWidth(currWindowCenter, currWindowWidth);
 
     if (pDicomImage->isMonochrome()) {
         /* Extract the 16bit raw pixel data */
