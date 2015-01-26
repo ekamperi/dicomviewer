@@ -33,10 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(containerWidget2);
     ui->stackedWidget->setCurrentWidget(containerWidget);
 
-    // XXX
-    this->pLayout = new QVBoxLayout();
-    this->pLayout->addWidget(new MyGLWidget());
-
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");

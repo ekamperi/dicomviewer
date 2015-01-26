@@ -129,6 +129,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
 {
     qDebug() << Q_FUNC_INFO;
     qDebug() << "tmin=" << this->tmin << "tmax=" << this->tmax;
+    qDebug() << event->rect();
 
     QPainter painter;
     painter.begin(this);
@@ -148,6 +149,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     Q_ASSERT(tmax != -1);
     program.setUniformValue(tmin_loc, this->tmin);
     program.setUniformValue(tmax_loc, this->tmax);
+    qDebug() << "tmin=" << this->tmin << "tmax=" << this->tmax;
 
     /* Ready to do the drawing */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
