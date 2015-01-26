@@ -22,6 +22,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 
 MyGLWidget::~MyGLWidget()
 {
+    qDebug() << Q_FUNC_INFO;
 //    if (this->pMagickImage) {
 //        delete this->pMagickImage;
 //        this->pMagickImage = NULL;
@@ -64,10 +65,14 @@ void MyGLWidget::loadTexture(float *pRawPixel,
      */
     this->makeCurrent();
 
-    glDeleteTextures(1, &this->textureID);
+    glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    glEnable(GL_TEXTURE_2D);
+    /*
+     * glDeleteTextures() silently ignores names that do not correspond
+     * to existing textures.
+     */
+    glDeleteTextures(1, &this->textureID);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     /* Obtain an id for the texture */
@@ -148,7 +153,9 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     QPainter painter;
     painter.begin(this);
 
-    this->pProgram->bind();
+    /* This is equivalent to calling glUseProgram() */
+    bool rv = this->pProgram->bind();
+    Q_ASSERT(rv);
 
     /* Setup the min, max values for transfer function */
     int tmin_loc = this->pProgram->uniformLocation("tmin");
@@ -157,7 +164,6 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     Q_ASSERT(tmax != -1);
     this->pProgram->setUniformValue(tmin_loc, this->tmin);
     this->pProgram->setUniformValue(tmax_loc, this->tmax);
-    qDebug() << "tmin=" << this->tmin << "tmax=" << this->tmax;
 
     /* Ready to do the drawing */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

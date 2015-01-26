@@ -208,9 +208,8 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::sliceDoubleClicked(Slice *pSlice)
 {
-    qDebug() << Q_FUNC_INFO;
-
     Q_ASSERT(pSlice);
+    qDebug() << Q_FUNC_INFO << "sliceIndex =" << pSlice->getIndex();
     gotoSlice(pSlice->getIndex());
 }
 
