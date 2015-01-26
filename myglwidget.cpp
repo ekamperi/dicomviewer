@@ -26,6 +26,8 @@ MyGLWidget::~MyGLWidget()
 //        delete this->pMagickImage;
 //        this->pMagickImage = NULL;
 //    }
+    Q_ASSERT(this->pProgram);
+    delete this->pProgram;
 }
 
 void MyGLWidget::setSlice(Slice *pSlice)
@@ -114,6 +116,14 @@ void MyGLWidget::png2raw(QString filename)
 
 void MyGLWidget::initializeGL()
 {
+    /* Construct the shaders */
+    this->pProgram = new QGLShaderProgram(this);
+    Q_ASSERT(this->pProgram);
+
+    this->pProgram->addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
+    this->pProgram->addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
+
+    this->pProgram->link();
 }
 
 void MyGLWidget::resizeGL(int w, int h)
@@ -134,21 +144,15 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     QPainter painter;
     painter.begin(this);
 
-    /* Construct the shaders */
-    QGLShaderProgram program(this);
-    program.addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
-    program.addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
-
-    program.link();
-    program.bind();
+    this->pProgram->bind();
 
     /* Setup the min, max values for transfer function */
-    int tmin_loc = program.uniformLocation("tmin");
-    int tmax_loc = program.uniformLocation("tmax");
+    int tmin_loc = this->pProgram->uniformLocation("tmin");
+    int tmax_loc = this->pProgram->uniformLocation("tmax");
     Q_ASSERT(tmin != -1);
     Q_ASSERT(tmax != -1);
-    program.setUniformValue(tmin_loc, this->tmin);
-    program.setUniformValue(tmax_loc, this->tmax);
+    this->pProgram->setUniformValue(tmin_loc, this->tmin);
+    this->pProgram->setUniformValue(tmax_loc, this->tmax);
     qDebug() << "tmin=" << this->tmin << "tmax=" << this->tmax;
 
     /* Ready to do the drawing */
@@ -164,6 +168,8 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     glEnd();
     glDisable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    this->pProgram->release();
 
     /* Proceed with native drawing */
     painter.setRenderHint(QPainter::Antialiasing);

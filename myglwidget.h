@@ -38,6 +38,9 @@ private:
      void drawDetails(QPainter *pPainter);
      void drawOutline(QPainter *pPainter);
 
+     //
+     QGLShaderProgram *pProgram;
+
      // XXX
      float tmin;
      float tmax;
