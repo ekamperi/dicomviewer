@@ -4,7 +4,7 @@ varying vec2 myTexCoord;
 uniform float tmin;
 uniform float tmax;
 
-float transfer(float x, float tmin, float tmax)
+vec4 transfer(vec4 x, float tmin, float tmax)
 {
     return smoothstep(tmin, tmax, x);
 }
@@ -12,7 +12,6 @@ float transfer(float x, float tmin, float tmax)
 void main()
 {
     vec4 color = texture2D(mysampler, myTexCoord);
-    float val = transfer(color, tmin, tmax);
+    vec4 val = transfer(color, tmin, tmax);
     gl_FragColor = val;
-//    gl_FragColor.r = 1.0;
 }
