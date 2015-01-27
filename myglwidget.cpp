@@ -229,17 +229,12 @@ void MyGLWidget::drawCurrentDistance(QPainter *painter)
     myPen.setColor(QColor(255, 0, 0, 128));
     painter->setPen(myPen);
 
-    QLineF line(this->startPoint, this->endPoint);
+    QLine line(this->startPoint, this->endPoint);
     painter->drawLine(line);
 
     /* Calculate distance in physical units */
-    float hs = this->pSlice->pDicomFile->getHorizontalSpacing();
-    float vs = this->pSlice->pDicomFile->getVerticalSpacing();
-    float sx = ((float)this->pSlice->getWidth()) / ((float)this->width());
-    float sy = ((float)this->pSlice->getHeight()) / ((float)this->height());
-    float dx = sx * (this->endPoint.x() - this->startPoint.x());
-    float dy = sy * (this->endPoint.y() - this->startPoint.y());
-    float len = sqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
+    unsigned int physicalDist;
+    physicalDist = this->calcPhysicalDistance(&line);
 
     /* Calculate the point coordinates where the text will be drawn */
     myPen.setColor(Qt::yellow);
@@ -247,8 +242,7 @@ void MyGLWidget::drawCurrentDistance(QPainter *painter)
     QPoint textPoint(
                 (this->startPoint.x()+this->endPoint.x())/2 - 15,
                 (this->startPoint.y()+this->endPoint.y())/2 - 15);
-
-    painter->drawText(textPoint, QString::number((int)len) + " mm");
+    painter->drawText(textPoint, QString::number(physicalDist) + " mm");
 
     painter->setPen(oldPen);
 }
@@ -257,16 +251,23 @@ void MyGLWidget::drawDistances(QPainter *painter)
 {
     Q_ASSERT(painter);
 
-    QPen oldPen, myPen;
+    QPen oldPen, linePen, textPen;
     oldPen = painter->pen();
-    myPen.setWidth(3);
-    myPen.setColor(Qt::red);
-    painter->setPen(myPen);
+    linePen.setWidth(3);
+    linePen.setColor(Qt::red);
+    textPen.setColor(Qt::yellow);
 
     for (unsigned int i = 0; i < this->vecDists.size(); i++) {
        QLine line = this->vecDists.at(i);
+       painter->setPen(linePen);
        painter->drawLine(line);
-       unsigned int len = this->calcPhysicalDistance(line);
+
+       unsigned int physicalDist = this->calcPhysicalDistance(&line);
+       painter->setPen(textPen);
+       QPoint textPoint(
+                   (line.p1().x()+line.p2().x())/2 - 15,
+                   (line.p1().y()+line.p2().y())/2 - 15);
+       painter->drawText(textPoint, QString::number(physicalDist) + " mm");
     }
 
     painter->setPen(oldPen);
@@ -338,8 +339,8 @@ unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
     float vs = this->pSlice->pDicomFile->getVerticalSpacing();
     float sx = ((float)this->pSlice->getWidth()) / ((float)this->width());
     float sy = ((float)this->pSlice->getHeight()) / ((float)this->height());
-    float dx = sx * (pLine->p2().x() - pLine->p1.x());
-    float dy = sy * (pLine->p2().y() - pLine->p1.y());
+    float dx = sx * (pLine->p2().x() - pLine->p1().x());
+    float dy = sy * (pLine->p2().y() - pLine->p1().y());
     float len = sqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
 
     return (unsigned int)len;
