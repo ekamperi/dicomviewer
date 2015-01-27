@@ -16,6 +16,8 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     //pMagickImage = NULL;
     setMouseTracking(true);
 
+    this->measureDistance = false;
+
     this->tmin = 0.0;
     this->tmax = 0.4;
 }
@@ -186,7 +188,16 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::TextAntialiasing);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
+    /* Draw examination details (patient name, ID, age, sex) */
     this->drawDetails(&painter);
+
+    /* Draw any measuring distances */
+    this->drawDistances(&painter);
+    if (this->measureDistance) {
+        this->drawCurrentDistance(&painter);
+        this->update();
+    }
+
     painter.end();
 }
 
@@ -208,6 +219,57 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
                 +  "Age: " + examDetails.getPatientAge() + "\n"
                 +  "Sex: " + examDetails.getPatientSex() + "\n"
                 + "Date: " + examDetails.getStudyDate());
+}
+
+void MyGLWidget::drawCurrentDistance(QPainter *painter)
+{
+    QPen oldPen, myPen;
+    oldPen = painter->pen();
+    myPen.setWidth(3);
+    myPen.setColor(QColor(255, 0, 0, 128));
+    painter->setPen(myPen);
+
+    QLineF line(this->startPoint, this->endPoint);
+    painter->drawLine(line);
+
+    /* Calculate distance in physical units */
+    float hs = this->pSlice->pDicomFile->getHorizontalSpacing();
+    float vs = this->pSlice->pDicomFile->getVerticalSpacing();
+    float sx = ((float)this->pSlice->getWidth()) / ((float)this->width());
+    float sy = ((float)this->pSlice->getHeight()) / ((float)this->height());
+    float dx = sx * (this->endPoint.x() - this->startPoint.x());
+    float dy = sy * (this->endPoint.y() - this->startPoint.y());
+    float len = sqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
+
+    /* Calculate the point coordinates where the text will be drawn */
+    myPen.setColor(Qt::yellow);
+    painter->setPen(myPen);
+    QPoint textPoint(
+                (this->startPoint.x()+this->endPoint.x())/2 - 15,
+                (this->startPoint.y()+this->endPoint.y())/2 - 15);
+
+    painter->drawText(textPoint, QString::number((int)len) + " mm");
+
+    painter->setPen(oldPen);
+}
+
+void MyGLWidget::drawDistances(QPainter *painter)
+{
+    Q_ASSERT(painter);
+
+    QPen oldPen, myPen;
+    oldPen = painter->pen();
+    myPen.setWidth(3);
+    myPen.setColor(Qt::red);
+    painter->setPen(myPen);
+
+    for (unsigned int i = 0; i < this->vecDists.size(); i++) {
+       QLine line = this->vecDists.at(i);
+       painter->drawLine(line);
+       unsigned int len = this->calcPhysicalDistance(line);
+    }
+
+    painter->setPen(oldPen);
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
@@ -232,7 +294,27 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
 
         qDebug() << "tmin =" << this->tmin << "tmax =" << this->tmax;
         this->update();
-    } else {
+    } else if (pEvent->buttons() & Qt::LeftButton) {
+        if (this->measureDistance) {
+            this->endPoint = pEvent->pos();
+            this->update();
+       }
+    }
+    pEvent->ignore();
+}
+
+void MyGLWidget::mousePressEvent(QMouseEvent *pEvent)
+{
+    this->startPoint = pEvent->pos();
+    this->endPoint = this->startPoint;
+}
+
+void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
+{
+    if (this->measureDistance) {
+        this->endPoint = pEvent->pos();
+        this->vecDists.push_back(QLine(this->startPoint, this->endPoint));
+        this->update();
     }
 }
 
@@ -246,4 +328,19 @@ unsigned int MyGLWidget::getSliceIndex() const
 {
     Q_ASSERT(this->pSlice);
     return this->pSlice->getIndex();
+}
+
+unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
+{
+    Q_ASSERT(pLine);
+
+    float hs = this->pSlice->pDicomFile->getHorizontalSpacing();
+    float vs = this->pSlice->pDicomFile->getVerticalSpacing();
+    float sx = ((float)this->pSlice->getWidth()) / ((float)this->width());
+    float sy = ((float)this->pSlice->getHeight()) / ((float)this->height());
+    float dx = sx * (pLine->p2().x() - pLine->p1.x());
+    float dy = sy * (pLine->p2().y() - pLine->p1.y());
+    float len = sqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
+
+    return (unsigned int)len;
 }

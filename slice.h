@@ -62,9 +62,9 @@ public:
     void normalizePixels(float maxPixel);
 
     QPair<float, float> getDefaultWindowWidth(void) const;
+    DicomFile *pDicomFile;
 
 private:
-    DicomFile *pDicomFile;
     unsigned int index;
 
     float *pRawPixelData;

@@ -36,12 +36,18 @@ public:
     GLint getFormat() const { return this->format; }
     float getMaxPixel(void) const;
 
+    float getHorizontalSpacing(void) const { return this->hSpacing; }
+    float getVerticalSpacing(void) const { return this->vSpacing; }
+
     HounsFieldUnit getDefaultHUF(void) const { return this->defHUF; }
 
 private:
     QString filename;
     DcmFileFormat dcmFileFormat;
     DcmDataset *pDcmDataset;
+
+    float vSpacing;
+    float hSpacing;
 
     Uint16 maxPixel;
     HounsFieldUnit defHUF;

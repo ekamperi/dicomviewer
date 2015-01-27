@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -61,8 +61,22 @@
     </widget>
     <addaction name="menu_Layout"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <widget class="QMenu" name="menuMeasure">
+     <property name="title">
+      <string>Measure</string>
+     </property>
+     <addaction name="actionDistance"/>
+     <addaction name="actionAngle"/>
+    </widget>
+    <addaction name="menuMeasure"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_View"/>
+   <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -107,6 +121,19 @@
   <action name="action2x2">
    <property name="text">
     <string>&amp;2x2</string>
+   </property>
+  </action>
+  <action name="actionDistance">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Distance</string>
+   </property>
+  </action>
+  <action name="actionAngle">
+   <property name="text">
+    <string>Angle</string>
    </property>
   </action>
  </widget>

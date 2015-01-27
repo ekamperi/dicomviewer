@@ -40,6 +40,8 @@ private slots:
 
     void on_actionClose_triggered();
 
+    void on_actionDistance_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -68,6 +70,8 @@ private:
     void gotoNextSlice();
     void gotoPrevSlice();
     void updateStatusBarForSlice(void) const;
+
+    MyGLWidget *currentGLWidget(void);
 };
 
 #endif // MAINWINDOW_H

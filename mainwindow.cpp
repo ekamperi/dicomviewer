@@ -340,3 +340,31 @@ void MainWindow::wheelEvent(QWheelEvent *pEvent)
 
     pEvent->accept();
 }
+
+void MainWindow::on_actionDistance_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    MyGLWidget *pMyGLWidget = this->currentGLWidget();
+    if (pMyGLWidget) {
+        bool flag = pMyGLWidget->isDistanceMeasureEnabled();
+        pMyGLWidget->setDistanceMeasure(!flag);  // toggle
+    }
+}
+
+MyGLWidget *MainWindow::currentGLWidget(void)
+{
+    if (ui->stackedWidget->currentWidget() != containerWidget2) {
+        return NULL;
+    }
+
+    QLayout *pLayout = containerWidget2->layout();
+    if (!pLayout) {
+        return NULL;
+    }
+
+    MyGLWidget *pMyGLWidget = (MyGLWidget *)
+            pLayout->itemAt(0)->widget();
+
+    return pMyGLWidget;
+}

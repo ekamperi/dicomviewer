@@ -51,13 +51,23 @@ void DicomFile::loadDicomFile(QString filename)
      * for converting CT intensity values to HUs (Hounsfield Units):
      * HU = pixelValue * slope + intercept
      */
-    Float64 rescaleSlope;
-    Float64 rescaleIntercept;
+    Float64 rescaleSlope = 0.0;
+    Float64 rescaleIntercept = 0.0;
     if (pDcmDataset->findAndGetFloat64(DCM_RescaleSlope, rescaleSlope).good() &&
         pDcmDataset->findAndGetFloat64(DCM_RescaleIntercept, rescaleIntercept).good()) {
     }
 
     this->defHUF.setSlopeIntercept(rescaleSlope, rescaleIntercept);
+
+    /* Extract pixel spacing: 10.7.1.3 Pixel Spacing Value Order and Valid Values
+     * The first value is the row spacing in mm, that is the spacing between the centers
+     * of adjacent rows, or vertical spacing.
+     * The second value is the column spacing in mm, that is the spacing between the centers
+     * of adjacent columns, or horizontal spacing. */
+    OFString ofsPixelSpacing;
+    status = this->pDcmDataset->findAndGetOFStringArray(DCM_PixelSpacing, ofsPixelSpacing);
+    Q_ASSERT(status.good());
+    sscanf(ofsPixelSpacing.c_str(), "%f\\%f", &this->hSpacing, &this->vSpacing);
 }
 
 void DicomFile::parseDicomFile(QString filename)
