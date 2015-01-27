@@ -314,8 +314,11 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
 {
     if (this->measureDistance) {
         this->endPoint = pEvent->pos();
-        this->vecDists.push_back(QLine(this->startPoint, this->endPoint));
-        this->update();
+        /* Skip single points */
+        if (this->startPoint != this->endPoint) {
+            this->vecDists.push_back(QLine(this->startPoint, this->endPoint));
+            this->update();
+        }
     }
 }
 
