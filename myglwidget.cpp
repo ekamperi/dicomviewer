@@ -346,5 +346,8 @@ unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
     float dy = sy * (pLine->p2().y() - pLine->p1().y());
     float len = sqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
 
+//    qDebug() << "sx =" << sx << " sy =" << sy << " dx =" << dx << " dy =" << dy
+//                << " hs =" << hs << " vs =" << vs;
+
     return (unsigned int)len;
 }

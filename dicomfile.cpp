@@ -67,7 +67,9 @@ void DicomFile::loadDicomFile(QString filename)
     OFString ofsPixelSpacing;
     status = this->pDcmDataset->findAndGetOFStringArray(DCM_PixelSpacing, ofsPixelSpacing);
     Q_ASSERT(status.good());
-    sscanf(ofsPixelSpacing.c_str(), "%f\\%f", &this->hSpacing, &this->vSpacing);
+    char delim;
+    std::stringstream ss(ofsPixelSpacing.c_str());
+    ss >> this->vSpacing >> delim >> this->hSpacing;
 }
 
 void DicomFile::parseDicomFile(QString filename)
