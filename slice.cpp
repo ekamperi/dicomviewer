@@ -11,6 +11,8 @@ Slice::Slice(QString filename, unsigned int index)
 
     /* Create a DicomFile object to dissect the input file */
     this->pDicomFile = new DicomFile();
+    Q_ASSERT(this->pDicomFile);
+
     pDicomFile->loadDicomFile(filename);
 
     /* Extract the raw pixel data from the DICOM file */
@@ -32,6 +34,7 @@ Slice::Slice(QString filename, unsigned int index)
 
 Slice::~Slice()
 {
+    Q_ASSERT(this->pDicomFile);
     delete this->pDicomFile;
 }
 
