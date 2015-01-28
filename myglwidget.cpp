@@ -32,6 +32,7 @@ MyGLWidget::~MyGLWidget()
 //    Q_ASSERT(this->pProgram);
 //    delete this->pProgram;
     /* Don't forget to delete the textures */
+    this->makeCurrent();
     glDeleteTextures(this->vecSlices.size(), this->pTexIDs);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
@@ -39,13 +40,7 @@ MyGLWidget::~MyGLWidget()
 void MyGLWidget::setSlice(Slice *pSlice)
 {
     Q_ASSERT(pSlice);
-
     this->pSlice = pSlice;
-
-    /* Select the right texture */
-    int idx = this->pSlice->getIndex();
-    glBindTexture(GL_TEXTURE_2D, this->pTexIDs[idx]);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     /* Force a redraw */
     this->update();
@@ -128,6 +123,9 @@ void MyGLWidget::png2raw(QString filename)
 
 void MyGLWidget::initializeGL()
 {
+    glEnable(GL_TEXTURE_2D);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
     /* Construct the shaders */
     this->pProgram = new QGLShaderProgram(this);
     Q_ASSERT(this->pProgram);
@@ -176,15 +174,16 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
-    glEnable(GL_TEXTURE_2D);
+    /* Bind again (besides setSlice() */
+    glBindTexture(GL_TEXTURE_2D, this->pTexIDs[this->pSlice->getIndex()]);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
     glBegin(GL_QUADS);
         glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
         glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
         glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
         glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
     glEnd();
-    glDisable(GL_TEXTURE_2D);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
 
     this->pProgram->release();
 

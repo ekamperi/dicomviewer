@@ -34,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->setCurrentWidget(containerWidget);
 
     this->pGLWidget = new MyGLWidget();
+    QVBoxLayout *pLayout = new QVBoxLayout();
+    pLayout->addWidget(this->pGLWidget);
+    containerWidget2->setLayout(pLayout);
 
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
@@ -260,12 +263,12 @@ void MainWindow::selectAllSlices(void)
     }
 }
 
-void MainWindow::gotoNextSlice()
+void MainWindow::gotoNextSlice(void)
 {
     this->gotoSlice(SliceDirection::Next);
 }
 
-void MainWindow::gotoPrevSlice()
+void MainWindow::gotoPrevSlice(void)
 {
     this->gotoSlice(SliceDirection::Prev);
 }
@@ -292,20 +295,9 @@ void MainWindow::gotoSlice(int idx)
         idx = 0;
     }
 
-    /* Get current slice and index */
-    QLayout *pLayout = containerWidget2->layout();
-    if (!pLayout) {
-        pLayout = new QVBoxLayout();
-        Q_ASSERT(pLayout);
-        pLayout->setContentsMargins(QMargins(0,0,0,0));
-    }
-
     /* Set new slice */
-    this->pGLWidget->setSlice(this->vecSlices[idx]);
-    pLayout->addWidget(this->pGLWidget);
-    containerWidget2->setLayout(pLayout);
-    containerWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->stackedWidget->setCurrentWidget(containerWidget2);
+    this->pGLWidget->setSlice(this->vecSlices[idx]);
 
     /* Update the status bar accordingly */
     updateStatusBarForSlice();
