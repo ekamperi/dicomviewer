@@ -12,7 +12,7 @@ class LoadDicomThread : public QThread
     Q_OBJECT
 
 public:
-    LoadDicomThread(const QStringList &fileNames, std::vector<Slice *> *slices, QObject *parent);
+    LoadDicomThread(const QStringList &fileNames, QVector<Slice *> *slices, QObject *parent);
     void run();
     void abortOperation();
 
@@ -24,7 +24,7 @@ private:
     QMutex mutex;
     bool abort;
 
-    std::vector<Slice *> *pResults;
+    QVector<Slice *> *pResults;
 };
 
 #endif // LOADDICOMWORKER_H

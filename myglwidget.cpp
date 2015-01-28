@@ -29,8 +29,8 @@ MyGLWidget::~MyGLWidget()
 //        delete this->pMagickImage;
 //        this->pMagickImage = NULL;
 //    }
-    Q_ASSERT(this->pProgram);
-    delete this->pProgram;
+//    Q_ASSERT(this->pProgram);
+//    delete this->pProgram;
 }
 
 void MyGLWidget::setSlice(Slice *pSlice)
@@ -38,22 +38,19 @@ void MyGLWidget::setSlice(Slice *pSlice)
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;
-    this->loadTexture(
-                pSlice->getRawPixelData(),
-                pSlice->getWidth(),
-                pSlice->getHeight(),
-                pSlice->getFormat());
 
+    /* Select the right texture */
+    int idx = this->pSlice->getIndex();
+    glBindTexture(GL_TEXTURE_2D, this->pTexIDs[idx]);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
+
+    /* Force a redraw */
     this->update();
 }
 
-void MyGLWidget::loadTexture(float *pRawPixel,
-                             unsigned int width,
-                             unsigned int height,
-                             GLint format)
+void MyGLWidget::loadSlices(QVector<Slice *> vecSlices)
 {
     qDebug() << Q_FUNC_INFO;
-    this->pRawPixel = pRawPixel;
 
     /* From the QGLWidget official documentation:
      *
@@ -64,43 +61,48 @@ void MyGLWidget::loadTexture(float *pRawPixel,
      * makeCurrent() makes this widget the current widget for OpenGL operations,
      * i.e. makes the widget's rendering context the current OpenGL rendering
      * context.
+     * DO NOT REMOVE THIS CALL.
      */
     this->makeCurrent();
 
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    /*
-     * glDeleteTextures() silently ignores names that do not correspond
-     * to existing textures.
-     */
-    glDeleteTextures(1, &this->textureID);
+    /* Obtain ids for the textures */
+    int nTextures = vecSlices.size();
+    if (nTextures < 1) {
+        qDebug() << "nTextures < 1";
+        return;
+    }
+    this->pTexIDs = (GLuint *) malloc(nTextures * sizeof(GLuint));
+    Q_ASSERT(this->pTexIDs);
+
+    glGenTextures(nTextures, this->pTexIDs);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    /* Obtain an id for the texture */
-    glGenTextures(1, &this->textureID);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
+    for (int i = 0; i < vecSlices.size(); i++) {
+        /* Select texture */
+        glBindTexture(GL_TEXTURE_2D, this->pTexIDs[i]);
+        Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    /* Select texture */
-    glBindTexture(GL_TEXTURE_2D, this->textureID);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
+        /* Select slice */
+        Slice *pSlice = vecSlices.at(i);
+        Q_ASSERT(pSlice);
 
-    /* Just a sanity check */
-    Q_ASSERT((format == GL_LUMINANCE) || (format == GL_RGB));
-    Q_ASSERT(this->pRawPixel);
+        glTexImage2D(GL_TEXTURE_2D, 0,
+                     pSlice->getFormat(),
+                     pSlice->getWidth(),
+                     pSlice->getHeight(), 0, GL_LUMINANCE, GL_FLOAT,
+                     pSlice->getRawPixelData());
+        Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format,
-                 width,
-                 height, 0, GL_LUMINANCE, GL_FLOAT,
-                 this->pRawPixel);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
-
-    /* Set texture stretching parameters */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    Q_ASSERT(glGetError() == GL_NO_ERROR);
+        /* Set texture stretching parameters */
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        Q_ASSERT(glGetError() == GL_NO_ERROR);
+    }
 
     glDisable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
@@ -156,6 +158,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     painter.begin(this);
 
     /* This is equivalent to calling glUseProgram() */
+    Q_ASSERT(this->pProgram);
     bool rv = this->pProgram->bind();
     Q_ASSERT(rv);
 
@@ -257,7 +260,7 @@ void MyGLWidget::drawDistances(QPainter *painter)
     linePen.setColor(Qt::red);
     textPen.setColor(Qt::yellow);
 
-    for (unsigned int i = 0; i < this->vecDists.size(); i++) {
+    for (int i = 0; i < this->vecDists.size(); i++) {
        QLine line = this->vecDists.at(i);
        painter->setPen(linePen);
        painter->drawLine(line);
@@ -349,5 +352,7 @@ unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
 //    qDebug() << "sx =" << sx << " sy =" << sy << " dx =" << dx << " dy =" << dy
 //                << " hs =" << hs << " vs =" << vs;
 
+    /* Physical distance unit is millimeter.
+     * No need to have a resolution less than 1mm */
     return (unsigned int)len;
 }

@@ -58,9 +58,11 @@ private:
     QWidget *containerWidget;
     QWidget *containerWidget2;
 
+    MyGLWidget *pGLWidget;
+
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
-    std::vector<Slice *> slices;
+    QVector<Slice *> vecSlices;
 
     void selectAllSlices(void);
 
@@ -70,8 +72,6 @@ private:
     void gotoNextSlice();
     void gotoPrevSlice();
     void updateStatusBarForSlice(void) const;
-
-    MyGLWidget *currentGLWidget(void);
 };
 
 #endif // MAINWINDOW_H

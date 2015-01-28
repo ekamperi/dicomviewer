@@ -6,7 +6,7 @@
 
 LoadDicomThread::LoadDicomThread(
         const QStringList &fileNames,
-        std::vector<Slice *> *results,
+        QVector<Slice *> *results,
         QObject *parent)
     : QThread(parent)
 {

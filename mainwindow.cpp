@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(containerWidget2);
     ui->stackedWidget->setCurrentWidget(containerWidget);
 
+    this->pGLWidget = new MyGLWidget();
+
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
@@ -98,7 +100,7 @@ void MainWindow::on_actionOpenDICOM_triggered()
     this->progressDialog->setWindowModality(Qt::WindowModal);
     this->progressDialog->show();
 
-    loadDicomThread = new LoadDicomThread(fileNames, &slices, this);
+    loadDicomThread = new LoadDicomThread(fileNames, &vecSlices, this);
     connect(loadDicomThread, SIGNAL(finished()),
             loadDicomThread, SLOT(deleteLater()));
     connect(loadDicomThread, SIGNAL(finished()),
@@ -127,12 +129,12 @@ void MainWindow::filesLoaded()
 {
     this->setCursor(Qt::WaitCursor);
 
-    int howMany = (int)this->slices.size();
+    int howMany = (int)this->vecSlices.size();
     float maxPixel = -1.0;
 
     /* Keep track of maximum pixel value acros all slices */
     for (unsigned int i = 0; i < howMany; i++) {
-        Slice *pSlice = this->slices.at(i);
+        Slice *pSlice = this->vecSlices.at(i);
         Q_ASSERT(pSlice);
         float val = pSlice->getMaxPixel();
         if (val > maxPixel) {
@@ -142,17 +144,19 @@ void MainWindow::filesLoaded()
 
     /* Normalize CT values across all slices */
     for (unsigned int i = 0; i < howMany; i++) {
-        Slice *pSlice = this->slices.at(i);
+        Slice *pSlice = this->vecSlices.at(i);
         Q_ASSERT(pSlice);
         pSlice->normalizePixels(maxPixel);
     }
 
     /* Populate the flow grid layout */
     for (unsigned int i = 0; i < howMany; i++) {
-        Slice *pSlice = this->slices.at(i);
+        Slice *pSlice = this->vecSlices.at(i);
         Q_ASSERT(pSlice);
+
         MyImageWidget *pMyImageWidget = new MyImageWidget();
         Q_ASSERT(pMyImageWidget);
+
         pSlice->setImageWidget(pMyImageWidget);
         pMyImageWidget->setSlice(pSlice);
 
@@ -161,6 +165,9 @@ void MainWindow::filesLoaded()
 
         this->flowLayout->addWidget(pMyImageWidget);
     }
+
+    /* Load the slices to gpu */
+    this->pGLWidget->loadSlices(this->vecSlices);
 
     containerWidget->setLayout(this->flowLayout);
     containerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -174,7 +181,7 @@ void MainWindow::filesLoaded()
     this->setCursor(Qt::ArrowCursor);
 
     this->statusBar()->showMessage(
-                QString::number(this->slices.size()) +
+                QString::number(this->vecSlices.size()) +
                 " files were loaded succesfully.");
 }
 
@@ -196,11 +203,11 @@ void MainWindow::on_actionClose_triggered()
         }
 
         /* Also remove the slices */
-        std::vector<Slice *>::iterator it;
-        for (it = slices.begin(); it != slices.end(); it++) {
+        QVector<Slice *>::iterator it;
+        for (it = vecSlices.begin(); it != vecSlices.end(); it++) {
             delete *it;
         }
-        slices.clear();
+        vecSlices.clear();
     }
     ui->stackedWidget->update();
     this->statusBar()->showMessage("Ready.");
@@ -234,7 +241,7 @@ bool MainWindow::event(QEvent *pEvent)
         } else if (key == Qt::Key_Home) {
             gotoSlice(0);
         } else if (key == Qt::Key_End) {
-            gotoSlice(slices.size() - 1);
+            gotoSlice(vecSlices.size() - 1);
         }
     }
 
@@ -243,9 +250,10 @@ bool MainWindow::event(QEvent *pEvent)
 
 void MainWindow::selectAllSlices(void)
 {
-    std::vector<Slice *>::iterator it;
-    for (it = slices.begin(); it != slices.end(); it++) {
+    QVector<Slice *>::iterator it;
+    for (it = vecSlices.begin(); it != vecSlices.end(); it++) {
         Slice *pSlice = *it;
+        Q_ASSERT(pSlice);
         bool isSelected = pSlice->isSelected();
         pSlice->setSelected(!isSelected);
         pSlice->getImageWidget()->update();
@@ -266,12 +274,7 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
 {
     Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
 
-    /* Get current slice and index */    
-    QLayout *pLayout = containerWidget2->layout();
-    Q_ASSERT(pLayout);
-    MyGLWidget *pMyGLWidget = (MyGLWidget *)pLayout->itemAt(0)->widget();
-    Q_ASSERT(pMyGLWidget);
-    unsigned int idx = pMyGLWidget->getSliceIndex();
+    unsigned int idx = this->pGLWidget->getSliceIndex();
 
     if (dir == SliceDirection::Next) {
         gotoSlice(idx+1);
@@ -280,13 +283,12 @@ void MainWindow::gotoSlice(SliceDirection::is dir)
     }
 }
 
-// ΧΧΧΧΧΧΧΧΧΧΧΧ
 void MainWindow::gotoSlice(int idx)
 {
     /* Check whether we are inside the bounds or we are recycling */
     if (idx < 0) {
-        idx = slices.size() - 1;
-    } else if (idx > slices.size()-1) {
+        idx = vecSlices.size() - 1;
+    } else if (idx > vecSlices.size()-1) {
         idx = 0;
     }
 
@@ -299,16 +301,8 @@ void MainWindow::gotoSlice(int idx)
     }
 
     /* Set new slice */
-    QLayoutItem *pItem = pLayout->itemAt(0);
-    MyGLWidget *pMyGLWidget;
-    if (pItem) {
-        pMyGLWidget = (MyGLWidget *)pItem->widget();
-    } else {
-        pMyGLWidget = new MyGLWidget();
-    }
-    Q_ASSERT(pMyGLWidget);
-    pMyGLWidget->setSlice(slices[idx]);
-    pLayout->addWidget(pMyGLWidget);
+    this->pGLWidget->setSlice(this->vecSlices[idx]);
+    pLayout->addWidget(this->pGLWidget);
     containerWidget2->setLayout(pLayout);
     containerWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     ui->stackedWidget->setCurrentWidget(containerWidget2);
@@ -326,7 +320,7 @@ void MainWindow::updateStatusBarForSlice(void) const
     unsigned int idx = pMyGLWidget->getSliceIndex() + 1;
 
     this->statusBar()->showMessage(
-                QString("Slice: %1 / %2").arg(idx).arg(slices.size()));
+                QString("Slice: %1 / %2").arg(idx).arg(vecSlices.size()));
 }
 
 void MainWindow::wheelEvent(QWheelEvent *pEvent)
@@ -344,27 +338,7 @@ void MainWindow::wheelEvent(QWheelEvent *pEvent)
 void MainWindow::on_actionDistance_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-
-    MyGLWidget *pMyGLWidget = this->currentGLWidget();
-    if (pMyGLWidget) {
-        bool flag = pMyGLWidget->isDistanceMeasureEnabled();
-        pMyGLWidget->setDistanceMeasure(!flag);  // toggle
-    }
+    bool flag = this->pGLWidget->isDistanceMeasureEnabled();
+    this->pGLWidget->setDistanceMeasure(!flag);  // toggle
 }
 
-MyGLWidget *MainWindow::currentGLWidget(void)
-{
-    if (ui->stackedWidget->currentWidget() != containerWidget2) {
-        return NULL;
-    }
-
-    QLayout *pLayout = containerWidget2->layout();
-    if (!pLayout) {
-        return NULL;
-    }
-
-    MyGLWidget *pMyGLWidget = (MyGLWidget *)
-            pLayout->itemAt(0)->widget();
-
-    return pMyGLWidget;
-}
