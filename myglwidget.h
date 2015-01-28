@@ -20,10 +20,9 @@ public:
 
     void loadSlices(QVector<Slice *> vecSlices);
     void setSlice(Slice *pSlice);
-    const Slice * getSlice() const;
+    const Slice *getSlice() const;
     unsigned int getSliceIndex() const;
 
-    //
     void setDistanceMeasure(bool enabled) { this->measureDistance = enabled; }
     bool isDistanceMeasureEnabled(void) const { return this->measureDistance; }
 
@@ -32,23 +31,21 @@ signals:
 
 protected:
     virtual void initializeGL();
+    virtual void paintEvent(QPaintEvent *pEvent);
     virtual void resizeGL(int w, int h);
-    //virtual void paintGL();
 
-    void mousePressEvent (QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void paintEvent(QPaintEvent *event);
+    void mouseMoveEvent(QMouseEvent *pEvent);
+    void mousePressEvent (QMouseEvent *pEvent);
+    void mouseReleaseEvent(QMouseEvent *pEvent);
 
 private:
-    void loadTexture(float *pRawData, unsigned int width, unsigned int height, GLint format);
     void drawDetails(QPainter *pPainter);
     void drawOutline(QPainter *pPainter);
-    void drawCurrentDistance(QPainter *painter);
-    void drawDistances(QPainter *painter);
+    void drawCurrentDistance(QPainter *pPainter);
+    void drawDistances(QPainter *pPainter);
     unsigned int calcPhysicalDistance(QLine *pLine);
 
-    // A vector with all lines
+    /* A vector with all the lines corresponding to measured distances */
     QVector<QLine> vecDists;
 
     /* Whether we are measuring distance at the moment or not */
@@ -56,11 +53,11 @@ private:
     QPoint startPoint;  /* Start point of measurement */
     QPoint endPoint;    /* End point of measurement */
 
-    //
     QGLShaderProgram *pProgram;
 
-    /* The min and max values in our tranfer function,
-     * corresponding to min and max pixel luminance (range: 0.0 - 1.0)
+    /* The min and max values in our tranfer function, corresponding to min and
+     * max pixel luminance (range: 0.0 - 1.0). These values will be passed to
+     * the fragment shader.
      */
     float tmin;
     float tmax;
@@ -73,9 +70,12 @@ private:
     //Magick::Image *pMagickImage;
     //Magick::Blob blob;
 
-    GLuint textureID;
+    /* Pointer to a dynamically allocated array with texture IDs (each slice
+     * corresponds to one texture ID).
+     */
     GLuint *pTexIDs;
 
+    /* Currently displayed slice */
     Slice *pSlice;
 
     /* A vector containing (pointers to) all slices managed by this widget */
