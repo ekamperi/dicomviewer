@@ -31,6 +31,9 @@ MyGLWidget::~MyGLWidget()
 //    }
 //    Q_ASSERT(this->pProgram);
 //    delete this->pProgram;
+    /* Don't forget to delete the textures */
+    glDeleteTextures(this->vecSlices.size(), this->pTexIDs);
+    Q_ASSERT(glGetError() == GL_NO_ERROR);
 }
 
 void MyGLWidget::setSlice(Slice *pSlice)
@@ -152,7 +155,6 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
 {
     qDebug() << Q_FUNC_INFO;
     qDebug() << "tmin=" << this->tmin << "tmax=" << this->tmax;
-    qDebug() << event->rect();
 
     QPainter painter;
     painter.begin(this);
@@ -325,7 +327,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
     }
 }
 
-const Slice * MyGLWidget::getSlice() const
+const Slice *MyGLWidget::getSlice() const
 {
     Q_ASSERT(this->pSlice);
     return this->pSlice;
