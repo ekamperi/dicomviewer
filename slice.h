@@ -73,14 +73,16 @@ private:
     GLint format;
     float maxPixel;
 
+    /* Name, sex, age, etc */
     ExamDetails examDetails;
 
     /* Default window/width in Hounsfield Units, e.g. 40/400 */
-    HounsFieldUnit defHUWindowWidth;
+    HUConverter defHUWindowWidth;
 
-    /* Whether this slice was selected by user */
+    /* Whether this slice was selected by user. If yes, we draw a red outline  */
     bool m_isSelected;
 
+    /* MyImageWidget is used in the grid layout */
     MyImageWidget *pMyImageWidget;
 };
 

@@ -57,7 +57,7 @@ void DicomFile::loadDicomFile(QString filename)
         pDcmDataset->findAndGetFloat64(DCM_RescaleIntercept, rescaleIntercept).good()) {
     }
 
-    this->defHUF.setSlopeIntercept(rescaleSlope, rescaleIntercept);
+    this->huConverter.setSlopeIntercept(rescaleSlope, rescaleIntercept);
 
     /* Extract pixel spacing: 10.7.1.3 Pixel Spacing Value Order and Valid Values
      * The first value is the row spacing in mm, that is the spacing between the centers
@@ -157,7 +157,7 @@ float *DicomFile::getUncompressedData()
     double currWindowWidth ;
     pDicomImage->setWindow(0);
     pDicomImage->getWindow(currWindowCenter, currWindowWidth);
-    this->defHUF.setDefaultCenterWidth(currWindowCenter, currWindowWidth);
+    this->huConverter.setDefaultCenterWidth(currWindowCenter, currWindowWidth);
 
     if (pDicomImage->isMonochrome()) {
         /* Extract the 16bit raw pixel data */

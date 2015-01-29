@@ -372,7 +372,8 @@ unsigned int MyGLWidget::getSliceIndex() const
 
 unsigned int MyGLWidget::calcMeanDensity(int dist)
 {
-    /* Get the points that are enclosed by the user-defined circle */
+    /* Get the points that are enclosed by the user-defined circle
+     * with center 'this->startPoint' and radius 'dist' */
     QVector<QPoint> vecPoints;
     this->getPointsInCircle(&vecPoints, this->startPoint, dist);
 
@@ -381,7 +382,7 @@ unsigned int MyGLWidget::calcMeanDensity(int dist)
     Q_ASSERT(pPixelData);
 
     float totalLuminance = 0.0;
-    unsigned int height = this->pSlice->getHeight();
+    int height = this->pSlice->getHeight();
     for (int i = 0; i < vecPoints.size(); i++) {
         QPoint point = vecPoints.at(i);
         totalLuminance += pPixelData[point.y()*(height-1) + point.x()];

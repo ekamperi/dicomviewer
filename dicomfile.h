@@ -39,18 +39,24 @@ public:
     float getHorizontalSpacing(void) const { return this->hSpacing; }
     float getVerticalSpacing(void) const { return this->vSpacing; }
 
-    HounsFieldUnit getDefaultHUF(void) const { return this->defHUF; }
+    HUConverter getDefaultHUF(void) const { return this->huConverter; }
 
 private:
     QString filename;
     DcmFileFormat dcmFileFormat;
     DcmDataset *pDcmDataset;
 
+    /* Vertical and horizontal pixel spacing used to convert
+     * pixel distance to physical distance */
     float vSpacing;
     float hSpacing;
 
+    /* Maximum pixel value across all slices used to normalize
+     * luminance over all slices */
     Uint16 maxPixel;
-    HounsFieldUnit defHUF;
+
+    /* Helper class to convert between raw pixel data and Hounsfield Units */
+    HUConverter huConverter;
 
     /* Image data */
     //Magick::Blob *pRawBlob;

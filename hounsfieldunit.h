@@ -11,11 +11,12 @@ namespace HUWindows {
     };
 }
 
-class HounsFieldUnit
+class HUConverter
 {
 public:
-    HounsFieldUnit();
-    HounsFieldUnit(float slope, float intercept);
+    HUConverter();
+    HUConverter(float slope, float intercept);
+    float rawToHUs(float pixelValue);
 
     void setSlopeIntercept(float slope, float intercept) {
         this->slope = slope;

@@ -4,7 +4,7 @@
 #include <QtDebug>
 #include <QtGlobal>
 
-HounsFieldUnit::HounsFieldUnit()
+HUConverter::HUConverter()
 {
     qDebug() << Q_FUNC_INFO;
     this->slope = 0.0;
@@ -12,14 +12,14 @@ HounsFieldUnit::HounsFieldUnit()
     this->maxPixel = 1.0;
 }
 
-HounsFieldUnit::HounsFieldUnit(float slope, float intercept)
+HUConverter::HUConverter(float slope, float intercept)
 {
     qDebug() << Q_FUNC_INFO;
     this->slope = slope;
     this->intercept = intercept;
 }
 
-QPair<float, float> HounsFieldUnit::getRawRange(float huCenter, float huWidth) const
+QPair<float, float> HUConverter::getRawRange(float huCenter, float huWidth) const
 {
     qDebug() << Q_FUNC_INFO;
     qDebug() << "huCenter = " << huCenter << "huWidth = " << huWidth << "maxPIxel = " << this->maxPixel;
@@ -43,7 +43,7 @@ QPair<float, float> HounsFieldUnit::getRawRange(float huCenter, float huWidth) c
 }
 
 QPair<float, float>
-HounsFieldUnit::getDefaultNormalizedRange(void) const
+HUConverter::getDefaultNormalizedRange(void) const
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -51,7 +51,7 @@ HounsFieldUnit::getDefaultNormalizedRange(void) const
 }
 
 QPair<float, float>
-HounsFieldUnit::getNormalizedRangeFromTemplate(HUWindows::window window) const
+HUConverter::getNormalizedRangeFromTemplate(HUWindows::window window) const
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -74,9 +74,19 @@ HounsFieldUnit::getNormalizedRangeFromTemplate(HUWindows::window window) const
     return this->getRawRange(huCenter, huWidth);
 }
 
-void HounsFieldUnit::normalize(float maxPixel)
+void HUConverter::normalize(float maxPixel)
 {
     qDebug() << Q_FUNC_INFO;
 
     this->maxPixel = maxPixel;
+}
+
+float HUConverter::rawToHUs(float pixelValue)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* HUs = value * slope + intercept */
+    float huValue = pixelValue * this->slope + this->intercept;
+
+    return huValue;
 }
