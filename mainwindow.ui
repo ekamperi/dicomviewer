@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -71,6 +71,7 @@
      </property>
      <addaction name="actionDistance"/>
      <addaction name="actionAngle"/>
+     <addaction name="actionDensity_HUs"/>
     </widget>
     <addaction name="menuMeasure"/>
    </widget>
@@ -132,8 +133,19 @@
    </property>
   </action>
   <action name="actionAngle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Angle</string>
+   </property>
+  </action>
+  <action name="actionDensity_HUs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Density (HUs)</string>
    </property>
   </action>
  </widget>

@@ -41,6 +41,7 @@ Slice::~Slice()
 void Slice::normalizePixels(float maxPixel)
 {
     Q_ASSERT(maxPixel > 0.0);
+    qDebug() << Q_FUNC_INFO << " maxPixel = " << maxPixel;
 
     for (unsigned long i = 0; i < this->width * this->height; i++) {
         this->pRawPixelData[i] = this->pRawPixelData[i] / maxPixel;

@@ -199,7 +199,11 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     this->drawDistances(&painter);
     if (this->measureDistance) {
         this->drawCurrentDistance(&painter);
-        this->update();
+    }
+
+    /* Draw any measuring densities */
+    if (this->measureDensity) {
+        this->drawCurrentDensity(&painter);
     }
 
     painter.end();
@@ -247,6 +251,31 @@ void MyGLWidget::drawCurrentDistance(QPainter *painter)
                 (this->startPoint.x()+this->endPoint.x())/2 - 15,
                 (this->startPoint.y()+this->endPoint.y())/2 - 15);
     painter->drawText(textPoint, QString::number(physicalDist) + " mm");
+
+    painter->setPen(oldPen);
+}
+
+void MyGLWidget::drawCurrentDensity(QPainter *painter)
+{
+    Q_ASSERT(painter);
+
+    QPen oldPen, myPen;
+    oldPen = painter->pen();
+    myPen.setWidth(3);
+    myPen.setColor(QColor(255, 0, 0, 255));
+    painter->setPen(myPen);
+
+    /* Draw a circle with center at mouse cursor click and a varying radius */
+    float dx = this->endPoint.x() - this->startPoint.x();
+    float dy = this->endPoint.y() - this->startPoint.y();
+    int dist = sqrt(dx*dx + dy*dy);
+    painter->drawEllipse(this->startPoint, dist, dist);
+
+    /* Calculate mean density over the above region */
+    int meanDensity = this->calcMeanDensity(dist);
+
+    /* Display result */
+    painter->drawText(this->startPoint, QString::number(meanDensity) + " HUs");
 
     painter->setPen(oldPen);
 }
@@ -303,7 +332,10 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
         if (this->measureDistance) {
             this->endPoint = pEvent->pos();
             this->update();
-       }
+       } else if (this->measureDensity) {
+            this->endPoint = pEvent->pos();
+            this->update();
+        }
     }
     pEvent->ignore();
 }
@@ -338,6 +370,31 @@ unsigned int MyGLWidget::getSliceIndex() const
     return this->pSlice->getIndex();
 }
 
+unsigned int MyGLWidget::calcMeanDensity(int dist)
+{
+    /* Get the points that are enclosed by the user-defined circle */
+    QVector<QPoint> vecPoints;
+    this->getPointsInCircle(&vecPoints, this->startPoint, dist);
+
+    /* Calculate average luminance over these points */
+    float *pPixelData = this->pSlice->getRawPixelData();
+    Q_ASSERT(pPixelData);
+
+    float totalLuminance = 0.0;
+    unsigned int height = this->pSlice->getHeight();
+    for (int i = 0; i < vecPoints.size(); i++) {
+        QPoint point = vecPoints.at(i);
+        totalLuminance += pPixelData[point.y()*(height-1) + point.x()];
+    }
+
+    qDebug() << " start =" << this->startPoint;
+    qDebug() << "avg luminance =" << totalLuminance / vecPoints.size();
+
+    /* XXX: We need to convert luminance to HUs */
+
+    return (unsigned int) (totalLuminance / vecPoints.size());
+}
+
 unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
 {
     Q_ASSERT(pLine);
@@ -356,4 +413,27 @@ unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
     /* Physical distance unit is millimeter.
      * No need to have a resolution less than 1mm */
     return (unsigned int)len;
+}
+
+void MyGLWidget::getPointsInCircle(QVector<QPoint> *pVecPoints,
+                                   QPoint centerPoint, float radius)
+{
+    Q_ASSERT(pVecPoints);
+
+    /* Calculate bounding box coordinates */
+    int left   = centerPoint.x() - radius;
+    int top    = centerPoint.y() - radius;
+    int right  = centerPoint.x() + radius;
+    int bottom = centerPoint.y() + radius;
+
+    for (int x = left; x < right; x++) {
+        for (int y = top; y < bottom; y++) {
+            float dx = x - centerPoint.x();
+            float dy = y - centerPoint.y();
+            float distSquared = dx*dx + dy*dy;
+            if (distSquared < radius*radius) {
+                pVecPoints->push_back(QPoint(x, y));
+            }
+        }
+    }
 }

@@ -334,3 +334,10 @@ void MainWindow::on_actionDistance_triggered()
     this->pGLWidget->setDistanceMeasure(!flag);  // toggle
 }
 
+
+void MainWindow::on_actionDensity_HUs_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    bool flag = this->pGLWidget->isDensityMeasureEnabled();
+    this->pGLWidget->setDensityMeasure(!flag);  // toggle
+}

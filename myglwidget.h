@@ -23,8 +23,13 @@ public:
     const Slice *getSlice() const;
     unsigned int getSliceIndex() const;
 
+    /* Measure distance */
     void setDistanceMeasure(bool enabled) { this->measureDistance = enabled; }
     bool isDistanceMeasureEnabled(void) const { return this->measureDistance; }
+
+    /* Measure density in Hounsfield units */
+    void setDensityMeasure(bool enabled) { this->measureDensity = enabled; }
+    bool isDensityMeasureEnabled(void) const { return this->measureDensity; }
 
 signals:
     void windowChanged(int x);
@@ -41,8 +46,13 @@ protected:
 private:
     void drawDetails(QPainter *pPainter);
     void drawOutline(QPainter *pPainter);
+    void drawCurrentDensity(QPainter *pPainter);
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
+
+    void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
+
+    unsigned int calcMeanDensity(int dist);
     unsigned int calcPhysicalDistance(QLine *pLine);
 
     /* A vector with all the lines corresponding to measured distances */
@@ -50,6 +60,7 @@ private:
 
     /* Whether we are measuring distance at the moment or not */
     bool measureDistance;
+    bool measureDensity;
     QPoint startPoint;  /* Start point of measurement */
     QPoint endPoint;    /* End point of measurement */
 

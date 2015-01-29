@@ -42,6 +42,8 @@ private slots:
 
     void on_actionDistance_triggered();
 
+    void on_actionDensity_HUs_triggered();
+
 private:
     Ui::MainWindow *ui;
 
