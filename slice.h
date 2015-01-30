@@ -59,7 +59,11 @@ public:
         return this->maxPixel;
     }
 
-    void normalizePixels(float maxPixel);
+    float getGlobalMaxPixel(void) const {
+        return this->globalMaxPixel;
+    }
+
+    void normalizePixels(float globalMaxPixel);
 
     QPair<float, float> getDefaultWindowWidth(void) const;
     DicomFile *pDicomFile;
@@ -71,7 +75,11 @@ private:
     unsigned int width;
     unsigned int height;
     GLint format;
+
     float maxPixel;
+
+    /* Global max pixel (across all slices) */
+    float globalMaxPixel;
 
     /* Name, sex, age, etc */
     ExamDetails examDetails;

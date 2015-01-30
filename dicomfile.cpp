@@ -169,12 +169,15 @@ float *DicomFile::getUncompressedData()
         Q_ASSERT(cond.good());
         Q_ASSERT(cnt > 0);
 
-        /* Extract the useful 12bit worth of data (0-11bit, Little Endian) */
+        /* Extract the useful 12bit worth of data (0-11bit, Little Endian)
+         * XXX: number of bits used and endianness must be extracted from .dcm file
+         */
         float *pixels = (float *) malloc(cnt * sizeof(float));
         Q_ASSERT(pixels);
+
         this->maxPixel = 0;
         for (unsigned long i = 0; i < cnt; i++) {
-            Uint16 pixel = (rawPixel[i] & 0x0FFF) >> 4;
+            Uint16 pixel = rawPixel[i] & 0x0FFF;
             if (pixel > this->maxPixel) {
                 this->maxPixel = pixel;
             }

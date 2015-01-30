@@ -151,9 +151,6 @@ void MyGLWidget::resizeGL(int w, int h)
 
 void MyGLWidget::paintEvent(QPaintEvent *event)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "tmin=" << this->tmin << "tmax=" << this->tmax;
-
     QPainter painter;
     painter.begin(this);
 
@@ -262,7 +259,7 @@ void MyGLWidget::drawCurrentDensity(QPainter *painter)
     QPen oldPen, myPen;
     oldPen = painter->pen();
     myPen.setWidth(3);
-    myPen.setColor(QColor(255, 0, 0, 255));
+    myPen.setColor(QColor(255, 0, 0, 200));
     painter->setPen(myPen);
 
     /* Draw a circle with center at mouse cursor click and a varying radius */
@@ -272,7 +269,7 @@ void MyGLWidget::drawCurrentDensity(QPainter *painter)
     painter->drawEllipse(this->startPoint, dist, dist);
 
     /* Calculate mean density over the above region */
-    int meanDensity = this->calcMeanDensity(dist);
+    int meanDensity = this->calcMeanDensity(painter, dist);
 
     /* Display result */
     painter->drawText(this->startPoint, QString::number(meanDensity) + " HUs");
@@ -370,7 +367,7 @@ unsigned int MyGLWidget::getSliceIndex() const
     return this->pSlice->getIndex();
 }
 
-unsigned int MyGLWidget::calcMeanDensity(int dist)
+int MyGLWidget::calcMeanDensity(QPainter *painter, int dist)
 {
     /* Get the points that are enclosed by the user-defined circle
      * with center 'this->startPoint' and radius 'dist' */
@@ -382,18 +379,34 @@ unsigned int MyGLWidget::calcMeanDensity(int dist)
     Q_ASSERT(pPixelData);
 
     float totalLuminance = 0.0;
-    int height = this->pSlice->getHeight();
+    int width = this->pSlice->getWidth();
     for (int i = 0; i < vecPoints.size(); i++) {
-        QPoint point = vecPoints.at(i);
-        totalLuminance += pPixelData[point.y()*(height-1) + point.x()];
+        QPoint oldPoint = vecPoints.at(i);
+        QPoint newPoint;
+        float w1 = this->pSlice->getWidth();
+        float w2 = this->width();
+        float h1 = this->pSlice->getHeight();
+        float h2 = this->height();
+        newPoint.setX(((h2-h1) / (w2-w1)) * oldPoint.x());
+        newPoint.setY(((h2-h1) / (w2-w1)) * oldPoint.y());
+        totalLuminance += pPixelData[newPoint.y()*width + newPoint.x()];
+        //painter->drawPoint(point);
     }
 
     qDebug() << " start =" << this->startPoint;
-    qDebug() << "avg luminance =" << totalLuminance / vecPoints.size();
+    qDebug() << " total points = " << vecPoints.size();
+    qDebug() << "total luminance = " << totalLuminance;
+    qDebug() << "avg luminance =" << totalLuminance / vecPoints.size()
+             << "max pixel = " << this->pSlice->getGlobalMaxPixel();
 
-    /* XXX: We need to convert luminance to HUs */
+    /* We need to convert luminance to HUs via the linear transformation:
+       HU = value * slope + intercept -> <HU> = <value> * slope + intercept
+       Where <x> denotes mean value of 'x'
+    */
+    float meanHUs =
+         (this->pSlice->getGlobalMaxPixel() * totalLuminance / vecPoints.size()) - 1024;
 
-    return (unsigned int) (totalLuminance / vecPoints.size());
+    return (int) (meanHUs);
 }
 
 unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)

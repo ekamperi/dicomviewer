@@ -38,17 +38,19 @@ Slice::~Slice()
     delete this->pDicomFile;
 }
 
-void Slice::normalizePixels(float maxPixel)
+void Slice::normalizePixels(float globalMaxPixel)
 {
     Q_ASSERT(maxPixel > 0.0);
-    qDebug() << Q_FUNC_INFO << " maxPixel = " << maxPixel;
+    qDebug() << Q_FUNC_INFO << " globalMaxPixel = " << globalMaxPixel;
+
+    this->globalMaxPixel = globalMaxPixel;
 
     for (unsigned long i = 0; i < this->width * this->height; i++) {
-        this->pRawPixelData[i] = this->pRawPixelData[i] / maxPixel;
+        this->pRawPixelData[i] = this->pRawPixelData[i] / globalMaxPixel;
     }
 
     /* Also normalize the window center/width */
-    this->defHUWindowWidth.normalize(maxPixel);
+    this->defHUWindowWidth.normalize(globalMaxPixel);
 }
 
 QPair<float, float> Slice::getDefaultWindowWidth(void) const

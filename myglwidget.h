@@ -52,7 +52,7 @@ private:
 
     void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
 
-    unsigned int calcMeanDensity(int dist);
+    int calcMeanDensity(QPainter *painter, int dist);
     unsigned int calcPhysicalDistance(QLine *pLine);
 
     /* A vector with all the lines corresponding to measured distances */
