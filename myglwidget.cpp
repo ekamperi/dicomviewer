@@ -379,25 +379,17 @@ int MyGLWidget::calcMeanDensity(QPainter *painter, int dist)
     Q_ASSERT(pPixelData);
 
     float totalLuminance = 0.0;
-    int width = this->pSlice->getWidth();
+    QPoint newPoint;
     for (int i = 0; i < vecPoints.size(); i++) {
         QPoint oldPoint = vecPoints.at(i);
-        QPoint newPoint;
-        float w1 = this->pSlice->getWidth();
-        float w2 = this->width();
-        float h1 = this->pSlice->getHeight();
-        float h2 = this->height();
-        newPoint.setX(((h2-h1) / (w2-w1)) * oldPoint.x());
-        newPoint.setY(((h2-h1) / (w2-w1)) * oldPoint.y());
-        totalLuminance += pPixelData[newPoint.y()*width + newPoint.x()];
-        //painter->drawPoint(point);
+            float w1 = this->pSlice->getWidth();
+            float w2 = this->width();
+            float h1 = this->pSlice->getHeight();
+            float h2 = this->height();
+            newPoint.setX((w1/w2) * oldPoint.x());
+            newPoint.setY((h1/h2) * oldPoint.y());
+            totalLuminance += pPixelData[newPoint.y()*this->pSlice->getWidth() + newPoint.x()];
     }
-
-    qDebug() << " start =" << this->startPoint;
-    qDebug() << " total points = " << vecPoints.size();
-    qDebug() << "total luminance = " << totalLuminance;
-    qDebug() << "avg luminance =" << totalLuminance / vecPoints.size()
-             << "max pixel = " << this->pSlice->getGlobalMaxPixel();
 
     /* We need to convert luminance to HUs via the linear transformation:
        HU = value * slope + intercept -> <HU> = <value> * slope + intercept
@@ -435,8 +427,8 @@ void MyGLWidget::getPointsInCircle(QVector<QPoint> *pVecPoints,
     Q_ASSERT(pVecPoints);
 
     /* Calculate bounding box coordinates */
-    int left   = centerPoint.x() - radius;
-    int top    = centerPoint.y() - radius;
+    int left   = qMax(0.0f, centerPoint.x() - radius);
+    int top    = qMax(0.0f, centerPoint.y() - radius);
     int right  = centerPoint.x() + radius;
     int bottom = centerPoint.y() + radius;
 
