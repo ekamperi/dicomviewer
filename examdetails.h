@@ -33,9 +33,7 @@ public:
         return this->details["patientBirthDate"];
     }
 
-    QString getStudyDate(void) const {
-        return this->details["studyDate"];
-    }
+    QString getStudyDate(void) const;
 
     QMap<QString, QString> getDetails(void) {
         return this->details;
