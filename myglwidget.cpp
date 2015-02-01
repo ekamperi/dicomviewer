@@ -388,7 +388,9 @@ int MyGLWidget::calcMeanDensity(QPainter *painter, int dist)
             float h2 = this->height();
             newPoint.setX((w1/w2) * oldPoint.x());
             newPoint.setY((h1/h2) * oldPoint.y());
-            totalLuminance += pPixelData[newPoint.y()*this->pSlice->getWidth() + newPoint.x()];
+            totalLuminance +=
+                    pPixelData[
+                        newPoint.y()*this->pSlice->getWidth() + newPoint.x()];
     }
 
     /* We need to convert luminance to HUs via the linear transformation:
@@ -396,10 +398,13 @@ int MyGLWidget::calcMeanDensity(QPainter *painter, int dist)
        Where <x> denotes mean value of 'x'
     */
     const HUConverter *pHUConverter = this->pSlice->pDicomFile->getHUConverter();
+    Q_ASSERT(pHUConverter);
+
+    float slope = pHUConverter->getSlope();
     float intercept = pHUConverter->getIntercept();
-    qDebug() << "iintercept=" << intercept;
     float meanHUs =
-         (this->pSlice->getGlobalMaxPixel() * totalLuminance / vecPoints.size()) + intercept;
+         (this->pSlice->getGlobalMaxPixel() * slope * totalLuminance / vecPoints.size())
+            + intercept;
 
     return (int) (meanHUs);
 }
@@ -430,6 +435,7 @@ void MyGLWidget::getPointsInCircle(QVector<QPoint> *pVecPoints,
     Q_ASSERT(pVecPoints);
 
     /* Calculate bounding box coordinates */
+    /* Discard points with negative (offscreen) coordinates */
     int left   = qMax(0.0f, centerPoint.x() - radius);
     int top    = qMax(0.0f, centerPoint.y() - radius);
     int right  = centerPoint.x() + radius;
