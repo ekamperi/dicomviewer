@@ -35,6 +35,8 @@ public:
 
     QString getStudyDate(void) const;
 
+    QString getStudyTime(void) const;
+
     QMap<QString, QString> getDetails(void) {
         return this->details;
     }

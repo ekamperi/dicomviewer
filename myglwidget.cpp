@@ -223,7 +223,8 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
                 + ", ID: " + examDetails.getPatientID()  + "\n"
                 +  "Age: " + examDetails.getPatientAge() + "\n"
                 +  "Sex: " + examDetails.getPatientSex() + "\n"
-                + "Date: " + examDetails.getStudyDate());
+                + "Date: " + examDetails.getStudyDate() + "\n"
+                + "Time: " + examDetails.getStudyTime());
 }
 
 void MyGLWidget::drawCurrentDistance(QPainter *painter)

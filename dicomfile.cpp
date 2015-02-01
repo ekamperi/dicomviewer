@@ -342,7 +342,8 @@ ExamDetails DicomFile::getExamDetails(void)
     { DCM_PatientAge,       "patientAge"       },
     { DCM_PatientSex,       "patientSex"       },
     { DCM_PatientBirthDate, "patientBirthDate" },
-    { DCM_StudyDate,        "studyDate"	       }
+    { DCM_StudyDate,        "studyDate"	       },
+    { DCM_StudyTime,        "studyTime"        }
 };
 
     /* Calculate size of array */
