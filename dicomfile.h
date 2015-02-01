@@ -39,7 +39,7 @@ public:
     float getHorizontalSpacing(void) const { return this->hSpacing; }
     float getVerticalSpacing(void) const { return this->vSpacing; }
 
-    HUConverter getDefaultHUF(void) const { return this->huConverter; }
+    const HUConverter *getHUConverter(void) const { return this->pHUConverter; }
 
 private:
     QString filename;
@@ -56,7 +56,7 @@ private:
     Uint16 maxPixel;
 
     /* Helper class to convert between raw pixel data and Hounsfield Units */
-    HUConverter huConverter;
+    HUConverter *pHUConverter;
 
     /* Image data */
     //Magick::Blob *pRawBlob;

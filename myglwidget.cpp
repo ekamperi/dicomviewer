@@ -395,8 +395,11 @@ int MyGLWidget::calcMeanDensity(QPainter *painter, int dist)
        HU = value * slope + intercept -> <HU> = <value> * slope + intercept
        Where <x> denotes mean value of 'x'
     */
+    const HUConverter *pHUConverter = this->pSlice->pDicomFile->getHUConverter();
+    float intercept = pHUConverter->getIntercept();
+    qDebug() << "iintercept=" << intercept;
     float meanHUs =
-         (this->pSlice->getGlobalMaxPixel() * totalLuminance / vecPoints.size()) - 1024;
+         (this->pSlice->getGlobalMaxPixel() * totalLuminance / vecPoints.size()) + intercept;
 
     return (int) (meanHUs);
 }

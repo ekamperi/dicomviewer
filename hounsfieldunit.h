@@ -28,6 +28,16 @@ public:
         this->defWidthHU = huWidth;
     }
 
+    float getIntercept(void) const
+    {
+        return this->intercept;
+    }
+
+    float getSlope(void) const
+    {
+        return this->slope;
+    }
+
     void normalize(float maxPixel);
 
     QPair<float, float> getDefaultNormalizedRange(void) const;

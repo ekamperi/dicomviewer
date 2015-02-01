@@ -23,7 +23,7 @@ Slice::Slice(QString filename, unsigned int index)
     this->maxPixel = pDicomFile->getMaxPixel();
 
     /* Extract current window/width */
-    this->defHUWindowWidth = pDicomFile->getDefaultHUF();
+    //this->defHUWindowWidth = pDicomFile->getDefaultHUF();
 
     /* Also extract the examination details (patients name, age, etc) */
     this->examDetails = pDicomFile->getExamDetails();

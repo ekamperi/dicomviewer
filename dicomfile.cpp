@@ -24,6 +24,8 @@ DicomFile::DicomFile()
     this->pList = new QList< QMap<QString, QString> >();
     Q_ASSERT(this->pList);
 
+    this->pHUConverter = new HUConverter();
+
     //this->pRawBlob = NULL;
 }
 
@@ -31,6 +33,9 @@ DicomFile::~DicomFile()
 {
     Q_ASSERT(this->pList);
     delete pList;
+
+    Q_ASSERT(this->pHUConverter);
+    delete this->pHUConverter;
 
 //    if (this->pRawBlob) {
 //        delete this->pRawBlob;
@@ -57,16 +62,20 @@ void DicomFile::loadDicomFile(QString filename)
         pDcmDataset->findAndGetFloat64(DCM_RescaleIntercept, rescaleIntercept).good()) {
     }
 
-    this->huConverter.setSlopeIntercept(rescaleSlope, rescaleIntercept);
+    this->pHUConverter->setSlopeIntercept(rescaleSlope, rescaleIntercept);
 
-    /* Extract pixel spacing: 10.7.1.3 Pixel Spacing Value Order and Valid Values
+    /*
+     * Extract pixel spacing: 10.7.1.3 Pixel Spacing Value Order and Valid Values.
+     *
      * The first value is the row spacing in mm, that is the spacing between the centers
-     * of adjacent rows, or vertical spacing.
-     * The second value is the column spacing in mm, that is the spacing between the centers
-     * of adjacent columns, or horizontal spacing. */
+     * of adjacent rows, or vertical spacing. The second value is the column spacing in mm,
+     * that is the spacing between the centers of adjacent columns, or horizontal spacing.
+     */
     OFString ofsPixelSpacing;
     status = this->pDcmDataset->findAndGetOFStringArray(DCM_PixelSpacing, ofsPixelSpacing);
     Q_ASSERT(status.good());
+
+    /* The values are delimited with an '\' */
     char delim;
     std::stringstream ss(ofsPixelSpacing.c_str());
     ss >> this->vSpacing >> delim >> this->hSpacing;
@@ -157,7 +166,7 @@ float *DicomFile::getUncompressedData()
     double currWindowWidth ;
     pDicomImage->setWindow(0);
     pDicomImage->getWindow(currWindowCenter, currWindowWidth);
-    this->huConverter.setDefaultCenterWidth(currWindowCenter, currWindowWidth);
+    this->pHUConverter->setDefaultCenterWidth(currWindowCenter, currWindowWidth);
 
     if (pDicomImage->isMonochrome()) {
         /* Extract the 16bit raw pixel data */
