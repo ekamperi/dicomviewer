@@ -324,7 +324,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
         if (this->tmin < 0.0) this->tmin = 0.0;
         if (this->tmax > 1.0) this->tmax = 1.0;
 
-        qDebug() << "tmin =" << this->tmin << "tmax =" << this->tmax;
+//        qDebug() << "tmin =" << this->tmin << "tmax =" << this->tmax;
         this->update();
     } else if (pEvent->buttons() & Qt::LeftButton) {
         if (this->measureDistance) {
