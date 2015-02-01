@@ -362,8 +362,8 @@ ExamDetails DicomFile::getExamDetails(void)
     if (result == "CT") {
     } else if (result == "MRI") {
     } else {
-        qDebug() << "Unknown imaging modality. We will not show examination \
-                    specific details";
+        qDebug() << "Unknown imaging modality. We will not show examination " \
+                    "specific details";
     }
 
     return ExamDetails(this->examDetails);

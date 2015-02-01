@@ -41,7 +41,7 @@ Slice::~Slice()
 void Slice::normalizePixels(float globalMaxPixel)
 {
     Q_ASSERT(maxPixel > 0.0);
-    qDebug() << Q_FUNC_INFO << " globalMaxPixel = " << globalMaxPixel;
+    qDebug() << Q_FUNC_INFO << " globalMaxPixel =" << globalMaxPixel;
 
     this->globalMaxPixel = globalMaxPixel;
 
