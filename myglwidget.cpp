@@ -269,7 +269,7 @@ void MyGLWidget::drawCurrentDensity(QPainter *painter)
     painter->drawEllipse(this->startPoint, dist, dist);
 
     /* Calculate mean density over the above region */
-    int meanDensity = this->calcMeanDensity(painter, dist);
+    int meanDensity = this->calcMeanDensity(dist);
 
     /* Display result */
     painter->drawText(this->startPoint, QString::number(meanDensity) + " HUs");
@@ -367,7 +367,7 @@ unsigned int MyGLWidget::getSliceIndex() const
     return this->pSlice->getIndex();
 }
 
-int MyGLWidget::calcMeanDensity(QPainter *painter, int dist)
+int MyGLWidget::calcMeanDensity(int dist)
 {
     /* Get the points that are enclosed by the user-defined circle
      * with center 'this->startPoint' and radius 'dist' */
