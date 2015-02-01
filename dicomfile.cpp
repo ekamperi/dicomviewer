@@ -25,6 +25,7 @@ DicomFile::DicomFile()
     Q_ASSERT(this->pList);
 
     this->pHUConverter = new HUConverter();
+    Q_ASSERT(this->pHUConverter);
 
     //this->pRawBlob = NULL;
 }
