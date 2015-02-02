@@ -215,20 +215,23 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
     Q_ASSERT(pPainter);
 
     QFont font = pPainter->font();
-    font.setPointSize(12);
+    font.setPointSize(10);
     pPainter->setFont(font);
-    pPainter->setPen(Qt::yellow);
+    pPainter->setPen(Qt::gray);
     ExamDetails examDetails = this->pSlice->getExamDetails();
 
+    /* Draw generic examination details (patient name, age, sex, etc) */
     pPainter->drawText(
                 QRect(5, 5, this->width(), this->height()),
                 Qt::TextWordWrap,
-                  "Name: " + examDetails.getPatientName()
-                + ", ID: " + examDetails.getPatientID()  + "\n"
-                +  "Age: " + examDetails.getPatientAge() + "\n"
-                +  "Sex: " + examDetails.getPatientSex() + "\n"
-                + "Date: " + examDetails.getStudyDate() + "\n"
-                + "Time: " + examDetails.getStudyTime());
+                examDetails.getGenericDetails());
+
+    /* Draw specific examination details (e.g. KVp, mAs in CT) */
+    pPainter->drawText(
+                QRect(5, 5 + this->height() - 100,
+                      this->width(), this->height()),
+                      Qt::TextWordWrap,
+                      examDetails.getSpecificDetails(Exam::CT));
 }
 
 void MyGLWidget::drawCurrentDistance(QPainter *painter)

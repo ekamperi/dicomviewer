@@ -7,7 +7,7 @@
 //#include "Magick++.h"
 
 #include "dicomfile.h"
-#include "hounsfieldunit.h"
+#include "huconverter.h"
 
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H
@@ -343,7 +343,13 @@ ExamDetails DicomFile::getExamDetails(void)
     { DCM_PatientSex,       "patientSex"       },
     { DCM_PatientBirthDate, "patientBirthDate" },
     { DCM_StudyDate,        "studyDate"	       },
-    { DCM_StudyTime,        "studyTime"        }
+    { DCM_StudyTime,        "studyTime"        },
+    /* CT specific tags */
+    { DCM_KVP,              "kvp"              },
+    { DCM_XRayTubeCurrent,  "xrayTubeCurrent"  },
+    { DCM_Exposure,         "exposure"         },
+    { DCM_GantryDetectorTilt, "gantryDetectorTilt" },
+    { DCM_SliceThickness,   "sliceThickness"   }
 };
 
     /* Calculate size of array */
@@ -355,7 +361,7 @@ ExamDetails DicomFile::getExamDetails(void)
         this->examDetails.insert(details[i].desc, result);
     }
 
-    /* Get the modality of (CT, MRI, etc) */
+    /* Get the modality of the exam (CT, MRI, etc) */
     OFString result;
     OFCondition status = this->pDcmDataset->findAndGetOFString(DCM_Modality, result);
     Q_ASSERT(status.good());

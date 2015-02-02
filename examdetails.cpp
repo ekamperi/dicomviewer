@@ -20,3 +20,35 @@ QString ExamDetails::getStudyTime(void) const
     QTime myQTime = QTime::fromString(studyTime, "hhmmss");
     return myQTime.toString("hh:mm:ss");
 }
+
+QString ExamDetails::getGenericDetails(void) const
+{
+    qDebug() << Q_FUNC_INFO;
+    QString genericDetails;
+
+    genericDetails =
+            "Name: " + this->getPatientName()
+            + ", ID: " + this->getPatientID()  + "\n"
+            +  "Age: " + this->getPatientAge() + "\n"
+            +  "Sex: " + this->getPatientSex() + "\n"
+            + "Date: " + this->getStudyDate() + "\n"
+            + "Time: " + this->getStudyTime();
+
+    return genericDetails;
+}
+
+QString ExamDetails::getSpecificDetails(Exam::Modality examModality) const
+{
+    qDebug() << Q_FUNC_INFO;
+    QString specificDetails;
+
+    if (examModality == Exam::CT) {
+        specificDetails =
+                        "KVp: " + this->getKVP() + "\n"
+                +  "Exposure: " + this->getExposure() + "\n"
+                +      "Tilt: " + this->getGantryDetectorTilt() + "\n"
+                + "Thickness: " + this->getSliceThickness() + "mm";
+    }
+
+    return specificDetails;
+}

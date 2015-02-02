@@ -4,6 +4,13 @@
 #include <QMap>
 #include <QString>
 
+namespace Exam {
+    enum Modality {
+        CT,
+        MRI
+    };
+}
+
 class ExamDetails
 {
 public:
@@ -34,12 +41,36 @@ public:
     }
 
     QString getStudyDate(void) const;
-
     QString getStudyTime(void) const;
 
+    /* CT specific functions */
+    QString getKVP(void) const {
+        return this->details["kvp"];
+    }
+
+    QString getXRayTubeCurrent(void) const {
+        return this->details["xrayTubeCurrent"];
+    }
+
+    QString getExposure(void) const {
+        return this->details["exposure"];
+    }
+
+    QString getGantryDetectorTilt(void) const {
+        return this->details["gantryDetectorTilt"];
+    }
+
+    QString getSliceThickness(void) const {
+        return this->details["sliceThickness"];
+    }
+
+    /* Aggregate functions */
     QMap<QString, QString> getDetails(void) {
         return this->details;
     }
+
+    QString getGenericDetails(void) const;
+    QString getSpecificDetails(Exam::Modality examModality) const;
 
 private:
     QMap<QString, QString> details;

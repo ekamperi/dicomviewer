@@ -2,7 +2,7 @@
 #define DICOMVIEWER_H
 
 #include "examdetails.h"
-#include "hounsfieldunit.h"
+#include "huconverter.h"
 //#include "Magick++.h"
 #include "GL/gl.h"
 

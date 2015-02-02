@@ -1,4 +1,4 @@
-#include "hounsfieldunit.h"
+#include "huconverter.h"
 #include "math.h"
 
 #include <QtDebug>
