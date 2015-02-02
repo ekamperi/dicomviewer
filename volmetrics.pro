@@ -19,7 +19,7 @@ SOURCES += main.cpp\
     slice.cpp \
     examdetails.cpp \
     flowlayout.cpp \
-    hounsfieldunit.cpp \
+    huconverter.cpp \
     myimagewidget.cpp
 
 HEADERS  += mainwindow.h \
@@ -29,7 +29,7 @@ HEADERS  += mainwindow.h \
     slice.h \
     examdetails.h \
     flowlayout.h \
-    hounsfieldunit.h \
+    huconverter.h \
     myimagewidget.h
 
 FORMS    += mainwindow.ui \
