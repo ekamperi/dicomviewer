@@ -77,6 +77,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionAbout_triggered()
 {
+    QMessageBox::information(
+                NULL,
+                "About", "Volmetrics development branch.\n"
+                "(c) Stathis Kamperis, Eleni-Maria Stea, 2014-5.");
 }
 
 void MainWindow::on_actionOpenDICOM_triggered()
@@ -340,4 +344,35 @@ void MainWindow::on_actionDensity_HUs_triggered()
     qDebug() << Q_FUNC_INFO;
     bool flag = this->pGLWidget->isDensityMeasureEnabled();
     this->pGLWidget->setDensityMeasure(!flag);  // toggle
+}
+
+void MainWindow::on_actionAbdomen_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->getSlice()->setWindow(HUWindows::ABDOMEN);
+}
+
+void MainWindow::on_actionBone_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->getSlice()->setWindow(HUWindows::BONE);
+}
+
+void MainWindow::on_actionLung_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->getSlice()->setWindow(HUWindows::LUNG);
+}
+
+void MainWindow::on_actionHead_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->getSlice()->setWindow(HUWindows::HEAD);
+}
+
+
+void MainWindow::on_actionMediastinum_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->getSlice()->setWindow(HUWindows::MEDIASTINUM);
 }

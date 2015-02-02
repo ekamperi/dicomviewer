@@ -23,7 +23,7 @@ Slice::Slice(QString filename, unsigned int index)
     this->maxPixel = pDicomFile->getMaxPixel();
 
     /* Extract current window/width */
-    //this->defHUWindowWidth = pDicomFile->getDefaultHUF();
+    this->pHUConverter = pDicomFile->getHUConverter();
 
     /* Also extract the examination details (patients name, age, etc) */
     this->examDetails = pDicomFile->getExamDetails();
@@ -50,10 +50,21 @@ void Slice::normalizePixels(float globalMaxPixel)
     }
 
     /* Also normalize the window center/width */
-    this->defHUWindowWidth.normalize(globalMaxPixel);
+    this->pHUConverter->normalize(globalMaxPixel);
 }
 
-QPair<float, float> Slice::getDefaultWindowWidth(void) const
+void Slice::setWindow(HUWindows::window huWindow)
 {
-    return this->defHUWindowWidth.getDefaultNormalizedRange();
+    qDebug() << Q_FUNC_INFO;
+
+    this->huWindow = huWindow;
+
+    QPair<float, float> tMinMax =
+            this->pHUConverter->getNormalizedRangeFromTemplate(this->huWindow);
+
+    /*
+     * Notify any GL widgets that are connected to us, that they need
+     * to repaint the data because thw window/level has changed.
+     */
+    emit this->iNeedRepaint(tMinMax.first, tMinMax.second);
 }

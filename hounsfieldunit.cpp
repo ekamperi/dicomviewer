@@ -22,7 +22,7 @@ HUConverter::HUConverter(float slope, float intercept)
 QPair<float, float> HUConverter::getRawRange(float huCenter, float huWidth) const
 {
     qDebug() << Q_FUNC_INFO;
-    qDebug() << "huCenter = " << huCenter << "huWidth = " << huWidth << "maxPIxel = " << this->maxPixel;
+    qDebug() << "huCenter = " << huCenter << "huWidth = " << huWidth << "maxPixel = " << this->maxPixel;
     qDebug() << "intercept = " << this->intercept;
     qDebug() << "slope = " << this->slope;
 
@@ -39,7 +39,7 @@ QPair<float, float> HUConverter::getRawRange(float huCenter, float huWidth) cons
     lvv = lvv / this->maxPixel;
     hvv = hvv / this->maxPixel;
 
-    return QPair<float, float>(0, 1);
+    return QPair<float, float>(lvv, hvv);
 }
 
 QPair<float, float>
@@ -58,9 +58,15 @@ HUConverter::getNormalizedRangeFromTemplate(HUWindows::window window) const
     float huCenter;
     float huWidth;
 
-    if (window == HUWindows::BONES) {
+    if (window == HUWindows::ABDOMEN) {
+        huCenter = 60;
+        huWidth = 400;
+    } else if (window == HUWindows::BONE) {
         huCenter = 1000;
         huWidth = 2500;
+    } else if (window == HUWindows::HEAD) {
+        huCenter = 40;
+        huWidth = 80;
     } else if (window == HUWindows::LUNG) {
         huCenter = -600;
         huWidth = 1700;

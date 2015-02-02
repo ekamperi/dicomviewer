@@ -20,7 +20,7 @@ public:
 
     void loadSlices(QVector<Slice *> vecSlices);
     void setSlice(Slice *pSlice);
-    const Slice *getSlice() const;
+    Slice *getSlice(void) const;
     unsigned int getSliceIndex() const;
 
     /* Measure distance */
@@ -33,6 +33,9 @@ public:
 
 signals:
     void windowChanged(int x);
+
+private slots:
+    void repaintSlice(float tmin, float tmax);
 
 protected:
     virtual void initializeGL();

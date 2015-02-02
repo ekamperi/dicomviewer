@@ -39,7 +39,7 @@ public:
     float getHorizontalSpacing(void) const { return this->hSpacing; }
     float getVerticalSpacing(void) const { return this->vSpacing; }
 
-    const HUConverter *getHUConverter(void) const { return this->pHUConverter; }
+    HUConverter *getHUConverter(void) const { return this->pHUConverter; }
 
 private:
     QString filename;

@@ -42,6 +42,10 @@ void MyGLWidget::setSlice(Slice *pSlice)
     Q_ASSERT(pSlice);
     this->pSlice = pSlice;
 
+    /* */
+    connect(this->pSlice, SIGNAL(iNeedRepaint(float, float)),
+            this, SLOT(repaintSlice(float, float)));
+
     /* Force a redraw */
     this->update();
 }
@@ -356,7 +360,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
     }
 }
 
-const Slice *MyGLWidget::getSlice() const
+Slice *MyGLWidget::getSlice(void) const
 {
     Q_ASSERT(this->pSlice);
     return this->pSlice;
@@ -452,4 +456,15 @@ void MyGLWidget::getPointsInCircle(QVector<QPoint> *pVecPoints,
             }
         }
     }
+}
+
+void MyGLWidget::repaintSlice(float tmin, float tmax)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "tmin =" << tmin << "tmax =" << tmax;
+
+    this->tmin = tmin;
+    this->tmax = tmax;
+
+    this->update();
 }

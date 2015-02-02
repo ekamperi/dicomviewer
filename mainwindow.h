@@ -44,6 +44,16 @@ private slots:
 
     void on_actionDensity_HUs_triggered();
 
+    void on_actionBone_triggered();
+
+    void on_actionLung_triggered();
+
+    void on_actionMediastinum_triggered();
+
+    void on_actionAbdomen_triggered();
+
+    void on_actionHead_triggered();
+
 private:
     Ui::MainWindow *ui;
 

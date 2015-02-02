@@ -5,7 +5,9 @@
 
 namespace HUWindows {
     enum window {
-        BONES,
+        ABDOMEN,
+        BONE,
+        HEAD,
         LUNG,
         MEDIASTINUM
     };

@@ -6,11 +6,15 @@
 #include "hounsfieldunit.h"
 #include "GL/gl.h"
 
+#include <QObject>
+
 class MyGLWidget;
 class MyImageWidget;
 
-class Slice
+class Slice : public QObject
 {
+    Q_OBJECT
+
 public:
     Slice(QString filename, unsigned int index);
     ~Slice();
@@ -65,8 +69,13 @@ public:
 
     void normalizePixels(float globalMaxPixel);
 
-    QPair<float, float> getDefaultWindowWidth(void) const;
+    void setWindow(HUWindows::window huWindow);
+
+    QPair<float, float> getWindowLevelWidth(void) const;
     DicomFile *pDicomFile;
+
+signals:
+    void iNeedRepaint(float tmin, float tmax);
 
 private:
     unsigned int index;
@@ -85,7 +94,8 @@ private:
     ExamDetails examDetails;
 
     /* Default window/width in Hounsfield Units, e.g. 40/400 */
-    HUConverter defHUWindowWidth;
+    HUConverter *pHUConverter;
+    HUWindows::window huWindow;
 
     /* Whether this slice was selected by user. If yes, we draw a red outline  */
     bool m_isSelected;

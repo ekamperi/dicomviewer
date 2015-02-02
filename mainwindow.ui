@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -63,11 +63,11 @@
      <property name="title">
       <string>Window</string>
      </property>
-     <addaction name="actionLung"/>
-     <addaction name="actionMediastinum"/>
+     <addaction name="actionAbdomen"/>
      <addaction name="actionBone"/>
      <addaction name="actionHead"/>
-     <addaction name="actionAbdomen"/>
+     <addaction name="actionLung"/>
+     <addaction name="actionMediastinum"/>
     </widget>
     <addaction name="menu_Layout"/>
     <addaction name="menuWindow"/>
@@ -159,6 +159,19 @@
     <string>Density (HUs)</string>
    </property>
   </action>
+  <action name="actionBone">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Bone</string>
+   </property>
+  </action>
+  <action name="actionHead">
+   <property name="text">
+    <string>Head</string>
+   </property>
+  </action>
   <action name="actionLung">
    <property name="text">
     <string>Lung</string>
@@ -167,16 +180,6 @@
   <action name="actionMediastinum">
    <property name="text">
     <string>Mediastinum</string>
-   </property>
-  </action>
-  <action name="actionBone">
-   <property name="text">
-    <string>Bone</string>
-   </property>
-  </action>
-  <action name="actionHead">
-   <property name="text">
-    <string>Head</string>
    </property>
   </action>
   <action name="actionAbdomen">
