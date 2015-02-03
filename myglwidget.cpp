@@ -17,6 +17,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     setMouseTracking(true);
 
     this->measureDistance = false;
+    this->measureDensity = false;
 
     this->tmin = 0.0;
     this->tmax = 0.4;
