@@ -53,7 +53,7 @@ void MyImageWidget::loadTexture(float* pRawPixel,
     this->pData = new unsigned char[nPixels];
     Q_ASSERT(this->pData);
 
-    for (int i = 0; i < nPixels; i++) {
+    for (unsigned long i = 0; i < nPixels; i++) {
         this->pData[i] = (unsigned char) (pRawPixel[i] * 255);
     }
 

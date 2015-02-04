@@ -4,6 +4,7 @@
 #include <QtOpenGL>
 
 #include "examdetails.h"
+#include "geomtransformation.h"
 #include "slice.h"
 
 //#include "Magick++.h"
@@ -23,7 +24,10 @@ public:
     Slice *getSlice(void) const;
     unsigned int getSliceIndex() const;
 
-    /* Measure distance */
+    /* Geometric transformations (e.g., flip, etc) */
+    void setGeomTransformation(Geometry::Transformation geomTransformation);
+
+    /* Measure distance in mm */
     void setDistanceMeasure(bool enabled) { this->measureDistance = enabled; }
     bool isDistanceMeasureEnabled(void) const { return this->measureDistance; }
 
@@ -45,6 +49,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *pEvent);
     void mousePressEvent (QMouseEvent *pEvent);
     void mouseReleaseEvent(QMouseEvent *pEvent);
+    void wheelEvent(QWheelEvent *pEvent);
 
 private:
     void drawDetails(QPainter *pPainter);
@@ -81,6 +86,12 @@ private:
     int texWidth;
     int texHeight;
 
+    /* Scale factor used to zoom in/out */
+    float scaleFactor;
+
+    /* Current geometric transformation, such as as flip (if any) */
+    Geometry::Transformation geomTransformation;
+
     //Magick::Image *pMagickImage;
     //Magick::Blob blob;
 
@@ -92,7 +103,11 @@ private:
     /* Currently displayed slice */
     Slice *pSlice;
 
-    /* A vector containing (pointers to) all slices managed by this widget */
+    /*
+     * A vector containing (pointers to) all slices managed by this widget.
+     * Initially, 1 GL Widget would handle 1 slice, but this was super inefficient
+     * due to many opengl contexts being created.
+     */
     QVector<Slice *> vecSlices;
 };
 

@@ -140,7 +140,7 @@ void MainWindow::filesLoaded()
     float maxPixel = -1.0;
 
     /* Keep track of maximum pixel value acros all slices */
-    for (unsigned int i = 0; i < howMany; i++) {
+    for (int i = 0; i < howMany; i++) {
         Slice *pSlice = this->vecSlices.at(i);
         Q_ASSERT(pSlice);
         float val = pSlice->getMaxPixel();
@@ -150,14 +150,14 @@ void MainWindow::filesLoaded()
     }
 
     /* Normalize CT values across all slices */
-    for (unsigned int i = 0; i < howMany; i++) {
+    for (int i = 0; i < howMany; i++) {
         Slice *pSlice = this->vecSlices.at(i);
         Q_ASSERT(pSlice);
         pSlice->normalizePixels(maxPixel);
     }
 
     /* Populate the flow grid layout */
-    for (unsigned int i = 0; i < howMany; i++) {
+    for (int i = 0; i < howMany; i++) {
         Slice *pSlice = this->vecSlices.at(i);
         Q_ASSERT(pSlice);
 
@@ -338,7 +338,6 @@ void MainWindow::on_actionDistance_triggered()
     this->pGLWidget->setDistanceMeasure(!flag);  // toggle
 }
 
-
 void MainWindow::on_actionDensity_HUs_triggered()
 {
     qDebug() << Q_FUNC_INFO;
@@ -370,9 +369,20 @@ void MainWindow::on_actionHead_triggered()
     this->pGLWidget->getSlice()->setWindow(HUWindows::HEAD);
 }
 
-
 void MainWindow::on_actionMediastinum_triggered()
 {
     qDebug() << Q_FUNC_INFO;
     this->pGLWidget->getSlice()->setWindow(HUWindows::MEDIASTINUM);
+}
+
+void MainWindow::on_actionFlip_Horizontally_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->setGeomTransformation(Geometry::FLIP_HORIZONTALLY);
+}
+
+void MainWindow::on_actionFlip_Vertically_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->setGeomTransformation(Geometry::FLIP_VERTICALLY);
 }

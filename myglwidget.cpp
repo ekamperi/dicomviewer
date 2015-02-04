@@ -1,4 +1,5 @@
 #include "examdetails.h"
+#include "geomtransformation.h"
 #include "slice.h"
 #include "myglwidget.h"
 
@@ -7,6 +8,7 @@
 #include <QMouseEvent>
 #include <QtGlobal>
 #include <QtOpenGL/QGLWidget>
+#include <QGLShader>
 
 MyGLWidget::MyGLWidget(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
@@ -14,11 +16,18 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     qDebug() << Q_FUNC_INFO;
 
     //pMagickImage = NULL;
+
+    /* This is necessary in order to track current mouse wheel position */
     setMouseTracking(true);
 
+    /* By default we don't scale (i.e zoom) */
+    this->scaleFactor = 1.0;
+
+    /* By default we don't measure anything */
     this->measureDistance = false;
     this->measureDensity = false;
 
+    /* Default window/width */
     this->tmin = 0.0;
     this->tmax = 0.4;
 }
@@ -43,7 +52,9 @@ void MyGLWidget::setSlice(Slice *pSlice)
     Q_ASSERT(pSlice);
     this->pSlice = pSlice;
 
-    /* */
+    /* When a slice, that we are connected with, needs a repaint
+     * e.g. when its window/width have changed, repaint!
+     */
     connect(this->pSlice, SIGNAL(iNeedRepaint(float, float)),
             this, SLOT(repaintSlice(float, float)));
 
@@ -176,17 +187,21 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
-    /* Bind again (besides setSlice() */
+    /* Bind again (besides setSlice()) */
     glBindTexture(GL_TEXTURE_2D, this->pTexIDs[this->pSlice->getIndex()]);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
+    glPushMatrix();
+    glScalef(this->scaleFactor, this->scaleFactor, this->scaleFactor);
     glBegin(GL_QUADS);
         glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
         glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
         glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
         glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
     glEnd();
+    glPopMatrix();
 
+    /* Should we call this at all ? */
     this->pProgram->release();
 
     /* Proceed with native drawing */
@@ -470,5 +485,63 @@ void MyGLWidget::repaintSlice(float tmin, float tmax)
     this->tmin = tmin;
     this->tmax = tmax;
 
+    /* Force a redraw */
+    this->update();
+}
+
+void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
+{
+    qDebug() << Q_FUNC_INFO;
+    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+        qDebug() << "YES!";
+        pEvent->accept();
+        int delta = pEvent->delta();
+        if (delta > 0) {
+            if (this->scaleFactor > 0.5) {
+                this->scaleFactor -= 0.02;
+            }
+        } else {
+            if (this->scaleFactor < 2.0) {
+                this->scaleFactor += 0.02;
+            }
+        }
+        this->update();
+    }
+
+    /* Let others be notified as well (e.g., the Main Window) */
+    pEvent->ignore();
+}
+
+void MyGLWidget::setGeomTransformation(Geometry::Transformation geomTransformation)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->geomTransformation = geomTransformation;
+    this->makeCurrent();
+
+    QGLShader *glShader = new QGLShader(QGLShader::Vertex);
+    bool rv = false;
+
+    switch (this->geomTransformation) {
+    case Geometry::FLIP_HORIZONTALLY:
+        rv = glShader->compileSourceFile("flipHorVertex.sh");
+        break;
+    case Geometry::FLIP_VERTICALLY:
+        rv = glShader->compileSourceFile("flipVertVertex.sh");
+        break;
+    case Geometry::NO_TRANSFORMATION:
+        return; // XXX
+    }
+    Q_ASSERT(rv);
+
+    this->pProgram->removeAllShaders();
+    rv = this->pProgram->addShader(glShader);
+    Q_ASSERT(rv);
+    rv = this->pProgram->addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
+    Q_ASSERT(rv);
+
+    this->pProgram->bind();
+
+    /* Force a redraw */
     this->update();
 }

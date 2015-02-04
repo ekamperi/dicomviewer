@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -71,6 +71,9 @@
     </widget>
     <addaction name="menu_Layout"/>
     <addaction name="menuWindow"/>
+    <addaction name="separator"/>
+    <addaction name="actionFlip_Horizontally"/>
+    <addaction name="actionFlip_Vertically"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -85,6 +88,7 @@
      <addaction name="actionDensity_HUs"/>
     </widget>
     <addaction name="menuMeasure"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_View"/>
@@ -185,6 +189,22 @@
   <action name="actionAbdomen">
    <property name="text">
     <string>Abdomen</string>
+   </property>
+  </action>
+  <action name="actionFlip_Horizontally">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Flip Horizontally</string>
+   </property>
+  </action>
+  <action name="actionFlip_Vertically">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Flip Vertically</string>
    </property>
   </action>
  </widget>

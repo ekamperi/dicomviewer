@@ -35,6 +35,7 @@ void LoadDicomThread::run()
         this->pResults->push_back(
                     new Slice(fileNames[i], i));
 
+        /* Notify the progress bar on our progress */
         emit this->reportProgress(i);
     }
 }

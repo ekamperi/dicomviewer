@@ -54,6 +54,10 @@ private slots:
 
     void on_actionHead_triggered();
 
+    void on_actionFlip_Horizontally_triggered();
+
+    void on_actionFlip_Vertically_triggered();
+
 private:
     Ui::MainWindow *ui;
 
