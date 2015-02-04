@@ -517,17 +517,17 @@ void MyGLWidget::setGeomTransformation(Geometry::Transformation geomTransformati
     qDebug() << Q_FUNC_INFO;
 
     this->geomTransformation = geomTransformation;
-    this->makeCurrent();
 
-    QGLShader *glShader = new QGLShader(QGLShader::Vertex);
+    QGLShader *pGLShader = new QGLShader(QGLShader::Vertex);
+    Q_ASSERT(pGLShader);
+
     bool rv = false;
-
     switch (this->geomTransformation) {
     case Geometry::FLIP_HORIZONTALLY:
-        rv = glShader->compileSourceFile("flipHorVertex.sh");
+        rv = pGLShader->compileSourceFile("flipHorVertex.sh");
         break;
     case Geometry::FLIP_VERTICALLY:
-        rv = glShader->compileSourceFile("flipVertVertex.sh");
+        rv = pGLShader->compileSourceFile("flipVertVertex.sh");
         break;
     case Geometry::NO_TRANSFORMATION:
         return; // XXX
@@ -535,7 +535,7 @@ void MyGLWidget::setGeomTransformation(Geometry::Transformation geomTransformati
     Q_ASSERT(rv);
 
     this->pProgram->removeAllShaders();
-    rv = this->pProgram->addShader(glShader);
+    rv = this->pProgram->addShader(pGLShader);
     Q_ASSERT(rv);
     rv = this->pProgram->addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
     Q_ASSERT(rv);
