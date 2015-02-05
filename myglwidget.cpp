@@ -139,6 +139,8 @@ void MyGLWidget::png2raw(QString filename)
 
 void MyGLWidget::initializeGL()
 {
+    bool rv;
+
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
@@ -149,10 +151,17 @@ void MyGLWidget::initializeGL()
     /* Default vertex shader */
     QGLShader *pDefVertexShader = new QGLShader(QGLShader::Vertex);
     Q_ASSERT(pDefVertexShader);
-    bool rv;
-    rv = this->pProgram->addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
+    rv = pDefVertexShader->compileSourceFile("./vertex.sh");
     Q_ASSERT(rv);
-    rv = this->pProgram->addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
+    rv = this->pProgram->addShader(pDefVertexShader);
+    Q_ASSERT(rv);
+
+    /* Default fragment shader */
+    QGLShader *pDefFragmentShader = new QGLShader(QGLShader::Fragment);
+    Q_ASSERT(pDefFragmentShader);
+    rv = pDefFragmentShader->compileSourceFile("./fragment.sh");
+    Q_ASSERT(rv);
+    rv = this->pProgram->addShader(pDefFragmentShader);
     Q_ASSERT(rv);
 
     rv = this->pProgram->link();
