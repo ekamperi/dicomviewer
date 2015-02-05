@@ -58,6 +58,13 @@ MainWindow::MainWindow(QWidget *parent) :
     pAlGroupWindowLevel->addAction(ui->actionLung);
     pAlGroupWindowLevel->addAction(ui->actionMediastinum);
 
+    QActionGroup *pAlGroupFlip = new QActionGroup(this);
+    Q_ASSERT(pAlGroupFlip);
+    pAlGroupFlip->addAction(ui->actionFlip_Horizontally);
+    pAlGroupFlip->addAction(ui->actionFlip_Vertically);
+
+    /* Flip horizontally/vertically */
+
     /*
      * Initialize library or else it will abort.
      * It may not be needed in newer versions of it.
