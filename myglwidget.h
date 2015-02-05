@@ -72,6 +72,9 @@ private:
     QPoint startPoint;  /* Start point of measurement */
     QPoint endPoint;    /* End point of measurement */
 
+    /* Shader related variables */
+    QGLShader *pVertexShader;
+    QGLShader *pFragmentShader;
     QGLShaderProgram *pProgram;
 
     /* The min and max values in our tranfer function, corresponding to min and

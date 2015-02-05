@@ -142,10 +142,13 @@ void MyGLWidget::initializeGL()
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    /* Construct the shaders */
+    /* Construct the default vertex and fragment shaders */
     this->pProgram = new QGLShaderProgram(this);
     Q_ASSERT(this->pProgram);
 
+    /* Default vertex shader */
+    QGLShader *pDefVertexShader = new QGLShader(QGLShader::Vertex);
+    Q_ASSERT(pDefVertexShader);
     bool rv;
     rv = this->pProgram->addShaderFromSourceFile(QGLShader::Vertex, "./vertex.sh");
     Q_ASSERT(rv);
@@ -170,7 +173,8 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     QPainter painter;
     painter.begin(this);
 
-    /* This is equivalent to calling glUseProgram() */
+    /* Bind this program shader to current opengl context.
+     * This is equivalent to calling glUseProgram(). */
     Q_ASSERT(this->pProgram);
     bool rv = this->pProgram->bind();
     Q_ASSERT(rv);
@@ -518,29 +522,32 @@ void MyGLWidget::setGeomTransformation(Geometry::Transformation geomTransformati
 
     this->geomTransformation = geomTransformation;
 
-    QGLShader *pGLShader = new QGLShader(QGLShader::Vertex);
-    Q_ASSERT(pGLShader);
+    QGLShader *pNewVertexShader = new QGLShader(QGLShader::Vertex);
+    Q_ASSERT(pNewVertexShader);
 
     bool rv = false;
     switch (this->geomTransformation) {
     case Geometry::FLIP_HORIZONTALLY:
-        rv = pGLShader->compileSourceFile("flipHorVertex.sh");
+        rv = pNewVertexShader->compileSourceFile("./flipHorVertex.sh");
         break;
     case Geometry::FLIP_VERTICALLY:
-        rv = pGLShader->compileSourceFile("flipVertVertex.sh");
+        rv = pNewVertexShader->compileSourceFile("./flipVertVertex.sh");
         break;
     case Geometry::NO_TRANSFORMATION:
-        return; // XXX
+        rv = pNewVertexShader->compileSourceFile("./vertex.sh");
+        break;
     }
     Q_ASSERT(rv);
 
-    this->pProgram->removeAllShaders();
-    rv = this->pProgram->addShader(pGLShader);
-    Q_ASSERT(rv);
-    rv = this->pProgram->addShaderFromSourceFile(QGLShader::Fragment, "./fragment.sh");
-    Q_ASSERT(rv);
+    /* Remove the old vertex shader (the object is not deleted by 'removeShader()') */
+    Q_ASSERT(this->pVertexShader);
+    this->pProgram->removeShader(this->pVertexShader);
+    delete this->pVertexShader;
 
-    this->pProgram->bind();
+    /* Add the new vertex shader */
+    rv = this->pProgram->addShader(pNewVertexShader);
+    Q_ASSERT(rv);
+    this->pVertexShader = pNewVertexShader;
 
     /* Force a redraw */
     this->update();
