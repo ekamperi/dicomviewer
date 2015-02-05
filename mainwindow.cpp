@@ -98,7 +98,7 @@ void MainWindow::on_actionAbout_triggered()
     QMessageBox::information(
                 NULL,
                 "About", "Volmetrics development branch.\n"
-                "(c) Stathis Kamperis, Eleni-Maria Stea, 2014-5.");
+                "(c) Stathis Kamperis, Eleni-Maria Stea, 2014-2015.");
 }
 
 void MainWindow::on_actionOpenDICOM_triggered()
