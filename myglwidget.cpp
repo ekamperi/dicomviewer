@@ -563,3 +563,9 @@ void MyGLWidget::setGeomTransformation(Geometry::Transformation geomTransformati
     /* Force a redraw */
     this->update();
 }
+
+Geometry::Transformation
+MyGLWidget::getGeomTransformation(void) const
+{
+    return this->geomTransformation;
+}

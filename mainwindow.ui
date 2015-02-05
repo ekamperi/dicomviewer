@@ -165,28 +165,40 @@
   </action>
   <action name="actionBone">
    <property name="checkable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Bone</string>
    </property>
   </action>
   <action name="actionHead">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Head</string>
    </property>
   </action>
   <action name="actionLung">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Lung</string>
    </property>
   </action>
   <action name="actionMediastinum">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Mediastinum</string>
    </property>
   </action>
   <action name="actionAbdomen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Abdomen</string>
    </property>

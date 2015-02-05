@@ -25,7 +25,8 @@ public:
     unsigned int getSliceIndex() const;
 
     /* Geometric transformations (e.g., flip, etc) */
-    void setGeomTransformation(Geometry::Transformation geomTransformation);
+    void setGeomTransformation(Geometry::Transformation geomTransformation); 
+    Geometry::Transformation getGeomTransformation(void) const;
 
     /* Measure distance in mm */
     void setDistanceMeasure(bool enabled) { this->measureDistance = enabled; }

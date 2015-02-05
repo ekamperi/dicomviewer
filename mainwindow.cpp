@@ -1,3 +1,4 @@
+#include <QActionGroup>
 #include <QDebug>
 #include <QFileDialog>
 #include <QKeyEvent>
@@ -46,6 +47,16 @@ MainWindow::MainWindow(QWidget *parent) :
      * at all (if the indicator-appmenus is removed.
      */
     this->menuBar()->setNativeMenuBar(false);
+
+    /* Alignment groups (i.e., mutually exlusive checkable menu items) */
+    /* Window/Width menu items (bone, head, lung, mediastinum, etc) */
+    QActionGroup *pAlGroupWindowLevel = new QActionGroup(this);
+    Q_ASSERT(pAlGroupWindowLevel);
+    pAlGroupWindowLevel->addAction(ui->actionAbdomen);
+    pAlGroupWindowLevel->addAction(ui->actionBone);
+    pAlGroupWindowLevel->addAction(ui->actionHead);
+    pAlGroupWindowLevel->addAction(ui->actionLung);
+    pAlGroupWindowLevel->addAction(ui->actionMediastinum);
 
     /*
      * Initialize library or else it will abort.
