@@ -155,6 +155,7 @@ void MyGLWidget::initializeGL()
     Q_ASSERT(rv);
     rv = this->pProgram->addShader(pDefVertexShader);
     Q_ASSERT(rv);
+    this->pVertexShader = pDefVertexShader;
 
     /* Default fragment shader */
     QGLShader *pDefFragmentShader = new QGLShader(QGLShader::Fragment);
@@ -163,6 +164,7 @@ void MyGLWidget::initializeGL()
     Q_ASSERT(rv);
     rv = this->pProgram->addShader(pDefFragmentShader);
     Q_ASSERT(rv);
+    this->pFragmentShader = pDefFragmentShader;
 
     rv = this->pProgram->link();
     Q_ASSERT(rv);
