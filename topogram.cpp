@@ -1,10 +1,12 @@
 #include "topogram.h"
 
 #include <QDebug>
+#include <QVBoxLayout>
 
 Topogram::Topogram(QWidget *parent) : QWidget(parent)
 {
     qDebug() << "-> " << Q_FUNC_INFO;
+    pImage = NULL;
 }
 
 Topogram::Topogram(float *pData, int width, int height,
@@ -23,26 +25,28 @@ Topogram::Topogram(float *pData, int width, int height,
       //  qDebug() << pNewData[i] << " ";
     }
 
-    QImage *qi = new QImage(pNewData, width, height, QImage::Format_Indexed8);
-    Q_ASSERT(qi);
+    this->pImage = new QImage(pNewData, width, height, QImage::Format_Indexed8);
+    Q_ASSERT(this->pImage);
 
     QVector<QRgb> my_table;
-    for(int i = 0; i < 256; i++) my_table.push_back(qRgb(i,i,i));
-    qi->setColorTable(my_table);
+    for (int i = 0; i < 256; i++) my_table.push_back(qRgb(i,i,i));
+    this->pImage->setColorTable(my_table);
+
+    this->pLayout = new QVBoxLayout(this);
+    this->pLayout->setMargin(0);
 
     this->pLabel = new QLabel();
-    this->pLabel->setPixmap(QPixmap::fromImage(*qi));
+    this->pLabel->setMinimumSize(1,1);
+    this->pLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    pLayout->addWidget(this->pLabel);
 }
 
 Topogram::~Topogram()
 {
-
 }
 
-void Topogram::resizeEvent (QResizeEvent *pEvent)
+void Topogram::resizeEvent(QResizeEvent *pEvent)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "w =" << this->width() << "h =" << this->height();
-    this->pLabel->setFixedSize(this->width(), this->height());
-    this->pLabel->update();
+    QImage scaled = this->pImage->scaled(size());
+    this->pLabel->setPixmap(QPixmap::fromImage(scaled));
 }

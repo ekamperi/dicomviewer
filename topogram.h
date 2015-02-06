@@ -2,6 +2,7 @@
 #define TOPOGRAM_H
 
 #include <QLabel>
+#include <QVBoxLayout>
 #include <QWidget>
 
 class Topogram : public QWidget
@@ -20,7 +21,10 @@ signals:
 public slots:
 
 private:
+    QVBoxLayout *pLayout;
     QLabel *pLabel;
+    QImage* pImage;
+    QPixmap *pPixmap;
 };
 
 #endif // TOPOGRAM_H

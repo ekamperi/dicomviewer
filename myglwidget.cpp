@@ -593,7 +593,7 @@ void MyGLWidget::genTopogram(void)
             for (unsigned int y = 0; y < h; y++) {
                 luminance += pzSlice->getRawPixelData()[(int)(x*w + y)];
             }
-            pResult[z*w+x] = luminance;
+            pResult[z*w+x] = luminance / h;
         }
     }
 
