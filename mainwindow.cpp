@@ -404,3 +404,8 @@ void MainWindow::on_actionFlip_Vertically_triggered()
     qDebug() << Q_FUNC_INFO;
     this->pGLWidget->setGeomTransformation(Geometry::FLIP_VERTICALLY);
 }
+
+void MainWindow::on_actionTopogram_triggered()
+{
+    this->pGLWidget->genTopogram();
+}

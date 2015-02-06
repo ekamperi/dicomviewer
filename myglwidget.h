@@ -24,6 +24,8 @@ public:
     Slice *getSlice(void) const;
     unsigned int getSliceIndex() const;
 
+    void genTopogram(void);
+
     /* Geometric transformations (e.g., flip, etc) */
     void setGeomTransformation(Geometry::Transformation geomTransformation); 
     Geometry::Transformation getGeomTransformation(void) const;

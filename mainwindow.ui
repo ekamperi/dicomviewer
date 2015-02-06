@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -74,6 +74,8 @@
     <addaction name="separator"/>
     <addaction name="actionFlip_Horizontally"/>
     <addaction name="actionFlip_Vertically"/>
+    <addaction name="separator"/>
+    <addaction name="actionTopogram"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -217,6 +219,11 @@
    </property>
    <property name="text">
     <string>Flip Vertically</string>
+   </property>
+  </action>
+  <action name="actionTopogram">
+   <property name="text">
+    <string>Topogram</string>
    </property>
   </action>
  </widget>

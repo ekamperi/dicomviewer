@@ -58,6 +58,8 @@ private slots:
 
     void on_actionFlip_Vertically_triggered();
 
+    void on_actionTopogram_triggered();
+
 private:
     Ui::MainWindow *ui;
 

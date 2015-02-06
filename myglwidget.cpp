@@ -1,6 +1,7 @@
 #include "examdetails.h"
 #include "geomtransformation.h"
 #include "slice.h"
+#include "topogram.h"
 #include "myglwidget.h"
 
 #include <iostream>
@@ -65,6 +66,8 @@ void MyGLWidget::setSlice(Slice *pSlice)
 void MyGLWidget::loadSlices(QVector<Slice *> vecSlices)
 {
     qDebug() << Q_FUNC_INFO;
+
+    this->vecSlices = vecSlices;
 
     /* From the QGLWidget official documentation:
      *
@@ -574,14 +577,26 @@ void MyGLWidget::genTopogram(void)
 {
     qDebug() << Q_FUNC_INFO;
 
+    float *pResult = (float *)malloc(sizeof(float) * 512*512);
+    Q_ASSERT(pResult);
+
     /* For every (x, z) calculate the average luminance along the y axis */
-    for (int i = 0; i < this->vecSlices.size(); i++) {
-        Slice *aSlice = this->vecSlices.at(i);
-        Q_ASSERT(aSlice);
+    for (int z = 0; z < this->vecSlices.size(); z++) {
+        Slice *pzSlice = this->vecSlices.at(z);
+        Q_ASSERT(pzSlice);
 
-        float luminance = 0.0;
+        unsigned int w = pzSlice->getWidth();
+        unsigned int h = pzSlice->getHeight();
 
-
+        for (unsigned int x = 0; x < w; x++) {
+            float luminance = 0.0;
+            for (unsigned int y = 0; y < h; y++) {
+                luminance += pzSlice->getRawPixelData()[(int)(x*w + y)];
+            }
+            pResult[z*w+x] = luminance;
+        }
     }
 
+    Topogram *top = new Topogram(pResult, 512, this->vecSlices.size());
+    top->show();
 }
