@@ -569,3 +569,19 @@ MyGLWidget::getGeomTransformation(void) const
 {
     return this->geomTransformation;
 }
+
+void MyGLWidget::genTopogram(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* For every (x, z) calculate the average luminance along the y axis */
+    for (int i = 0; i < this->vecSlices.size(); i++) {
+        Slice *aSlice = this->vecSlices.at(i);
+        Q_ASSERT(aSlice);
+
+        float luminance = 0.0;
+
+
+    }
+
+}
