@@ -32,7 +32,6 @@ Topogram::Topogram(float *pData, int width, int height,
 
     this->pLabel = new QLabel();
     this->pLabel->setPixmap(QPixmap::fromImage(*qi));
-    this->pLabel->show();
 }
 
 Topogram::~Topogram()
