@@ -10,11 +10,12 @@ class Topogram : public QWidget
     Q_OBJECT
 public:
     explicit Topogram(QWidget *parent = 0);
-    explicit Topogram(float *pData, int width, int height, QWidget *parent = 0);
+    explicit Topogram(float *pData, int width, int height, int sliceIndex, QWidget *parent = 0);
     ~Topogram();
 
 protected:
-    virtual void resizeEvent(QResizeEvent *pEvent);
+    virtual void paintEvent(QPaintEvent *pEvent);
+    virtual void mouseMoveEvent(QMouseEvent *pEvent);
 
 signals:
 
@@ -25,6 +26,14 @@ private:
     QLabel *pLabel;
     QImage* pImage;
     QPixmap *pPixmap;
+    float *pRawData;
+
+    /* Current slice index that we are looking at */
+    unsigned int sliceIndex;
+    unsigned int totalSlices;
+
+    float tmin;
+    float tmax;
 };
 
 #endif // TOPOGRAM_H

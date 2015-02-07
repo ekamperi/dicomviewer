@@ -41,6 +41,7 @@ protected:
 
 signals:
     void sliceDoubleClicked(Slice *pSlice);
+    void sliceIndexChanged(unsigned int sliceIndex);
 
 public slots:
 };

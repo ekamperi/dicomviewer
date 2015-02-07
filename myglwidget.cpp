@@ -3,6 +3,7 @@
 #include "slice.h"
 #include "topogram.h"
 #include "myglwidget.h"
+#include "mymath.h"
 
 #include <iostream>
 #include <QDebug>
@@ -573,15 +574,6 @@ MyGLWidget::getGeomTransformation(void) const
     return this->geomTransformation;
 }
 
-float cclamp(float x, float minVal, float maxVal)
-{
-    return qMin(qMax(x, minVal), maxVal);
-}
-float sstep(float edge0, float edge1, float x)
-{
-    float t = cclamp((x-edge0) / (edge1-edge0), 0.0, 1.0);
-    return t*t* (3.0 - 2.0*t);
-}
 
 void MyGLWidget::genTopogram(void)
 {
@@ -603,10 +595,10 @@ void MyGLWidget::genTopogram(void)
             for (unsigned int y = 0; y < h; y++) {
                 luminance += pzSlice->getRawPixelData()[(int)(y*w + x)];
             }
-            pResult[z*w+x] = sstep(0.0, 0.3, luminance / h);
+            pResult[z*w+x] = MyMath::sstep(0.0, 0.3, luminance / h);
         }
     }
 
-    Topogram *top = new Topogram(pResult, 512, this->vecSlices.size());
+    Topogram *top = new Topogram(pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
     top->show();
 }
