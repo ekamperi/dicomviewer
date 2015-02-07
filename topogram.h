@@ -13,6 +13,8 @@ public:
     explicit Topogram(float *pData, int width, int height, int sliceIndex, QWidget *parent = 0);
     ~Topogram();
 
+    void setNewSliceIndex(unsigned int newSliceIndex);
+
 protected:
     virtual void paintEvent(QPaintEvent *pEvent);
     virtual void mouseMoveEvent(QMouseEvent *pEvent);

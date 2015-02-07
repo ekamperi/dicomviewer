@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     flowlayout.cpp \
     huconverter.cpp \
     myimagewidget.cpp \
-    topogram.cpp
+    topogram.cpp \
+    mymath.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -32,7 +33,8 @@ HEADERS  += mainwindow.h \
     flowlayout.h \
     huconverter.h \
     myimagewidget.h \
-    topogram.h
+    topogram.h \
+    mymath.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

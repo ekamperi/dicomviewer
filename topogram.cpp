@@ -86,8 +86,6 @@ void Topogram::paintEvent(QPaintEvent *pEvent)
     qDebug() << this->sliceIndex << this->totalSlices;
 
     QImage scaled = this->pImage->scaled(size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    //this->pLabel->setPixmap(QPixmap::fromImage(scaled));
-
     QPainter painter;
 
     painter.begin(this);
@@ -99,4 +97,10 @@ void Topogram::paintEvent(QPaintEvent *pEvent)
     painter.setPen(pen);
     painter.drawLine(0, ypos, width(), ypos);
     painter.end();
+}
+
+void Topogram::setNewSliceIndex(unsigned int newSliceIndex)
+{
+    this->sliceIndex = newSliceIndex;
+    this->update();
 }

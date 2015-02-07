@@ -6,6 +6,7 @@
 #include "examdetails.h"
 #include "geomtransformation.h"
 #include "slice.h"
+#include "topogram.h"
 
 //#include "Magick++.h"
 
@@ -115,6 +116,8 @@ private:
      * due to many opengl contexts being created.
      */
     QVector<Slice *> vecSlices;
+
+    Topogram *pTopogram;
 };
 
 #endif // MYGLWIDGET_H

@@ -1,7 +1,6 @@
 #include "examdetails.h"
 #include "geomtransformation.h"
 #include "slice.h"
-#include "topogram.h"
 #include "myglwidget.h"
 #include "mymath.h"
 
@@ -32,6 +31,9 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     /* Default window/width */
     this->tmin = 0.0;
     this->tmax = 0.4;
+
+    /* By default we don't show any topogram */
+    this->pTopogram = NULL;
 }
 
 MyGLWidget::~MyGLWidget()
@@ -62,6 +64,11 @@ void MyGLWidget::setSlice(Slice *pSlice)
 
     /* Force a redraw */
     this->update();
+
+    /* Also notify our associated topogram, if any */
+    if (pTopogram) {
+        this->pTopogram->setNewSliceIndex(pSlice->getIndex());
+    }
 }
 
 void MyGLWidget::loadSlices(QVector<Slice *> vecSlices)
@@ -574,7 +581,6 @@ MyGLWidget::getGeomTransformation(void) const
     return this->geomTransformation;
 }
 
-
 void MyGLWidget::genTopogram(void)
 {
     qDebug() << Q_FUNC_INFO;
@@ -599,6 +605,6 @@ void MyGLWidget::genTopogram(void)
         }
     }
 
-    Topogram *top = new Topogram(pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
-    top->show();
+    this->pTopogram = new Topogram(pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
+    this->pTopogram->show();
 }
