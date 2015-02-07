@@ -70,23 +70,24 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         if (newTmin < 0.0) newTmin = 0.0;
         if (newTmax > 1.0) newTmax = 1.0;
 
-        if (qAbs(newTmin - this->tmin) > 0.025) this->tmin = newTmin;
-        if (qAbs(newTmax - this->tmax) > 0.025) this->tmax = newTmax;
+        if (qAbs(newTmin - this->tmin) > 0.005) this->tmin = newTmin;
+        if (qAbs(newTmax - this->tmax) > 0.005) this->tmax = newTmax;
 
-        /* */
-        delete this->pImage;
-        delete this->pConvertedData;
-        this->pConvertedData =
-                MyMath::floatToByte(
-                    this->pRawData, this->rawWidth, this->rawHeight,
-                    this->tmin, this->tmax);
+        if (this->tmin == newTmin || this->tmax == newTmax) {
+            delete this->pImage;
+            delete this->pConvertedData;
+            this->pConvertedData =
+                    MyMath::floatToByte(
+                        this->pRawData, this->rawWidth, this->rawHeight,
+                        this->tmin, this->tmax);
 
-        QImage *pNewImage = new QImage(
-                    this->pConvertedData,
-                    this->rawWidth, this->rawHeight, QImage::Format_Indexed8);
-        Q_ASSERT(pNewImage);
-        this->pImage = pNewImage;
-        this->update();
+            QImage *pNewImage = new QImage(
+                        this->pConvertedData,
+                        this->rawWidth, this->rawHeight, QImage::Format_Indexed8);
+            Q_ASSERT(pNewImage);
+            this->pImage = pNewImage;
+            this->update();
+        }
     }
 }
 
