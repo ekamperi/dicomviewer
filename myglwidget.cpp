@@ -573,6 +573,16 @@ MyGLWidget::getGeomTransformation(void) const
     return this->geomTransformation;
 }
 
+float cclamp(float x, float minVal, float maxVal)
+{
+    return qMin(qMax(x, minVal), maxVal);
+}
+float sstep(float edge0, float edge1, float x)
+{
+    float t = cclamp((x-edge0) / (edge1-edge0), 0.0, 1.0);
+    return t*t* (3.0 - 2.0*t);
+}
+
 void MyGLWidget::genTopogram(void)
 {
     qDebug() << Q_FUNC_INFO;
@@ -591,9 +601,9 @@ void MyGLWidget::genTopogram(void)
         for (unsigned int x = 0; x < w; x++) {
             float luminance = 0.0;
             for (unsigned int y = 0; y < h; y++) {
-                luminance += pzSlice->getRawPixelData()[(int)(x*w + y)];
+                luminance += pzSlice->getRawPixelData()[(int)(y*w + x)];
             }
-            pResult[z*w+x] = luminance / h;
+            pResult[z*w+x] = sstep(0.0, 0.3, luminance / h);
         }
     }
 

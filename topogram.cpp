@@ -47,6 +47,6 @@ Topogram::~Topogram()
 
 void Topogram::resizeEvent(QResizeEvent *pEvent)
 {
-    QImage scaled = this->pImage->scaled(size());
+    QImage scaled = this->pImage->scaled(size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     this->pLabel->setPixmap(QPixmap::fromImage(scaled));
 }
