@@ -10,7 +10,8 @@ class Topogram : public QWidget
     Q_OBJECT
 public:
     explicit Topogram(QWidget *parent = 0);
-    explicit Topogram(float *pData, int width, int height, int sliceIndex, QWidget *parent = 0);
+    explicit Topogram(float *pData, int width, int height,
+                      int sliceIndex, QWidget *parent = 0);
     ~Topogram();
 
     void setNewSliceIndex(unsigned int newSliceIndex);
@@ -28,12 +29,20 @@ private:
     QLabel *pLabel;
     QImage* pImage;
     QPixmap *pPixmap;
+
+    /* Raw data are the floating point original pixel values */
     float *pRawData;
+    unsigned char *pConvertedData;
+
+    /* */
+    int rawWidth;
+    int rawHeight;
 
     /* Current slice index that we are looking at */
     unsigned int sliceIndex;
     unsigned int totalSlices;
 
+    /* Min and max values for the transfer function */
     float tmin;
     float tmax;
 };

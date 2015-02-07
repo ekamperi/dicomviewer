@@ -231,9 +231,9 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     this->pProgram->release();
 
     /* Proceed with native drawing */
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setRenderHint(QPainter::TextAntialiasing);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
 
     /* Draw examination details (patient name, ID, age, sex) */
     this->drawDetails(&painter);
@@ -361,11 +361,6 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
 
         float width = y / ((float) this->height());
         float center = x / ((float) this->width());
-
-        if (width < 0.0) width = 0.0;
-        if (width > 1.0) width = 1.0;
-        if (center < 0.0) center = 0.0;
-        if (center > 1.0) center = 1.0;
 
         this->tmin = center - width/2;
         this->tmax = center + width/2;
