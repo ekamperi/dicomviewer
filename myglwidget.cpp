@@ -607,7 +607,7 @@ void MyGLWidget::genTopogram(void)
         connect(this->pTopogram, SIGNAL(iWantToBreakFree(void)),
                 this, SLOT(setTheTopogramFree(void)));
         this->pTopogram->show();
-        pTopogram->move(this->width()-pTopogram->width(), 0);
+        this->pTopogram->move(this->width()-pTopogram->width(), 0);
     } else {
         this->pTopogram->hide();
         this->pTopogram->deleteLater();
@@ -617,7 +617,9 @@ void MyGLWidget::genTopogram(void)
 
 void MyGLWidget::setTheTopogramFree(void)
 {
+    qDebug() << Q_FUNC_INFO;
+
     this->pTopogram->setParent(NULL);
-    this->pTopogram->move(this->mapFromGlobal(QCursor::pos()));
+    this->pTopogram->move(this->mapToGlobal(QPoint(this->width()-pTopogram->width(), 0)));
     this->pTopogram->show();
 }
