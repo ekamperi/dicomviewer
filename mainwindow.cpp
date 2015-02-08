@@ -10,7 +10,6 @@
 #include "mainwindow.h"
 #include "myglwidget.h"
 #include "myimagewidget.h"
-#include "startupmenu.h"
 #include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */
@@ -31,17 +30,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->flowLayout = new FlowLayout;
     this->containerWidget = new QWidget;
     this->containerWidget2 = new QWidget;
-    this->containerWidget3 = new QWidget;
+    this->pStartupMenu = new StartupMenu;
     ui->stackedWidget->addWidget(containerWidget);
     ui->stackedWidget->addWidget(containerWidget2);
-    ui->stackedWidget->addWidget(containerWidget3);
-    ui->stackedWidget->setCurrentWidget(containerWidget3);
+    ui->stackedWidget->addWidget(this->pStartupMenu);
+    ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
 
-    StartupMenu *sm = new StartupMenu();
-    QVBoxLayout *pLlayout = new QVBoxLayout();
-    pLlayout->addWidget(sm);
-    containerWidget3->setLayout(pLlayout);
-    connect(sm, SIGNAL(openDICOM_files()), this, SLOT(on_actionOpenDICOM_triggered()));
+    connect(this->pStartupMenu, SIGNAL(openDICOM_files()), this, SLOT(on_actionOpenDICOM_triggered()));
 
     this->pGLWidget = new MyGLWidget();
     QVBoxLayout *pLayout = new QVBoxLayout();
@@ -242,6 +237,7 @@ void MainWindow::on_actionClose_triggered()
             delete *it;
         }
         vecSlices.clear();
+        ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
     }
     ui->stackedWidget->update();
     this->statusBar()->showMessage("Ready.");

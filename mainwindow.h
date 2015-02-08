@@ -10,6 +10,7 @@
 #include "flowlayout.h"
 #include "loaddicomworker.h"
 #include "myglwidget.h"
+#include "startupmenu.h"
 
 namespace Ui {
 class MainWindow;
@@ -75,7 +76,7 @@ private:
      */
     QWidget *containerWidget;
     QWidget *containerWidget2;
-    QWidget *containerWidget3;
+    StartupMenu *pStartupMenu;
 
     MyGLWidget *pGLWidget;
 
