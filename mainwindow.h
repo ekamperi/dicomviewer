@@ -75,6 +75,7 @@ private:
      */
     QWidget *containerWidget;
     QWidget *containerWidget2;
+    QWidget *containerWidget3;
 
     MyGLWidget *pGLWidget;
 

@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     huconverter.cpp \
     myimagewidget.cpp \
     topogram.cpp \
-    mymath.cpp
+    mymath.cpp \
+    startupmenu.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -34,11 +35,13 @@ HEADERS  += mainwindow.h \
     huconverter.h \
     myimagewidget.h \
     topogram.h \
-    mymath.h
+    mymath.h \
+    startupmenu.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \
-    dicomfile.ui
+    dicomfile.ui \
+    startupmenu.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
 -lMagick++ -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
