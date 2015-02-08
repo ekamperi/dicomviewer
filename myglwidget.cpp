@@ -580,26 +580,44 @@ void MyGLWidget::genTopogram(void)
 {
     qDebug() << Q_FUNC_INFO;
 
-    float *pResult = (float *)malloc(sizeof(float) * 512*512);
-    Q_ASSERT(pResult);
+    float *pResult;
+    if (!this->pTopogram) {
+        pResult = (float *)malloc(sizeof(float) * 512*512);
+        Q_ASSERT(pResult);
 
-    /* For every (x, z) calculate the average luminance along the y axis */
-    for (int z = 0; z < this->vecSlices.size(); z++) {
-        Slice *pzSlice = this->vecSlices.at(z);
-        Q_ASSERT(pzSlice);
+        /* For every (x, z) calculate the average luminance along the y axis */
+        for (int z = 0; z < this->vecSlices.size(); z++) {
+            Slice *pzSlice = this->vecSlices.at(z);
+            Q_ASSERT(pzSlice);
 
-        unsigned int w = pzSlice->getWidth();
-        unsigned int h = pzSlice->getHeight();
+            unsigned int w = pzSlice->getWidth();
+            unsigned int h = pzSlice->getHeight();
 
-        for (unsigned int x = 0; x < w; x++) {
-            float luminance = 0.0;
-            for (unsigned int y = 0; y < h; y++) {
-                luminance += pzSlice->getRawPixelData()[(int)(y*w + x)];
+            for (unsigned int x = 0; x < w; x++) {
+                float luminance = 0.0;
+                for (unsigned int y = 0; y < h; y++) {
+                    luminance += pzSlice->getRawPixelData()[(int)(y*w + x)];
+                }
+                pResult[z*w+x] = MyMath::sstep(0.0, 0.3, luminance / h);
             }
-            pResult[z*w+x] = MyMath::sstep(0.0, 0.3, luminance / h);
         }
-    }
 
-    this->pTopogram = new Topogram(pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
+        this->pTopogram = new Topogram(pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
+        this->pTopogram->setParent(this);
+        connect(this->pTopogram, SIGNAL(iWantToBreakFree(void)),
+                this, SLOT(setTheTopogramFree(void)));
+        this->pTopogram->show();
+        pTopogram->move(this->width()-pTopogram->width(), 0);
+    } else {
+        this->pTopogram->hide();
+        this->pTopogram->deleteLater();
+        this->pTopogram = NULL;
+    }
+}
+
+void MyGLWidget::setTheTopogramFree(void)
+{
+    this->pTopogram->setParent(NULL);
+    this->pTopogram->move(this->mapFromGlobal(QCursor::pos()));
     this->pTopogram->show();
 }

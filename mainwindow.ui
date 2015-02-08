@@ -232,6 +232,9 @@
    </property>
   </action>
   <action name="actionTopogram">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Topogram</string>
    </property>

@@ -44,6 +44,7 @@ signals:
 
 private slots:
     void repaintSlice(float tmin, float tmax);
+    void setTheTopogramFree(void);
 
 protected:
     virtual void initializeGL();

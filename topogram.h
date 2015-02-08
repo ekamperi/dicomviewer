@@ -21,6 +21,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *pEvent);
 
 signals:
+    void iWantToBreakFree(void);
 
 public slots:
 

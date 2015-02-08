@@ -23,6 +23,8 @@ Topogram::Topogram(float *pRawData, int width, int height, int sliceIndex,
     this->sliceIndex = sliceIndex;
     this->totalSlices = height; // XXX
 
+    this->setStyleSheet("background-color: rgba(0, 0, 0, 50%);");
+
     /* Convert floating point pixel data [0.0, 1.0] to unsigned char [0, 255]
      * QImage cannot handle floating point data!
      */
@@ -44,7 +46,7 @@ Topogram::Topogram(float *pRawData, int width, int height, int sliceIndex,
     this->pImage->setColorTable(my_table);
 
     /* XXX: Take slice thickness into consideration for height */
-    this->setGeometry(0, 0, width, 5*height);
+    this->setGeometry(0, 0, width/2, 2*height);
  }
 
 Topogram::~Topogram()
@@ -87,6 +89,12 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
             Q_ASSERT(pNewImage);
             this->pImage = pNewImage;
             this->update();
+        }
+    } else if (pEvent->buttons() & Qt::LeftButton) {
+        int xpos = pEvent->pos().x();
+        int ypos = pEvent->pos().y();
+        if (ypos < 0 || xpos > this->width()) {
+            emit iWantToBreakFree();
         }
     }
 }
