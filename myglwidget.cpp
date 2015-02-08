@@ -45,6 +45,12 @@ MyGLWidget::~MyGLWidget()
 //    }
 //    Q_ASSERT(this->pProgram);
 //    delete this->pProgram;
+
+    /* Get rid of the topogram, if any */
+    if (this->pTopogram) {
+        delete this->pTopogram;
+    }
+
     /* Don't forget to delete the textures */
     this->makeCurrent();
     glDeleteTextures(this->vecSlices.size(), this->pTexIDs);
