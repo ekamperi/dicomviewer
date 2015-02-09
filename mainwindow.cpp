@@ -414,3 +414,56 @@ void MainWindow::on_actionTopogram_triggered()
 {
     this->pGLWidget->genTopogram();
 }
+
+void MainWindow::on_actionOpen_DICOM_dir_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Select DICOM directory to open */
+    QString dir = QFileDialog::getExistingDirectory(
+                this, "Open Directory",
+             QDir::homePath(),
+             QFileDialog::ShowDirsOnly
+           | QFileDialog::DontResolveSymlinks);
+
+    /* If user clicked cancel, just return */
+    if (dir.isEmpty()) {
+        qDebug() << "dir is empty!";
+        return;
+    }
+
+    /* Find all the .dcm files in the selected directory */
+    QStringList nameFilter("*.dcm");
+    QDir directory(dir);
+    QStringList res = directory.entryList(nameFilter);
+
+    for (int count = 0; count < res.size (); count ++) {
+            res[count].prepend (dir + "/");
+        }
+
+    this->loadDCMFiles(res);
+}
+
+void MainWindow::loadDCMFiles(QStringList fileNames)
+{
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << fileNames;
+
+    this->progressDialog = new QProgressDialog(
+                "Loading DICOM files...",
+                "Abort operation", 1, fileNames.size(), this);
+    this->progressDialog->setWindowModality(Qt::WindowModal);
+    this->progressDialog->show();
+
+    loadDicomThread = new LoadDicomThread(fileNames, &vecSlices, this);
+    connect(loadDicomThread, SIGNAL(finished()),
+            loadDicomThread, SLOT(deleteLater()));
+    connect(loadDicomThread, SIGNAL(finished()),
+            this, SLOT(filesLoaded()));
+    connect(loadDicomThread, SIGNAL(reportProgress(unsigned int)),
+            this, SLOT(getProgress(unsigned int)));
+    connect(progressDialog, SIGNAL(canceled()),
+            this, SLOT(progressDialogCanceled()));
+
+    loadDicomThread->start();
+}

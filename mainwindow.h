@@ -61,6 +61,8 @@ private slots:
 
     void on_actionTopogram_triggered();
 
+    void on_actionOpen_DICOM_dir_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -83,6 +85,8 @@ private:
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
     QVector<Slice *> vecSlices;
+
+    void loadDCMFiles(QStringList filenames);
 
     void selectAllSlices(void);
 
