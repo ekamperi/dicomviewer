@@ -62,8 +62,8 @@ HUConverter::getNormalizedRangeFromTemplate(HUWindows::window window) const
         huCenter = 60;
         huWidth = 400;
     } else if (window == HUWindows::BONE) {
-        huCenter = 1000;
-        huWidth = 2500;
+        huCenter = 300;
+        huWidth = 1500;
     } else if (window == HUWindows::HEAD) {
         huCenter = 40;
         huWidth = 80;
