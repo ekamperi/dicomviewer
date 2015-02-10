@@ -440,6 +440,8 @@ void MainWindow::loadDCMFiles(QStringList fileNames)
     this->progressDialog->show();
 
     loadDicomThread = new LoadDicomThread(fileNames, &vecSlices, this);
+    Q_ASSERT(loadDicomThread);
+
     connect(loadDicomThread, SIGNAL(finished()),
             loadDicomThread, SLOT(deleteLater()));
     connect(loadDicomThread, SIGNAL(finished()),
