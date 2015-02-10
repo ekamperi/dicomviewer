@@ -17,6 +17,9 @@ Topogram::Topogram(float *pRawData, int width, int height, int sliceIndex,
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* By default the topogram is embedded into the GL Widget */
+    this->amIEmbedded = true;
+
     this->pRawData = pRawData;
     this->rawHeight = height;
     this->rawWidth = width;

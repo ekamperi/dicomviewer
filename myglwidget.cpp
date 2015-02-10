@@ -194,6 +194,11 @@ void MyGLWidget::resizeGL(int w, int h)
     glLoadIdentity();
     glOrtho(0, 1, 1, 0, 0, 1);
     glMatrixMode(GL_MODELVIEW);
+
+    /* If there is a topogram and only if it's embedded into us move it */
+    if (this->pTopogram && this->pTopogram->isEmbedded()) {
+        this->pTopogram->move(this->width()-pTopogram->width(), 0);
+    }
 }
 
 void MyGLWidget::paintEvent(QPaintEvent *event)
@@ -628,4 +633,5 @@ void MyGLWidget::setTheTopogramFree(void)
     this->pTopogram->setParent(NULL);
     this->pTopogram->move(this->mapToGlobal(QPoint(this->width()-pTopogram->width(), 0)));
     this->pTopogram->show();
+    this->pTopogram->setEmbedded(false);
 }

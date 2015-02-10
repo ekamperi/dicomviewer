@@ -15,6 +15,8 @@ public:
     ~Topogram();
 
     void setNewSliceIndex(unsigned int newSliceIndex);
+    bool isEmbedded(void) const { return this->amIEmbedded; }
+    void setEmbedded(bool value) { this->amIEmbedded = value; }
 
 protected:
     virtual void paintEvent(QPaintEvent *pEvent);
@@ -46,6 +48,9 @@ private:
     /* Min and max values for the transfer function */
     float tmin;
     float tmax;
+
+    /* Whethere topogram is an autonomous window or embedded into the GLWidget */
+    bool amIEmbedded;
 };
 
 #endif // TOPOGRAM_H
