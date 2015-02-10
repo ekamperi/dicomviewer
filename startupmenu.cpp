@@ -18,3 +18,13 @@ void StartupMenu::on_btnOpenDICOMFiles_clicked()
 {
     emit openDICOM_files();
 }
+
+void StartupMenu::on_btnOpenDICOMDir_clicked()
+{
+    emit openDICOM_dir();
+}
+
+void StartupMenu::on_btnExit_clicked()
+{
+    QCoreApplication::exit(0);
+}

@@ -36,7 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
 
-    connect(this->pStartupMenu, SIGNAL(openDICOM_files()), this, SLOT(on_actionOpenDICOM_triggered()));
+    /* Connect signals from the startup menu widget to the main window */
+    connect(this->pStartupMenu, SIGNAL(openDICOM_files()),
+            this, SLOT(on_actionOpenDICOM_triggered()));
+    connect(this->pStartupMenu, SIGNAL(openDICOM_dir()),
+            this, SLOT(on_actionOpen_DICOM_dir_triggered()));
 
     this->pGLWidget = new MyGLWidget();
     QVBoxLayout *pLayout = new QVBoxLayout();

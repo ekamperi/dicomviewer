@@ -40,12 +40,14 @@
         <string>&amp;Open DICOM files...</string>
        </property>
        <property name="icon">
-        <iconset theme="document-open"/>
+        <iconset theme="document-open">
+         <normaloff/>
+        </iconset>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="btnOpenDICOMDir">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -103,7 +105,9 @@
         <string>&amp;Exit</string>
        </property>
        <property name="icon">
-        <iconset theme="application-exit"/>
+        <iconset theme="application-exit">
+         <normaloff/>
+        </iconset>
        </property>
        <property name="checkable">
         <bool>false</bool>
