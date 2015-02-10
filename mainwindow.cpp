@@ -123,23 +123,7 @@ void MainWindow::on_actionOpenDICOM_triggered()
         return;
     }
 
-    this->progressDialog = new QProgressDialog(
-                "Loading DICOM files...",
-                "Abort operation", 1, fileNames.size(), this);
-    this->progressDialog->setWindowModality(Qt::WindowModal);
-    this->progressDialog->show();
-
-    loadDicomThread = new LoadDicomThread(fileNames, &vecSlices, this);
-    connect(loadDicomThread, SIGNAL(finished()),
-            loadDicomThread, SLOT(deleteLater()));
-    connect(loadDicomThread, SIGNAL(finished()),
-            this, SLOT(filesLoaded()));
-    connect(loadDicomThread, SIGNAL(reportProgress(unsigned int)),
-            this, SLOT(getProgress(unsigned int)));
-    connect(progressDialog, SIGNAL(canceled()),
-            this, SLOT(progressDialogCanceled()));
-
-    loadDicomThread->start();
+    this->loadDCMFiles(fileNames);
 }
 
 void MainWindow::getProgress(unsigned int cnt)
