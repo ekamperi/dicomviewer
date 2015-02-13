@@ -63,6 +63,10 @@ private slots:
 
     void on_actionOpen_DICOM_dir_triggered();
 
+    void on_actionPan_triggered();
+
+    void on_action_Reset_triggered();
+
 private:
     Ui::MainWindow *ui;
 

@@ -462,3 +462,15 @@ void MainWindow::loadDCMFiles(QStringList fileNames)
 
     loadDicomThread->start();
 }
+
+void MainWindow::on_actionPan_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    bool flag = this->pGLWidget->isPanMode();
+    this->pGLWidget->setPanMode(!flag);  // toggle
+}
+
+void MainWindow::on_action_Reset_triggered()
+{
+    this->pGLWidget->resetView();
+}

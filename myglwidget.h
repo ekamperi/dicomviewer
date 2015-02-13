@@ -20,6 +20,8 @@ public:
     explicit MyGLWidget(QWidget *parent = 0);
     ~MyGLWidget();
 
+    void resetView(void);
+
     void loadSlices(QVector<Slice *> vecSlices);
     void setSlice(Slice *pSlice);
     Slice *getSlice(void) const;
@@ -30,6 +32,10 @@ public:
     /* Geometric transformations (e.g., flip, etc) */
     void setGeomTransformation(Geometry::Transformation geomTransformation); 
     Geometry::Transformation getGeomTransformation(void) const;
+
+    /* Pan mode */
+    void setPanMode(bool enabled) { this->panMode = enabled; }
+    bool isPanMode(void) const { return this->panMode; }
 
     /* Measure distance in mm */
     void setDistanceMeasure(bool enabled) { this->measureDistance = enabled; }
@@ -63,7 +69,7 @@ private:
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
 
-    void resetView(void);
+    void resetViewMatrix(void);
 
     void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
 
@@ -78,6 +84,8 @@ private:
     bool measureDensity;
     QPoint startPoint;  /* Start point of measurement */
     QPoint endPoint;    /* End point of measurement */
+
+    bool panMode;
 
     /* Shader related variables */
     QGLShader *pVertexShader;
@@ -98,6 +106,8 @@ private:
 
     /* Scale factor used to zoom in/out */
     float scaleFactor;
+    float offsetX, offsetY;
+    float oldOffsetX, oldOffsetY;
 
     /* Current geometric transformation, such as as flip (if any) */
     Geometry::Transformation geomTransformation;

@@ -16,6 +16,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
+    this->setStyleSheet("background-color:black;");
     //pMagickImage = NULL;
 
     /* This is necessary in order to track current mouse wheel position */
@@ -23,10 +24,14 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 
     /* By default we don't scale (i.e zoom) */
     this->scaleFactor = 2.0;
+    this->oldOffsetX = -0.5;
+    this->oldOffsetY = -0.5;
 
     /* By default we don't measure anything */
     this->measureDistance = false;
     this->measureDensity = false;
+
+    this->panMode = false;
 
     /* Default window/width */
     this->tmin = 0.0;
@@ -161,7 +166,7 @@ void MyGLWidget::initializeGL()
     /* Setup the OpenGL matrices */
 //    this->projectionMatrix.perspective(
 //                0.0f, (float)this->width() / (float)this->height(), 0.1f, 100.0f);
-    resetView();
+    resetViewMatrix();
 
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
@@ -404,7 +409,17 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
        } else if (this->measureDensity) {
             this->endPoint = pEvent->pos();
             this->update();
+        } else if (this->isPanMode()) {
+            float dx = pEvent->pos().x() - this->startPoint.x();
+            float dy = pEvent->pos().y() - this->startPoint.y();
+            this->offsetX = dx / this->width();
+            this->offsetY = dy / this->height();
+            qDebug() << this->startPoint << this->endPoint;
+            qDebug() << "oldOffsetX =" << this->oldOffsetX << " oldOffsetY =" << this->oldOffsetY;
+            this->resetViewMatrix();
+            this->update();
         }
+    } else {
     }
     pEvent->ignore();
 }
@@ -424,6 +439,9 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
             this->vecDists.push_back(QLine(this->startPoint, this->endPoint));
             this->update();
         }
+    } else if (this->panMode) {
+        this->oldOffsetX += this->offsetX;
+        this->oldOffsetY += this->offsetY;
     }
 }
 
@@ -553,7 +571,7 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
                 this->scaleFactor += 0.05;
             }
         }
-        resetView();
+        this->resetViewMatrix();
         this->update();
     }
 
@@ -653,12 +671,23 @@ void MyGLWidget::setTheTopogramFree(void)
     this->pTopogram->setEmbedded(false);
 }
 
-void MyGLWidget::resetView(void)
+void MyGLWidget::resetViewMatrix(void)
 {
     qDebug() << Q_FUNC_INFO;
 
     this->viewMatrix.setToIdentity();
     this->viewMatrix.flipCoordinates();
     this->viewMatrix.scale(this->scaleFactor);
-    this->viewMatrix.translate(-0.5, -0.5, 0.0);
+    this->viewMatrix.translate(this->oldOffsetX + this->offsetX, this->oldOffsetY + this->offsetY, 0.0);
+}
+
+void MyGLWidget::resetView(void)
+{
+    this->scaleFactor = 2.0;
+    this->oldOffsetX = -0.5;
+    this->oldOffsetY = -0.5;
+    this->offsetX = 0.0;
+    this->offsetY = 0.0;
+    this->resetViewMatrix();
+    this->update();
 }

@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -95,6 +95,8 @@
     <addaction name="actionFlip_Vertically"/>
     <addaction name="separator"/>
     <addaction name="actionTopogram"/>
+    <addaction name="actionPan"/>
+    <addaction name="action_Reset"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -243,6 +245,19 @@
   <action name="actionOpen_DICOM_dir">
    <property name="text">
     <string>Open DICOM dir...</string>
+   </property>
+  </action>
+  <action name="actionPan">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Pan</string>
+   </property>
+  </action>
+  <action name="action_Reset">
+   <property name="text">
+    <string>&amp;Reset</string>
    </property>
   </action>
  </widget>
