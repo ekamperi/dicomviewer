@@ -22,7 +22,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     setMouseTracking(true);
 
     /* By default we don't scale (i.e zoom) */
-    this->scaleFactor = 1.0;
+    this->scaleFactor = 2.0;
 
     /* By default we don't measure anything */
     this->measureDistance = false;
@@ -159,11 +159,9 @@ void MyGLWidget::initializeGL()
     bool rv;
 
     /* Setup the OpenGL matrices */
-    this->projectionMatrix.perspective(
-                0.0f, (float)this->width() / (float)this->height(), 0.1f, 100.0f);
-    this->viewMatrix.flipCoordinates();
-    this->viewMatrix.scale(2.0);
-    this->viewMatrix.translate(-0.5, -0.5, 0.0);
+//    this->projectionMatrix.perspective(
+//                0.0f, (float)this->width() / (float)this->height(), 0.1f, 100.0f);
+    resetView();
 
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
@@ -543,18 +541,19 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
 {
     qDebug() << Q_FUNC_INFO;
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        qDebug() << "YES!";
+        qDebug() << "YES!" << "scaleFactor =" << this->scaleFactor;
         pEvent->accept();
         int delta = pEvent->delta();
         if (delta > 0) {
-            if (this->scaleFactor > 0.5) {
-                this->scaleFactor -= 0.02;
+            if (this->scaleFactor > 0.2) {
+                this->scaleFactor -= 0.05;
             }
         } else {
-            if (this->scaleFactor < 2.0) {
-                this->scaleFactor += 0.02;
+            if (this->scaleFactor < 5.0) {
+                this->scaleFactor += 0.05;
             }
         }
+        resetView();
         this->update();
     }
 
@@ -652,4 +651,14 @@ void MyGLWidget::setTheTopogramFree(void)
     this->pTopogram->move(this->mapToGlobal(QPoint(this->width()-pTopogram->width(), 0)));
     this->pTopogram->show();
     this->pTopogram->setEmbedded(false);
+}
+
+void MyGLWidget::resetView(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->viewMatrix.setToIdentity();
+    this->viewMatrix.flipCoordinates();
+    this->viewMatrix.scale(this->scaleFactor);
+    this->viewMatrix.translate(-0.5, -0.5, 0.0);
 }

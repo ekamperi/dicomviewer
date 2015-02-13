@@ -63,6 +63,8 @@ private:
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
 
+    void resetView(void);
+
     void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
 
     int calcMeanDensity(int dist);

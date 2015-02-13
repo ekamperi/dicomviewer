@@ -332,14 +332,19 @@ void MainWindow::updateStatusBarForSlice(void) const
 
 void MainWindow::wheelEvent(QWheelEvent *pEvent)
 {
-    int delta = pEvent->delta();
-    if (delta > 0) {
-        this->gotoPrevSlice();
-    } else {
-        this->gotoNextSlice();
-    }
+    qDebug() << Q_FUNC_INFO;
 
-    pEvent->accept();
+    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+        pEvent->ignore();
+    } else {
+        pEvent->accept();
+        int delta = pEvent->delta();
+        if (delta > 0) {
+            this->gotoPrevSlice();
+        } else {
+            this->gotoNextSlice();
+        }
+    }
 }
 
 void MainWindow::on_actionDistance_triggered()
