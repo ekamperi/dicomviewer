@@ -161,6 +161,7 @@ void MyGLWidget::initializeGL()
     /* Setup the OpenGL matrices */
     this->projectionMatrix.perspective(
                 0.0f, (float)this->width() / (float)this->height(), 0.1f, 100.0f);
+    this->viewMatrix.flipCoordinates();
     this->viewMatrix.scale(2.0);
     this->viewMatrix.translate(-0.5, -0.5, 0.0);
 

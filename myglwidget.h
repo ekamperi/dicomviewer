@@ -8,9 +8,6 @@
 #include "slice.h"
 #include "topogram.h"
 
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-
 //#include "Magick++.h"
 
 class Slice;
