@@ -8,6 +8,9 @@
 #include "slice.h"
 #include "topogram.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 //#include "Magick++.h"
 
 class Slice;
@@ -119,6 +122,11 @@ private:
     QVector<Slice *> vecSlices;
 
     Topogram *pTopogram;
+
+    /* OpenGL matrices */
+    QMatrix4x4 projectionMatrix;
+    QMatrix4x4 viewMatrix;
+    QMatrix4x4 modelMatrix;
 };
 
 #endif // MYGLWIDGET_H

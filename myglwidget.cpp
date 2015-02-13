@@ -158,6 +158,12 @@ void MyGLWidget::initializeGL()
 {
     bool rv;
 
+    /* Setup the OpenGL matrices */
+    this->projectionMatrix.perspective(
+                0.0f, (float)this->width() / (float)this->height(), 0.1f, 100.0f);
+    this->viewMatrix.scale(2.0);
+    this->viewMatrix.translate(-0.5, -0.5, 0.0);
+
     glEnable(GL_TEXTURE_2D);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
@@ -219,6 +225,17 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     Q_ASSERT(tmax != -1);
     this->pProgram->setUniformValue(tmin_loc, this->tmin);
     this->pProgram->setUniformValue(tmax_loc, this->tmax);
+
+    //
+    int pm_loc = this->pProgram->uniformLocation("projectionMatrix");
+    int vm_loc = this->pProgram->uniformLocation("viewMatrix");
+    int mm_loc = this->pProgram->uniformLocation("modelMatrix");
+    Q_ASSERT(pm_loc != -1);
+    Q_ASSERT(vm_loc != -1);
+    Q_ASSERT(mm_loc != -1);
+    this->pProgram->setUniformValue(pm_loc, this->projectionMatrix);
+    this->pProgram->setUniformValue(vm_loc, this->viewMatrix);
+    this->pProgram->setUniformValue(mm_loc, this->modelMatrix);
 
     /* Ready to do the drawing */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
