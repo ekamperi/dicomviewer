@@ -26,7 +26,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     /* By default we don't measure anything */
     this->measureDistance = false;
     this->measureDensity = false;
-    this->panMode = true;
+    this->panMode = false;
 
     // XXX
     this->resetView();
@@ -75,8 +75,6 @@ void MyGLWidget::setSlice(Slice *pSlice)
     if (pTopogram) {
         this->pTopogram->setNewSliceIndex(pSlice->getIndex());
     }
-
-    this->resetView();
 
     /* Force a redraw */
     this->update();
@@ -664,7 +662,7 @@ void MyGLWidget::setTheTopogramFree(void)
 
 void MyGLWidget::resetViewMatrix(void)
 {
-    qDebug() << Q_FUNC_INFO << this->scaleFactor << "ox =" << this->oldOffsetX + this->offsetX;
+    qDebug() << Q_FUNC_INFO;
 
     this->viewMatrix.setToIdentity();
     this->viewMatrix.scale(this->scaleFactor);
