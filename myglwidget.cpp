@@ -548,16 +548,15 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
 {
     qDebug() << Q_FUNC_INFO;
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        qDebug() << "YES!" << "scaleFactor =" << this->scaleFactor;
         pEvent->accept();
         int delta = pEvent->delta();
         if (delta > 0) {
-            if (this->scaleFactor > 0.2) {
-                this->scaleFactor -= 0.15;
+            if (this->scaleFactor > 0.1) {
+                this->scaleFactor -= 0.25;
             }
         } else {
-            if (this->scaleFactor < 5.0) {
-                this->scaleFactor += 0.15;
+            if (this->scaleFactor < 10.0) {
+                this->scaleFactor += 0.25;
             }
         }
         this->resetViewMatrix();
@@ -662,13 +661,30 @@ void MyGLWidget::setTheTopogramFree(void)
 
 void MyGLWidget::resetViewMatrix(void)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "sf =" << this->scaleFactor;
 
     this->viewMatrix.setToIdentity();
+
+    /*
+     * Get mouse position in local (to GL widget) coordinates. Then calculate
+     * the displacement that we must counterbalance once the scaling takes place,
+     * so that the mouse cursor points to the same point.
+     *
+     * (x,y) is mapped to (s*x, s*y), therefore the displacement is
+     * dx = s*x - x = (s-1)*x and the needed translation is towards the
+     * opposite direction, hence -dx.
+     */
+    QPoint p = this->mapFromGlobal(QCursor::pos());
+    qDebug() << "x =" << p.x() << " y=" << p.y();
+    float dx = (this->scaleFactor - 1.0) * ((float)p.x()) / (float)this->width();
+    float dy = (this->scaleFactor - 1.0) * ((float)p.y()) / (float)this->height();
+    qDebug() << "dx =" << dx << " dy =" << dy;
+    this->viewMatrix.translate(-dx, -dy, 0.0);
     this->viewMatrix.scale(this->scaleFactor);
-    this->viewMatrix.translate(
-                this->oldOffsetX + this->offsetX,
-                this->oldOffsetY + this->offsetY, 0.0);
+
+//    this->viewMatrix.translate(
+//                this->oldOffsetX + this->offsetX,
+//                this->oldOffsetY + this->offsetY, 0.0);
 }
 
 void MyGLWidget::resetView(void)
