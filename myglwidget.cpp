@@ -16,16 +16,12 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
-    this->setStyleSheet("background-color:black;");
+    //this->setStyleSheet("background-color:black;");
+    //this->setStyleSheet("border: 1px solid red");
     //pMagickImage = NULL;
 
     /* This is necessary in order to track current mouse wheel position */
     setMouseTracking(true);
-
-    /* By default we don't scale (i.e zoom) */
-    this->scaleFactor = 2.0;
-    this->oldOffsetX = -0.5;
-    this->oldOffsetY = -0.5;
 
     /* By default we don't measure anything */
     this->measureDistance = false;
@@ -73,13 +69,15 @@ void MyGLWidget::setSlice(Slice *pSlice)
     connect(this->pSlice, SIGNAL(iNeedRepaint(float, float)),
             this, SLOT(repaintSlice(float, float)));
 
-    /* Force a redraw */
-    this->update();
-
     /* Also notify our associated topogram, if any */
     if (pTopogram) {
         this->pTopogram->setNewSliceIndex(pSlice->getIndex());
     }
+
+    this->resetView();
+
+    /* Force a redraw */
+    this->update();
 }
 
 void MyGLWidget::loadSlices(QVector<Slice *> vecSlices)
@@ -249,15 +247,12 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     glBindTexture(GL_TEXTURE_2D, this->pTexIDs[this->pSlice->getIndex()]);
     Q_ASSERT(glGetError() == GL_NO_ERROR);
 
-    glPushMatrix();
-    glScalef(this->scaleFactor, this->scaleFactor, this->scaleFactor);
     glBegin(GL_QUADS);
         glTexCoord2d(0.0, 0.0); glVertex2d(0.0, 0.0);
         glTexCoord2d(1.0, 0.0); glVertex2d(1.0, 0.0);
         glTexCoord2d(1.0, 1.0); glVertex2d(1.0, 1.0);
         glTexCoord2d(0.0, 1.0); glVertex2d(0.0, 1.0);
     glEnd();
-    glPopMatrix();
 
     /* Should we call this at all ? */
     this->pProgram->release();
@@ -281,6 +276,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
         this->drawCurrentDensity(&painter);
     }
 
+    painter.drawRoundedRect(0,5,width()-5, height()-7,3,3);
     painter.end();
 }
 
@@ -410,12 +406,14 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
             this->endPoint = pEvent->pos();
             this->update();
         } else if (this->isPanMode()) {
+            qDebug() << "->" << pEvent->pos() << "->" << this->startPoint;
             float dx = pEvent->pos().x() - this->startPoint.x();
             float dy = pEvent->pos().y() - this->startPoint.y();
-            this->offsetX = dx / this->width();
-            this->offsetY = dy / this->height();
-            qDebug() << this->startPoint << this->endPoint;
-            qDebug() << "oldOffsetX =" << this->oldOffsetX << " oldOffsetY =" << this->oldOffsetY;
+            qDebug() << "dx =" << dx << "width =" << this->width();
+            qDebug() << "spliceWidth =" << this->pSlice->getWidth();
+            qDebug() << "scaleFactor =" << this->scaleFactor;
+            this->offsetX = 2 * (dx / this->width()) * (this->pSlice->getWidth() / (float)this->width()) * this->scaleFactor;
+            this->offsetY = 2* (dy / this->height()) * (this->pSlice->getHeight() / (float)this->height()) * this->scaleFactor;
             this->resetViewMatrix();
             this->update();
         }
@@ -564,11 +562,11 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
         int delta = pEvent->delta();
         if (delta > 0) {
             if (this->scaleFactor > 0.2) {
-                this->scaleFactor -= 0.05;
+                this->scaleFactor -= 0.15;
             }
         } else {
             if (this->scaleFactor < 5.0) {
-                this->scaleFactor += 0.05;
+                this->scaleFactor += 0.15;
             }
         }
         this->resetViewMatrix();
@@ -673,17 +671,21 @@ void MyGLWidget::setTheTopogramFree(void)
 
 void MyGLWidget::resetViewMatrix(void)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << this->scaleFactor << "ox =" << this->oldOffsetX + this->offsetX;
 
     this->viewMatrix.setToIdentity();
     this->viewMatrix.flipCoordinates();
-    this->viewMatrix.scale(this->scaleFactor);
-    this->viewMatrix.translate(this->oldOffsetX + this->offsetX, this->oldOffsetY + this->offsetY, 0.0);
+    //this->viewMatrix.scale(this->scaleFactor);
+    this->viewMatrix.translate(
+                this->oldOffsetX + this->offsetX,
+                this->oldOffsetY + this->offsetY, 0.0);
 }
 
 void MyGLWidget::resetView(void)
 {
-    this->scaleFactor = 2.0;
+    Q_ASSERT(pSlice);
+
+    this->scaleFactor = 1.0;//((float) this->width()) / (this->pSlice->getWidth());
     this->oldOffsetX = -0.5;
     this->oldOffsetY = -0.5;
     this->offsetX = 0.0;

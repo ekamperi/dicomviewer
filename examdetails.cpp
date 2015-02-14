@@ -23,7 +23,7 @@ QString ExamDetails::getStudyTime(void) const
 
 QString ExamDetails::getGenericDetails(void) const
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     QString genericDetails;
 
     genericDetails =
@@ -39,7 +39,7 @@ QString ExamDetails::getGenericDetails(void) const
 
 QString ExamDetails::getSpecificDetails(Exam::Modality examModality) const
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     QString specificDetails;
 
     if (examModality == Exam::CT) {
