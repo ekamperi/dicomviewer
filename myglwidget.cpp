@@ -16,7 +16,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
-    //this->setStyleSheet("background-color:black;");
+    this->setStyleSheet("background-color:black;");
     //this->setStyleSheet("border: 1px solid red");
     //pMagickImage = NULL;
 
@@ -26,8 +26,10 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     /* By default we don't measure anything */
     this->measureDistance = false;
     this->measureDensity = false;
+    this->panMode = true;
 
-    this->panMode = false;
+    // XXX
+    this->resetView();
 
     /* Default window/width */
     this->tmin = 0.0;
@@ -162,8 +164,7 @@ void MyGLWidget::initializeGL()
     bool rv;
 
     /* Setup the OpenGL matrices */
-//    this->projectionMatrix.perspective(
-//                0.0f, (float)this->width() / (float)this->height(), 0.1f, 100.0f);
+    this->projectionMatrix.ortho(0, 1, 1, 0, 0, 1);
     resetViewMatrix();
 
     glEnable(GL_TEXTURE_2D);
@@ -197,11 +198,7 @@ void MyGLWidget::initializeGL()
 
 void MyGLWidget::resizeGL(int w, int h)
 {
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, 1, 1, 0, 0, 1);
-    glMatrixMode(GL_MODELVIEW);
+    this->resetViewMatrix();
 
     /* If there is a topogram and only if it's embedded into us move it */
     if (this->pTopogram && this->pTopogram->isEmbedded()) {
@@ -276,7 +273,6 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
         this->drawCurrentDensity(&painter);
     }
 
-    painter.drawRoundedRect(0,5,width()-5, height()-7,3,3);
     painter.end();
 }
 
@@ -409,11 +405,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
             qDebug() << "->" << pEvent->pos() << "->" << this->startPoint;
             float dx = pEvent->pos().x() - this->startPoint.x();
             float dy = pEvent->pos().y() - this->startPoint.y();
-            qDebug() << "dx =" << dx << "width =" << this->width();
-            qDebug() << "spliceWidth =" << this->pSlice->getWidth();
-            qDebug() << "scaleFactor =" << this->scaleFactor;
-            this->offsetX = 2 * (dx / this->width()) * (this->pSlice->getWidth() / (float)this->width()) * this->scaleFactor;
-            this->offsetY = 2* (dy / this->height()) * (this->pSlice->getHeight() / (float)this->height()) * this->scaleFactor;
+            this->offsetX = (dx / this->width()) / this->scaleFactor;
+            this->offsetY = (dy / this->height()) / this->scaleFactor;
             this->resetViewMatrix();
             this->update();
         }
@@ -674,8 +667,7 @@ void MyGLWidget::resetViewMatrix(void)
     qDebug() << Q_FUNC_INFO << this->scaleFactor << "ox =" << this->oldOffsetX + this->offsetX;
 
     this->viewMatrix.setToIdentity();
-    this->viewMatrix.flipCoordinates();
-    //this->viewMatrix.scale(this->scaleFactor);
+    this->viewMatrix.scale(this->scaleFactor);
     this->viewMatrix.translate(
                 this->oldOffsetX + this->offsetX,
                 this->oldOffsetY + this->offsetY, 0.0);
@@ -683,11 +675,9 @@ void MyGLWidget::resetViewMatrix(void)
 
 void MyGLWidget::resetView(void)
 {
-    Q_ASSERT(pSlice);
-
-    this->scaleFactor = 1.0;//((float) this->width()) / (this->pSlice->getWidth());
-    this->oldOffsetX = -0.5;
-    this->oldOffsetY = -0.5;
+    this->scaleFactor = 1.0;
+    this->oldOffsetX = 0.0;
+    this->oldOffsetY = 0.0;
     this->offsetX = 0.0;
     this->offsetY = 0.0;
     this->resetViewMatrix();
