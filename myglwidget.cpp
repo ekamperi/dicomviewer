@@ -29,6 +29,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     this->panMode = false;
 
     // XXX
+    this->viewMatrix.setToIdentity();
     this->resetView();
 
     /* Default window/width */
@@ -551,6 +552,7 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
         pEvent->accept();
         int delta = pEvent->delta();
         if (delta > 0) {
+            this->oldScaleFactor = this->scaleFactor;
             if (this->scaleFactor > 0.1) {
                 this->scaleFactor -= 0.25;
             }
@@ -636,10 +638,18 @@ void MyGLWidget::genTopogram(void)
             }
         }
 
-        this->pTopogram = new Topogram(pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
+        /* Construct a new topogram */
+        this->pTopogram = new Topogram(
+                    pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
+
+        /* By default, the topogram is embedded in the GL widget */
         this->pTopogram->setParent(this);
+
+        /* But also let the user un-embed it, should s/he want */
         connect(this->pTopogram, SIGNAL(iWantToBreakFree(void)),
                 this, SLOT(setTheTopogramFree(void)));
+
+        /* Position the topogram at the top right corner */
         this->pTopogram->show();
         this->pTopogram->move(this->width()-pTopogram->width(), 0);
     } else {
@@ -663,8 +673,6 @@ void MyGLWidget::resetViewMatrix(void)
 {
     qDebug() << Q_FUNC_INFO << "sf =" << this->scaleFactor;
 
-    this->viewMatrix.setToIdentity();
-
     /*
      * Get mouse position in local (to GL widget) coordinates. Then calculate
      * the displacement that we must counterbalance once the scaling takes place,
@@ -674,12 +682,15 @@ void MyGLWidget::resetViewMatrix(void)
      * dx = s*x - x = (s-1)*x and the needed translation is towards the
      * opposite direction, hence -dx.
      */
-    QPoint p = this->mapFromGlobal(QCursor::pos());
-    qDebug() << "x =" << p.x() << " y=" << p.y();
-    float dx = (this->scaleFactor - 1.0) * ((float)p.x()) / (float)this->width();
-    float dy = (this->scaleFactor - 1.0) * ((float)p.y()) / (float)this->height();
-    qDebug() << "dx =" << dx << " dy =" << dy;
-    this->viewMatrix.translate(-dx, -dy, 0.0);
+
+    QPointF m = this->mapFromGlobal(QCursor::pos());
+    QPointF p = this->viewMatrix.map(m);
+    QPointF r = this->viewMatrix.map(QPointF(this->width(), this->height()));
+    float dx = (this->scaleFactor - 1) * (p.x() / r.x());
+    float dy = (this->scaleFactor - 1) * (p.y() / r.y());
+
+    this->viewMatrix.setToIdentity();
+    this->viewMatrix.translate(-dx, -dy);
     this->viewMatrix.scale(this->scaleFactor);
 
 //    this->viewMatrix.translate(

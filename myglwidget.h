@@ -106,6 +106,7 @@ private:
 
     /* Scale factor used to zoom in/out */
     float scaleFactor;
+    float oldScaleFactor;
     float offsetX, offsetY;
     float oldOffsetX, oldOffsetY;
 

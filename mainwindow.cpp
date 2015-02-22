@@ -472,5 +472,6 @@ void MainWindow::on_actionPan_triggered()
 
 void MainWindow::on_action_Reset_triggered()
 {
+    qDebug() << Q_FUNC_INFO;
     this->pGLWidget->resetView();
 }

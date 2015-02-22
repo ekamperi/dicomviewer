@@ -96,6 +96,7 @@
     <addaction name="separator"/>
     <addaction name="actionTopogram"/>
     <addaction name="actionPan"/>
+    <addaction name="actionRotate"/>
     <addaction name="action_Reset"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -258,6 +259,11 @@
   <action name="action_Reset">
    <property name="text">
     <string>&amp;Reset</string>
+   </property>
+  </action>
+  <action name="actionRotate">
+   <property name="text">
+    <string>Rotate</string>
    </property>
   </action>
  </widget>
