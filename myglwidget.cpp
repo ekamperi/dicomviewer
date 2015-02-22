@@ -552,7 +552,6 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
         pEvent->accept();
         int delta = pEvent->delta();
         if (delta > 0) {
-            this->oldScaleFactor = this->scaleFactor;
             if (this->scaleFactor > 0.1) {
                 this->scaleFactor -= 0.25;
             }
@@ -684,10 +683,15 @@ void MyGLWidget::resetViewMatrix(void)
      */
 
     QPointF m = this->mapFromGlobal(QCursor::pos());
-    QPointF p = this->viewMatrix.map(m);
-    QPointF r = this->viewMatrix.map(QPointF(this->width(), this->height()));
-    float dx = (this->scaleFactor - 1) * (p.x() / r.x());
-    float dy = (this->scaleFactor - 1) * (p.y() / r.y());
+    qDebug() << "Current mouse pos =" << m;
+    QPointF p = this->viewMatrix.inverted().map(
+                QPointF(m.x() / this->width(),
+                        m.y() / this->height()));
+    qDebug() << "Current mouse pos =" << p;
+
+    float dx = this->scaleFactor * p.x() - m.x() / this->width();
+    float dy = this->scaleFactor * p.y() - m.y() / this->height();
+    qDebug() << dx << dy;
 
     this->viewMatrix.setToIdentity();
     this->viewMatrix.translate(-dx, -dy);
