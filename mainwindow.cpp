@@ -332,8 +332,6 @@ void MainWindow::updateStatusBarForSlice(void) const
 
 void MainWindow::wheelEvent(QWheelEvent *pEvent)
 {
-    qDebug() << Q_FUNC_INFO;
-
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         pEvent->ignore();
     } else {

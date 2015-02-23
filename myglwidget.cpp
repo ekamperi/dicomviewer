@@ -401,11 +401,10 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
             this->endPoint = pEvent->pos();
             this->update();
         } else if (this->isPanMode()) {
-            qDebug() << "->" << pEvent->pos() << "->" << this->startPoint;
             float dx = pEvent->pos().x() - this->startPoint.x();
             float dy = pEvent->pos().y() - this->startPoint.y();
-            this->offsetX = (1/this->scaleFactor) * (dx / this->width());
-            this->offsetY = (1/this->scaleFactor) * (dy / this->height());
+            this->offsetX = dx / this->width();
+            this->offsetY = dy / this->height();
             this->resetViewMatrix();
         }
     } else {
@@ -546,7 +545,6 @@ void MyGLWidget::repaintSlice(float tmin, float tmax)
 
 void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
 {
-    qDebug() << Q_FUNC_INFO;
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         pEvent->accept();
         int delta = pEvent->delta();
@@ -669,25 +667,31 @@ void MyGLWidget::setTheTopogramFree(void)
 
 void MyGLWidget::resetViewMatrix(void)
 {
+    qDebug();
     qDebug() << Q_FUNC_INFO << "sf =" << this->scaleFactor;
 
     /* Get mouse position in local (to GL widget) coordinates */
     QPointF m = this->mapFromGlobal(QCursor::pos());
 
+    /* Calculate offsets from paning (if any) */
+    float ofsX = this->oldOffsetX + this->offsetX;
+    float ofsY = this->oldOffsetY + this->offsetY;
+    qDebug() << "ofsX =" << ofsX << " ofsY =" << ofsY;
+
     /* Get position in the original slice data */
     QPointF p = this->viewMatrix.inverted().map(
                 QPointF(m.x() / this->width(),
                         m.y() / this->height()));
+    qDebug() << " p =" << p;
 
-    float dx = this->scaleFactor * p.x() - m.x() / this->width();
-    float dy = this->scaleFactor * p.y() - m.y() / this->height();
+    float dx = -ofsX + this->scaleFactor * p.x() - m.x() / this->width();
+    float dy = -ofsY + this->scaleFactor * p.y() - m.y() / this->height();
 
     this->viewMatrix.setToIdentity();
-//    this->viewMatrix.translate(-dx, -dy);
+    this->viewMatrix.translate(-dx, -dy);
     this->viewMatrix.scale(this->scaleFactor);
-    this->viewMatrix.translate(
-                this->oldOffsetX + this->offsetX,
-                this->oldOffsetY + this->offsetY, 0.0);
+
+    qDebug() << this->viewMatrix;
 
     /* Update the view */
     this->update();
@@ -700,5 +704,6 @@ void MyGLWidget::resetView(void)
     this->oldOffsetY = 0.0;
     this->offsetX = 0.0;
     this->offsetY = 0.0;
+    this->viewMatrix.setToIdentity();
     this->resetViewMatrix();
 }
