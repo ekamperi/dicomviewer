@@ -16,8 +16,9 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
-    this->setStyleSheet("background-color:black;");
-    //this->setStyleSheet("border: 1px solid red");
+    /* Make the background black */
+    this->setStyleSheet("background-color: black;");
+
     //pMagickImage = NULL;
 
     /* This is necessary in order to track current mouse wheel position */
@@ -28,7 +29,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     this->measureDensity = false;
     this->panMode = true;
 
-    // XXX
+    /* Reset view */
     this->viewMatrix.setToIdentity();
     this->resetView();
 
@@ -40,7 +41,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     this->pTopogram = NULL;
 
     /* By default we don't debug */
-    this->debugMode = true;
+    this->debugMode = false;
 }
 
 MyGLWidget::~MyGLWidget()
@@ -337,6 +338,7 @@ void MyGLWidget::drawCurrentDensity(QPainter *painter)
 {
     Q_ASSERT(painter);
 
+    /* Save old pen before replacing it */
     QPen oldPen, myPen;
     oldPen = painter->pen();
     myPen.setWidth(3);
@@ -355,6 +357,7 @@ void MyGLWidget::drawCurrentDensity(QPainter *painter)
     /* Display result */
     painter->drawText(this->startPoint, QString::number(meanDensity) + " HUs");
 
+    /* Restore old pen */
     painter->setPen(oldPen);
 }
 
@@ -592,11 +595,11 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
         this->oldScaleFactor = this->scaleFactor;
         if (delta > 0) {
             if (this->scaleFactor > 0.1) {
-                this->scaleFactor -= 0.25;
+                this->scaleFactor -= 0.15;
             }
         } else {
             if (this->scaleFactor < 10.0) {
-                this->scaleFactor += 0.25;
+                this->scaleFactor += 0.15;
             }
         }
         this->resetViewMatrix();
