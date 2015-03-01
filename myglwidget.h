@@ -68,6 +68,7 @@ private:
     void drawCurrentDensity(QPainter *pPainter);
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
+    void drawDebug(QPainter *pPainter);
 
     void resetViewMatrix(void);
 
@@ -137,6 +138,9 @@ private:
     QMatrix4x4 projectionMatrix;
     QMatrix4x4 viewMatrix;
     QMatrix4x4 modelMatrix;
+
+    /* Whether debug mode is on or off */
+    bool debugMode;
 };
 
 #endif // MYGLWIDGET_H

@@ -6,8 +6,6 @@
 
 MyImageWidget::MyImageWidget(QWidget *parent) : QLabel(parent)
 {
-    qDebug() << Q_FUNC_INFO;
-
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
 
@@ -21,7 +19,6 @@ MyImageWidget::MyImageWidget(QWidget *parent) : QLabel(parent)
 
 MyImageWidget::~MyImageWidget()
 {
-    qDebug() << Q_FUNC_INFO;
     Q_ASSERT(this->pData);
 
     delete this->pData;

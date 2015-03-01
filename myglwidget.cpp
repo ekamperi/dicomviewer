@@ -38,6 +38,9 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
 
     /* By default we don't show any topogram */
     this->pTopogram = NULL;
+
+    /* By default we don't debug */
+    this->debugMode = true;
 }
 
 MyGLWidget::~MyGLWidget()
@@ -272,6 +275,11 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
         this->drawCurrentDensity(&painter);
     }
 
+    /* Draw debug information */
+    if (this->debugMode) {
+        this->drawDebug(&painter);
+    }
+
     painter.end();
 }
 
@@ -376,6 +384,37 @@ void MyGLWidget::drawDistances(QPainter *painter)
     painter->setPen(oldPen);
 }
 
+void MyGLWidget::drawDebug(QPainter *painter)
+{
+    Q_ASSERT(painter);
+
+    QPen oldPen, textPen;
+    oldPen = painter->pen();
+    textPen.setColor(Qt::red);
+
+    /* Get current cursor position */
+    QPointF mousePos = this->mapFromGlobal(QCursor::pos());
+
+    /* Convert to [0,1] */
+    QPointF m = QPointF(mousePos.x() / this->width(),
+                        mousePos.y() / this->height());
+    QPointF p = this->viewMatrix.inverted().map(m);
+
+    /* Construct the debug message (mouse pos) -> (original pos) */
+    QString dm = "(" +
+            QString::number(m.x(), 'g', 2) + ", " +
+            QString::number(m.y(), 'g', 2) + ") -> (" +
+            QString::number(p.x(), 'g', 2) + ", " +
+            QString::number(p.y(), 'g', 2) + ")";
+
+    /* Write the debug message in the current cursor position */
+    painter->setPen(textPen);
+    painter->drawText(mousePos, dm);
+
+    /* Restore old pen */
+    painter->setPen(oldPen);
+}
+
 void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
 {
     if (pEvent->buttons() & Qt::RightButton) {
@@ -407,7 +446,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
             this->offsetY = dy / this->height();
             this->resetViewMatrix();
         }
-    } else {
+    } else if (this->debugMode) {
+        this->update();
     }
     pEvent->ignore();
 }
@@ -430,6 +470,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
     } else if (this->panMode) {
         this->oldOffsetX += this->offsetX;
         this->oldOffsetY += this->offsetY;
+        this->offsetX = this->offsetY = 0;
     }
 }
 
@@ -548,6 +589,7 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
         pEvent->accept();
         int delta = pEvent->delta();
+        this->oldScaleFactor = this->scaleFactor;
         if (delta > 0) {
             if (this->scaleFactor > 0.1) {
                 this->scaleFactor -= 0.25;
@@ -660,7 +702,9 @@ void MyGLWidget::setTheTopogramFree(void)
     qDebug() << Q_FUNC_INFO;
 
     this->pTopogram->setParent(NULL);
-    this->pTopogram->move(this->mapToGlobal(QPoint(this->width()-pTopogram->width(), 0)));
+    this->pTopogram->move(
+                this->mapToGlobal(
+                    QPoint(this->width()-pTopogram->width(), 0)));
     this->pTopogram->show();
     this->pTopogram->setEmbedded(false);
 }
@@ -671,21 +715,31 @@ void MyGLWidget::resetViewMatrix(void)
     qDebug() << Q_FUNC_INFO << "sf =" << this->scaleFactor;
 
     /* Get mouse position in local (to GL widget) coordinates */
-    QPointF m = this->mapFromGlobal(QCursor::pos());
+    QPointF mousePos = this->mapFromGlobal(QCursor::pos());
+    QPointF m = QPointF(((float)mousePos.x()) / this->width(),
+                        ((float)mousePos.y()) / this->height());
+
+    /* Get position in the original slice data */
+    QPointF p = this->viewMatrix.inverted().map(m);
+    qDebug() << "m =" << m << " p =" << p;
 
     /* Calculate offsets from paning (if any) */
     float ofsX = this->oldOffsetX + this->offsetX;
     float ofsY = this->oldOffsetY + this->offsetY;
     qDebug() << "ofsX =" << ofsX << " ofsY =" << ofsY;
 
-    /* Get position in the original slice data */
-    QPointF p = this->viewMatrix.inverted().map(
-                QPointF(m.x() / this->width(),
-                        m.y() / this->height()));
-    qDebug() << " p =" << p;
-
-    float dx = -ofsX + this->scaleFactor * p.x() - m.x() / this->width();
-    float dy = -ofsY + this->scaleFactor * p.y() - m.y() / this->height();
+    float dx, dy;
+    if (this->offsetX == 0 && this->offsetY == 0) {
+        qDebug() << "ZOOMING!";
+        dx = this->scaleFactor * p.x() - m.x();
+        dy = this->scaleFactor * p.y() - m.y();
+        this->oldOffsetX = -dx;
+        this->oldOffsetY = -dy;
+    } else {
+        qDebug() << "PANNING!";
+        dx = -ofsX;
+        dy = -ofsY;
+    }
 
     this->viewMatrix.setToIdentity();
     this->viewMatrix.translate(-dx, -dy);
@@ -700,6 +754,7 @@ void MyGLWidget::resetViewMatrix(void)
 void MyGLWidget::resetView(void)
 {
     this->scaleFactor = 1.0;
+    this->oldScaleFactor = 1.0;
     this->oldOffsetX = 0.0;
     this->oldOffsetY = 0.0;
     this->offsetX = 0.0;
