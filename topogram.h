@@ -21,9 +21,11 @@ public:
 protected:
     virtual void paintEvent(QPaintEvent *pEvent);
     virtual void mouseMoveEvent(QMouseEvent *pEvent);
+    virtual void mouseReleaseEvent(QMouseEvent *pEvent);
 
 signals:
     void iWantToBreakFree(void);
+    void sliceChanged(int newSliceIndex);
 
 public slots:
 
@@ -49,7 +51,7 @@ private:
     float tmin;
     float tmax;
 
-    /* Whethere topogram is an autonomous window or embedded into the GLWidget */
+    /* Whether topogram is an autonomous window or embedded into the GLWidget */
     bool amIEmbedded;
 };
 

@@ -130,3 +130,25 @@ void Topogram::setNewSliceIndex(unsigned int newSliceIndex)
     this->sliceIndex = newSliceIndex;
     this->update();
 }
+
+void Topogram::mouseReleaseEvent(QMouseEvent *pEvent)
+{
+    /*
+     * Change slice if and only if user clicked with *left* button.
+     * Because s/he may be releasing the right button while changing
+     * window/width.
+     *
+     * From the Qt docs regarding the QMouseEvent::buttons() function:
+     * "... For mouse release events this *excludes* the button that caused
+     * the event."
+     *
+     * Whereas for QMouseEvent::button():
+     * "... Returns the button that caused the event."
+     *
+     * For the above reason, use ::button() instead of ::buttons() here.
+     */
+    if (pEvent->button() == Qt::LeftButton) {
+        int ypos = this->totalSlices * pEvent->pos().y() / this->height();
+        emit this->sliceChanged(ypos);
+    }
+}

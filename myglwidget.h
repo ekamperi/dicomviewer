@@ -47,6 +47,7 @@ public:
 
 signals:
     void windowChanged(int x);
+    void sliceChanged(int newSliceIndex);
 
 private slots:
     void repaintSlice(float tmin, float tmax);

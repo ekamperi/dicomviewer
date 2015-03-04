@@ -46,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QVBoxLayout *pLayout = new QVBoxLayout();
     pLayout->addWidget(this->pGLWidget);
     containerWidget2->setLayout(pLayout);
+    connect(this->pGLWidget, SIGNAL(sliceChanged(int)),
+            this, SLOT(gotoSlice(int)));
 
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();

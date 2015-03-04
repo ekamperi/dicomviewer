@@ -689,6 +689,8 @@ void MyGLWidget::genTopogram(void)
         /* But also let the user un-embed it, should s/he want */
         connect(this->pTopogram, SIGNAL(iWantToBreakFree(void)),
                 this, SLOT(setTheTopogramFree(void)));
+        connect(this->pTopogram, SIGNAL(sliceChanged(int)),
+                this, SIGNAL(sliceChanged(int)));
 
         /* Position the topogram at the top right corner */
         this->pTopogram->show();

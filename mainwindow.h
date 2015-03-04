@@ -32,6 +32,7 @@ private slots:
     void on_actionAbout_triggered();
     void on_actionOpenDICOM_triggered();
     void sliceDoubleClicked(Slice *pSlice);
+    void gotoSlice(int sliceIndex);
 
     void getProgress(unsigned int cnt);
     void progressDialogCanceled();
@@ -96,7 +97,6 @@ private:
 
     struct SliceDirection { enum is { Prev, Next }; };
     void gotoSlice(SliceDirection::is dir);
-    void gotoSlice(int sliceIndex);
     void gotoNextSlice();
     void gotoPrevSlice();
     void updateStatusBarForSlice(void) const;
