@@ -49,7 +49,7 @@ Topogram::Topogram(float *pRawData, int width, int height, int sliceIndex,
     this->pImage->setColorTable(my_table);
 
     /* XXX: Take slice thickness into consideration for height */
-    this->setGeometry(0, 0, width/2, 2*height);
+    this->setGeometry(0, 0, width/2, 2.5*height);
  }
 
 Topogram::~Topogram()
