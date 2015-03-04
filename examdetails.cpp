@@ -23,23 +23,22 @@ QString ExamDetails::getStudyTime(void) const
 
 QString ExamDetails::getGenericDetails(void) const
 {
-//    qDebug() << Q_FUNC_INFO;
     QString genericDetails;
 
     genericDetails =
             "Name: " + this->getPatientName()
-            + ", ID: " + this->getPatientID()  + "\n"
-            +  "Age: " + this->getPatientAge() + "\n"
-            +  "Sex: " + this->getPatientSex() + "\n"
-            + "Date: " + this->getStudyDate() + "\n"
-            + "Time: " + this->getStudyTime();
+            +        ", ID: " + this->getPatientID()  + "\n"
+            +         "Age: " + this->getPatientAge() + "\n"
+            +         "Sex: " + this->getPatientSex() + "\n"
+            +        "Date: " + this->getStudyDate() + "\n"
+            +        "Time: " + this->getStudyTime() + "\n"
+            + "Institution: " + this->getInstitutionName();
 
     return genericDetails;
 }
 
 QString ExamDetails::getSpecificDetails(Exam::Modality examModality) const
 {
-//    qDebug() << Q_FUNC_INFO;
     QString specificDetails;
 
     if (examModality == Exam::CT) {

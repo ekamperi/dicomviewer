@@ -344,6 +344,7 @@ ExamDetails DicomFile::getExamDetails(void)
     { DCM_PatientBirthDate, "patientBirthDate" },
     { DCM_StudyDate,        "studyDate"	       },
     { DCM_StudyTime,        "studyTime"        },
+    { DCM_InstitutionName,  "institutionName"  },
     /* CT specific tags */
     { DCM_KVP,              "kvp"              },
     { DCM_XRayTubeCurrent,  "xrayTubeCurrent"  },

@@ -27,7 +27,7 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     /* By default we don't measure anything */
     this->measureDistance = false;
     this->measureDensity = false;
-    this->panMode = true;
+    this->panMode = false;
 
     /* Reset view */
     this->viewMatrix.setToIdentity();
