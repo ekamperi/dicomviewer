@@ -443,6 +443,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent *pEvent)
             this->endPoint = pEvent->pos();
             this->update();
         } else if (this->isPanMode()) {
+            this->setCursor(Qt::OpenHandCursor);
             float dx = pEvent->pos().x() - this->startPoint.x();
             float dy = pEvent->pos().y() - this->startPoint.y();
             this->offsetX = dx / this->width();
@@ -471,6 +472,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
             this->update();
         }
     } else if (this->panMode) {
+        this->setCursor(Qt::ArrowCursor);
         this->oldOffsetX += this->offsetX;
         this->oldOffsetY += this->offsetY;
         this->offsetX = this->offsetY = 0;
