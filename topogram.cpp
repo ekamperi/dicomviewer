@@ -104,9 +104,6 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
 
 void Topogram::paintEvent(QPaintEvent *pEvent)
 {
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << this->sliceIndex << this->totalSlices;
-
     /* Create a scaled version of the topogram, based on the new size */
     QImage scaledImage =
             this->pImage->scaled(

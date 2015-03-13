@@ -70,14 +70,6 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <widget class="QMenu" name="menu_Layout">
-     <property name="title">
-      <string>&amp;Layout</string>
-     </property>
-     <addaction name="action1x1"/>
-     <addaction name="action1x2"/>
-     <addaction name="action2x2"/>
-    </widget>
     <widget class="QMenu" name="menuWindow">
      <property name="title">
       <string>Window</string>
@@ -87,8 +79,8 @@
      <addaction name="actionHead"/>
      <addaction name="actionLung"/>
      <addaction name="actionMediastinum"/>
+     <addaction name="actionSoft_tissue"/>
     </widget>
-    <addaction name="menu_Layout"/>
     <addaction name="menuWindow"/>
     <addaction name="separator"/>
     <addaction name="actionFlip_Horizontally"/>
@@ -264,6 +256,11 @@
   <action name="actionRotate">
    <property name="text">
     <string>Rotate</string>
+   </property>
+  </action>
+  <action name="actionSoft_tissue">
+   <property name="text">
+    <string>Soft tissue</string>
    </property>
   </action>
  </widget>

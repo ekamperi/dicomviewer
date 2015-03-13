@@ -597,11 +597,11 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
         this->oldScaleFactor = this->scaleFactor;
         if (delta > 0) {
             if (this->scaleFactor > 0.1) {
-                this->scaleFactor -= 0.15;
+                this->scaleFactor -= 0.1;
             }
         } else {
             if (this->scaleFactor < 10.0) {
-                this->scaleFactor += 0.15;
+                this->scaleFactor += 0.1;
             }
         }
         this->resetViewMatrix();
@@ -655,29 +655,48 @@ MyGLWidget::getGeomTransformation(void) const
     return this->geomTransformation;
 }
 
-void MyGLWidget::genTopogram(void)
+void MyGLWidget::genTopogram(float angle)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "angle =" << angle << " a =" << tan(angle);
 
     float *pResult;
     if (!this->pTopogram) {
-        pResult = (float *)malloc(sizeof(float) * 512*512);
+        pResult = (float *)calloc(sizeof(float), 512 * 512);
         Q_ASSERT(pResult);
 
-        /* For every (x, z) calculate the average luminance along the y axis */
         for (int z = 0; z < this->vecSlices.size(); z++) {
-            Slice *pzSlice = this->vecSlices.at(z);
+            const Slice *pzSlice = this->vecSlices.at(z);
             Q_ASSERT(pzSlice);
 
-            unsigned int w = pzSlice->getWidth();
-            unsigned int h = pzSlice->getHeight();
+            float *pRawPixelData = pzSlice->getRawPixelData();
+            Q_ASSERT(pRawPixelData);
 
-            for (unsigned int x = 0; x < w; x++) {
+            int w = pzSlice->getWidth();
+            int h = pzSlice->getHeight();
+
+            float b1 = h;
+            float b2 = -tan(angle) * w;
+            float step = (b1-b2) / 512.0;
+
+            for (int idx = 0; idx < 512; idx++) {
+                int cnt = 0;
                 float luminance = 0.0;
-                for (unsigned int y = 0; y < h; y++) {
-                    luminance += pzSlice->getRawPixelData()[(int)(y*w + x)];
+                float a = tan(angle);
+                float b = b2 + idx * step;
+                for (float x = 0.0; x < w; x += 0.5) {
+                    float y = a * x + b;
+                    if (y >= 0 && y <= h-1) {
+                        cnt++;
+                        luminance += pRawPixelData[(int)(y*w + x)];
+                    }
                 }
-                pResult[z*w+x] = MyMath::sstep(0.0, 0.25, luminance / h);
+                if (cnt == 0) { luminance = 0.0; cnt = 1; }
+                int n = z*w + idx;
+                qDebug() << "n =" << n;
+                if (pResult[n] != 0.0) {
+                    qDebug() << "WTF!";
+                }
+                pResult[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
             }
         }
 
@@ -752,7 +771,7 @@ void MyGLWidget::resetViewMatrix(void)
     this->viewMatrix.translate(-dx, -dy);
     this->viewMatrix.scale(this->scaleFactor);
 
-    qDebug() << this->viewMatrix;
+    //qDebug() << this->viewMatrix;
 
     /* Update the view */
     this->update();

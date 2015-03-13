@@ -405,7 +405,7 @@ void MainWindow::on_actionFlip_Vertically_triggered()
 
 void MainWindow::on_actionTopogram_triggered()
 {
-    this->pGLWidget->genTopogram();
+    this->pGLWidget->genTopogram(85.0*3.1415926/180.0);
 }
 
 void MainWindow::on_actionOpen_DICOM_dir_triggered()
