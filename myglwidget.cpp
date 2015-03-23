@@ -674,28 +674,25 @@ void MyGLWidget::genTopogram(float angle)
             int w = pzSlice->getWidth();
             int h = pzSlice->getHeight();
 
+            float a = tan(angle);
             float b1 = h;
-            float b2 = -tan(angle) * w;
+            float b2 = -a*w;
             float step = (b1-b2) / 512.0;
 
             for (int idx = 0; idx < 512; idx++) {
                 int cnt = 0;
                 float luminance = 0.0;
-                float a = tan(angle);
                 float b = b2 + idx * step;
-                for (float x = 0.0; x < w; x += 0.5) {
+                for (float x = 0.0; x < w; x += 1.00) {
                     float y = a * x + b;
-                    if (y >= 0 && y <= h-1) {
+                    int idx = ((int)y)*w + (int)x;
+                    if (idx >= 0 && idx < 512*512) {
                         cnt++;
-                        luminance += pRawPixelData[(int)(y*w + x)];
+                        luminance += pRawPixelData[idx];
                     }
                 }
                 if (cnt == 0) { luminance = 0.0; cnt = 1; }
                 int n = z*w + idx;
-                qDebug() << "n =" << n;
-                if (pResult[n] != 0.0) {
-                    qDebug() << "WTF!";
-                }
                 pResult[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
             }
         }
