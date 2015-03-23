@@ -40,6 +40,8 @@ private:
     void genData(void);
     void regenData(void);   // regenData() just calls genData(). It's used for clarity.
 
+    void genImage(void);
+
     /* Raw data are the floating point original pixel values */
     float *pRawData;
     unsigned char *pConvertedData;

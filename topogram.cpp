@@ -19,11 +19,6 @@ Topogram::Topogram(const QVector<Slice *> *pVecSlices, float angle,
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* */
-    this->angle = angle;
-    this->pVecSlices = pVecSlices;
-    this->genData();
-
     /* By default the topogram is embedded into the GL Widget */
     this->amIEmbedded = true;
 
@@ -32,27 +27,15 @@ Topogram::Topogram(const QVector<Slice *> *pVecSlices, float angle,
     this->sliceIndex = sliceIndex;
     this->totalSlices = height; // XXX
 
+    this->tmin = 0.0;
+    this->tmax = 0.2;
+
+    /* */
+    this->angle = angle;
+    this->pVecSlices = pVecSlices;
+    this->genData();
+
     this->setStyleSheet("background-color: rgba(0, 0, 0, 50%);");
-
-    /* Convert floating point pixel data [0.0, 1.0] to unsigned char [0, 255]
-     * QImage cannot handle floating point data!
-     */
-    this->pConvertedData =
-            MyMath::floatToByte(
-                this->pRawData, this->rawWidth, this->rawHeight);
-
-    /* Quoting from the Qt docs:
-     * The buffer must remain valid throughout the life of the QImage.
-     * The image does NOT delete the buffer at destruction.
-     */
-    this->pImage = new QImage(this->pConvertedData,
-                              this->rawWidth, this->rawHeight,
-                              QImage::Format_Indexed8);
-    Q_ASSERT(this->pImage);
-
-    QVector<QRgb> my_table;
-    for (int i = 0; i < 256; i++) my_table.push_back(qRgb(i,i,i));
-    this->pImage->setColorTable(my_table);
 
     /* XXX: Take slice thickness into consideration for height */
     this->setGeometry(0, 0, width/2, 2.5*height);
@@ -71,9 +54,9 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
     float ypos = pEvent->localPos().y();
 
     /*
-     * Left button changes the embedding status.
-     * Right button changes the window/width level.
-     * Middle button changes the angle of view.
+     * LEFT button changes the embedding status.
+     * RIGHT button changes the window/width level.
+     * MIDDLE button changes the angle of view.
      */
     if (pEvent->buttons() & Qt::LeftButton) {
         int xpos = pEvent->pos().x();
@@ -85,8 +68,12 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         qDebug() << "MIDDLE BUTTON MOUSE MOVE!";
         float width = ypos / ((float) this->height());
 #define PI 3.1415926
-        this->angle = (PI/2) * width;
-        this->regenData();
+        float newAngle = (PI/2) * width;
+        qDebug() << newAngle << this->angle;
+        if (fabs(newAngle - this->angle) > 0.025) {
+            this->angle = newAngle;
+            this->regenData();
+        }
     } else if (pEvent->buttons() & Qt::RightButton) {
         float newTmin;
         float newTmax;
@@ -104,21 +91,50 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         if (qAbs(newTmax - this->tmax) > 0.005) this->tmax = newTmax;
 
         if (this->tmin == newTmin || this->tmax == newTmax) {
-            delete this->pImage;
-            delete this->pConvertedData;
-            this->pConvertedData =
-                    MyMath::floatToByte(
-                        this->pRawData, this->rawWidth, this->rawHeight,
-                        this->tmin, this->tmax);
-
-            QImage *pNewImage = new QImage(
-                        this->pConvertedData,
-                        this->rawWidth, this->rawHeight, QImage::Format_Indexed8);
-            Q_ASSERT(pNewImage);
-            this->pImage = pNewImage;
-            this->update();
+            this->genImage();
         }
     }
+}
+
+void Topogram::genImage(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+//    if (this->pImage) {
+//        delete this->pImage;
+//    }
+//    if (this->pConvertedData) {
+//        delete this->pConvertedData;
+//    }
+
+    /*
+     * Convert floating point pixel data [0.0, 1.0] to unsigned char [0, 255].
+     * QImage cannot handle floating point data!
+     */
+    this->pConvertedData =
+            MyMath::floatToByte(
+                this->pRawData, this->rawWidth, this->rawHeight,
+                this->tmin, this->tmax);
+
+    /*
+     * Quoting from the Qt docs:
+     * The buffer must remain valid throughout the life of the QImage.
+     * The image does NOT delete the buffer at destruction.
+     */
+    QImage *pNewImage = new QImage(
+                this->pConvertedData,
+                this->rawWidth, this->rawHeight, QImage::Format_Indexed8);
+    Q_ASSERT(pNewImage);
+
+    /* Setup the color table */
+    QVector<QRgb> my_table;
+    for (int i = 0; i < 256; i++) my_table.push_back(qRgb(i,i,i));
+    pNewImage->setColorTable(my_table);
+
+    this->pImage = pNewImage;
+
+    /* Update graphics */
+    this->update();
 }
 
 void Topogram::paintEvent(QPaintEvent *pEvent)
@@ -179,11 +195,14 @@ void Topogram::regenData(void)
 
 void Topogram::genData(void)
 {
+    qDebug() << Q_FUNC_INFO << this->angle;
+
+    /* If there are existing data, discard them */
     if (this->pRawData) {
         delete this->pRawData;
-        this->pRawData = NULL;
     }
 
+    /* Allocate memory for the topogram */
     this->pRawData = (float *)calloc(sizeof(float), 512 * 512);
     Q_ASSERT(this->pRawData);
 
@@ -224,4 +243,7 @@ NEXT:;
             this->pRawData[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
         }
     }
+
+    this->genImage();
+    this->update();
 }
