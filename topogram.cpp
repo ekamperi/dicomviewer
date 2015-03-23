@@ -13,7 +13,8 @@ Topogram::Topogram(QWidget *parent) : QWidget(parent)
     qDebug() << Q_FUNC_INFO;
 }
 
-Topogram::Topogram(QVector<Slice *> vecSlices, float angle, int width, int height, int sliceIndex,
+Topogram::Topogram(QVector<Slice *> vecSlices, float angle,
+                   int width, int height, int sliceIndex,
                    QWidget *parent) : QWidget(parent)
 {
     qDebug() << Q_FUNC_INFO;
@@ -59,6 +60,7 @@ Topogram::~Topogram()
 {
     delete this->pImage;
     delete this->pConvertedData;
+    delete this->pRawData;
 }
 
 void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
@@ -157,6 +159,7 @@ void Topogram::genData(QVector<Slice *> vecSlices, float angle)
 {
     if (this->pRawData) {
         delete this->pRawData;
+        this->pRawData = NULL;
     }
 
     this->pRawData = (float *)calloc(sizeof(float), 512 * 512);
