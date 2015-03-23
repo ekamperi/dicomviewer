@@ -1,6 +1,7 @@
 #include "mymath.h"
 #include "topogram.h"
 
+#include <math.h>
 #include <QtGlobal>
 #include <QDebug>
 #include <QMouseEvent>
@@ -12,15 +13,17 @@ Topogram::Topogram(QWidget *parent) : QWidget(parent)
     qDebug() << Q_FUNC_INFO;
 }
 
-Topogram::Topogram(float *pRawData, int width, int height, int sliceIndex,
+Topogram::Topogram(QVector<Slice *> vecSlices, float angle, int width, int height, int sliceIndex,
                    QWidget *parent) : QWidget(parent)
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* */
+    this->genData(vecSlices, angle);
+
     /* By default the topogram is embedded into the GL Widget */
     this->amIEmbedded = true;
 
-    this->pRawData = pRawData;
     this->rawHeight = height;
     this->rawWidth = width;
     this->sliceIndex = sliceIndex;
@@ -147,5 +150,53 @@ void Topogram::mouseReleaseEvent(QMouseEvent *pEvent)
     if (pEvent->button() == Qt::LeftButton) {
         int ypos = this->totalSlices * pEvent->pos().y() / this->height();
         emit this->sliceChanged(ypos);
+    }
+}
+
+void Topogram::genData(QVector<Slice *> vecSlices, float angle)
+{
+    if (this->pRawData) {
+        delete this->pRawData;
+    }
+
+    this->pRawData = (float *)calloc(sizeof(float), 512 * 512);
+    Q_ASSERT(this->pRawData);
+
+    for (int z = 0; z < vecSlices.size(); z++) {
+        const Slice *pzSlice = vecSlices.at(z);
+        Q_ASSERT(pzSlice);
+
+        float *pRawPixelData = pzSlice->getRawPixelData();
+        Q_ASSERT(pRawPixelData);
+
+        int w = pzSlice->getWidth();
+        int h = pzSlice->getHeight();
+
+        float a = tan(angle);
+        float b1 = h;
+        float b2 = -a*w;
+        float step = (b1-b2) / 512.0;
+
+        for (int idx = 0; idx < 512; idx++) {
+            int cnt = 0;
+            float luminance = 0.0;
+            float b = b2 + idx * step;
+            for (float x = 0.0; x < w; x++) {
+                float y = a * x + b;
+                int idx = ((int)y)*w + x;
+                if (idx >= 0 && idx < 512*512) {
+                    cnt++;
+                    luminance += pRawPixelData[idx];
+                } else {
+                    if (cnt > 0) {
+                        goto NEXT;
+                    }
+                }
+            }
+NEXT:;
+            if (cnt == 0) { luminance = 0.0; cnt = 1; }
+            int n = z*w + idx;
+            this->pRawData[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
+        }
     }
 }

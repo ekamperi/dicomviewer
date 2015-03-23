@@ -5,12 +5,14 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "slice.h"
+
 class Topogram : public QWidget
 {
     Q_OBJECT
 public:
     explicit Topogram(QWidget *parent = 0);
-    explicit Topogram(float *pData, int width, int height,
+    explicit Topogram(QVector<Slice *> vecSlices, float angle, int width, int height,
                       int sliceIndex, QWidget *parent = 0);
     ~Topogram();
 
@@ -34,6 +36,8 @@ private:
     QLabel *pLabel;
     QImage* pImage;
     QPixmap *pPixmap;
+
+    void genData(QVector<Slice *> vecSlices, float angle);
 
     /* Raw data are the floating point original pixel values */
     float *pRawData;

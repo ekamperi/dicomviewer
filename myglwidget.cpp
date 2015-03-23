@@ -657,49 +657,10 @@ MyGLWidget::getGeomTransformation(void) const
 
 void MyGLWidget::genTopogram(float angle)
 {
-    qDebug() << Q_FUNC_INFO << "angle =" << angle << " a =" << tan(angle);
-
-    float *pResult;
     if (!this->pTopogram) {
-        pResult = (float *)calloc(sizeof(float), 512 * 512);
-        Q_ASSERT(pResult);
-
-        for (int z = 0; z < this->vecSlices.size(); z++) {
-            const Slice *pzSlice = this->vecSlices.at(z);
-            Q_ASSERT(pzSlice);
-
-            float *pRawPixelData = pzSlice->getRawPixelData();
-            Q_ASSERT(pRawPixelData);
-
-            int w = pzSlice->getWidth();
-            int h = pzSlice->getHeight();
-
-            float a = tan(angle);
-            float b1 = h;
-            float b2 = -a*w;
-            float step = (b1-b2) / 512.0;
-
-            for (int idx = 0; idx < 512; idx++) {
-                int cnt = 0;
-                float luminance = 0.0;
-                float b = b2 + idx * step;
-                for (float x = 0.0; x < w; x += 1.00) {
-                    float y = a * x + b;
-                    int idx = ((int)y)*w + (int)x;
-                    if (idx >= 0 && idx < 512*512) {
-                        cnt++;
-                        luminance += pRawPixelData[idx];
-                    }
-                }
-                if (cnt == 0) { luminance = 0.0; cnt = 1; }
-                int n = z*w + idx;
-                pResult[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
-            }
-        }
-
         /* Construct a new topogram */
         this->pTopogram = new Topogram(
-                    pResult, 512, this->vecSlices.size(), this->pSlice->getIndex());
+                    this->vecSlices, angle, 512, this->vecSlices.size(), this->pSlice->getIndex());
 
         /* By default, the topogram is embedded in the GL widget */
         this->pTopogram->setParent(this);
