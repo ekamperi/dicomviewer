@@ -12,7 +12,7 @@ class Topogram : public QWidget
     Q_OBJECT
 public:
     explicit Topogram(QWidget *parent = 0);
-    explicit Topogram(QVector<Slice *> vecSlices, float angle, int width, int height,
+    explicit Topogram(const QVector<Slice *> *pVecSlices, float angle, int width, int height,
                       int sliceIndex, QWidget *parent = 0);
     ~Topogram();
 
@@ -37,7 +37,8 @@ private:
     QImage* pImage;
     QPixmap *pPixmap;
 
-    void genData(QVector<Slice *> vecSlices, float angle);
+    void genData(void);
+    void regenData(void);   // regenData() just calls genData(). It's used for clarity.
 
     /* Raw data are the floating point original pixel values */
     float *pRawData;
@@ -46,6 +47,12 @@ private:
     /* */
     int rawWidth;
     int rawHeight;
+
+    /* */
+    const QVector<Slice *> *pVecSlices;
+
+    /* Current angle in radians from where we are looking at */
+    float angle;
 
     /* Current slice index that we are looking at */
     unsigned int sliceIndex;

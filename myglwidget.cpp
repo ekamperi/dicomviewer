@@ -657,12 +657,15 @@ MyGLWidget::getGeomTransformation(void) const
 
 void MyGLWidget::genTopogram(float angle)
 {
+    /* If there's no topogram at all, construct a new one */
     if (!this->pTopogram) {
-        /* Construct a new topogram */
         this->pTopogram = new Topogram(
-                    this->vecSlices, angle, 512, this->vecSlices.size(), this->pSlice->getIndex());
+                    &this->vecSlices, angle, 512, this->vecSlices.size(), this->pSlice->getIndex());
 
-        /* By default, the topogram is embedded in the GL widget */
+        /* By default, the topogram is embedded in the GL widget.
+         * XXX: In Mac OSX the embedded GL widget is not shown. Perhaps default to un-embedded
+         * in Mac OSX (only) ?
+         */
         this->pTopogram->setParent(this);
 
         /* But also let the user un-embed it, should s/he want */
@@ -675,9 +678,9 @@ void MyGLWidget::genTopogram(float angle)
         this->pTopogram->show();
         this->pTopogram->move(this->width()-pTopogram->width(), 0);
     } else {
-        this->pTopogram->hide();
-        this->pTopogram->deleteLater();
-        this->pTopogram = NULL;
+        /* We already have a topogram. Just toggle its visibility (do not destroy it)! */
+        bool isVisible = this->pTopogram->isVisible();
+        this->pTopogram->setVisible(!isVisible);
     }
 }
 

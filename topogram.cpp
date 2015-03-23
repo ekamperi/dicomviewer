@@ -13,14 +13,16 @@ Topogram::Topogram(QWidget *parent) : QWidget(parent)
     qDebug() << Q_FUNC_INFO;
 }
 
-Topogram::Topogram(QVector<Slice *> vecSlices, float angle,
+Topogram::Topogram(const QVector<Slice *> *pVecSlices, float angle,
                    int width, int height, int sliceIndex,
                    QWidget *parent) : QWidget(parent)
 {
     qDebug() << Q_FUNC_INFO;
 
     /* */
-    this->genData(vecSlices, angle);
+    this->angle = angle;
+    this->pVecSlices = pVecSlices;
+    this->genData();
 
     /* By default the topogram is embedded into the GL Widget */
     this->amIEmbedded = true;
@@ -65,14 +67,32 @@ Topogram::~Topogram()
 
 void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
 {
-    if (pEvent->buttons() & Qt::RightButton) {
+    float xpos = pEvent->localPos().x();
+    float ypos = pEvent->localPos().y();
+
+    /*
+     * Left button changes the embedding status.
+     * Right button changes the window/width level.
+     * Middle button changes the angle of view.
+     */
+    if (pEvent->buttons() & Qt::LeftButton) {
+        int xpos = pEvent->pos().x();
+        int ypos = pEvent->pos().y();
+        if (ypos < 0 || xpos > this->width()) {
+            emit iWantToBreakFree();
+        }
+    } else if (pEvent->buttons() & Qt::MiddleButton) {
+        qDebug() << "MIDDLE BUTTON MOUSE MOVE!";
+        float width = ypos / ((float) this->height());
+#define PI 3.1415926
+        this->angle = (PI/2) * width;
+        this->regenData();
+    } else if (pEvent->buttons() & Qt::RightButton) {
         float newTmin;
         float newTmax;
-        float x = pEvent->localPos().x();
-        float y = pEvent->localPos().y();
 
-        float width = y / ((float) this->height());
-        float center = x / ((float) this->width());
+        float width = ypos / ((float) this->height());
+        float center = xpos / ((float) this->width());
 
         newTmin = center - width/2;
         newTmax = center + width/2;
@@ -97,12 +117,6 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
             Q_ASSERT(pNewImage);
             this->pImage = pNewImage;
             this->update();
-        }
-    } else if (pEvent->buttons() & Qt::LeftButton) {
-        int xpos = pEvent->pos().x();
-        int ypos = pEvent->pos().y();
-        if (ypos < 0 || xpos > this->width()) {
-            emit iWantToBreakFree();
         }
     }
 }
@@ -155,7 +169,15 @@ void Topogram::mouseReleaseEvent(QMouseEvent *pEvent)
     }
 }
 
-void Topogram::genData(QVector<Slice *> vecSlices, float angle)
+/* regenData() just calls genData() and is used for clarity.
+ e.g. when the angle changes, we call regenData().
+*/
+void Topogram::regenData(void)
+{
+    this->genData();
+}
+
+void Topogram::genData(void)
 {
     if (this->pRawData) {
         delete this->pRawData;
@@ -165,8 +187,8 @@ void Topogram::genData(QVector<Slice *> vecSlices, float angle)
     this->pRawData = (float *)calloc(sizeof(float), 512 * 512);
     Q_ASSERT(this->pRawData);
 
-    for (int z = 0; z < vecSlices.size(); z++) {
-        const Slice *pzSlice = vecSlices.at(z);
+    for (int z = 0; z < this->pVecSlices->size(); z++) {
+        const Slice *pzSlice = this->pVecSlices->at(z);
         Q_ASSERT(pzSlice);
 
         float *pRawPixelData = pzSlice->getRawPixelData();
