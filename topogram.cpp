@@ -243,7 +243,7 @@ void Topogram::genRawData(void)
             }
 NEXT:;
             if (cnt == 0) { luminance = 0.0; cnt = 1; }
-            int n = z*w + idx;
+            int n = z*w + 512-idx-1;
             this->pRawData[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
         }
     }
