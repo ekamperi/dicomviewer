@@ -79,11 +79,11 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         }
     } else if (pEvent->buttons() & Qt::MiddleButton) {
         qDebug() << "MIDDLE BUTTON MOUSE MOVE!";
-        float width = ypos / ((float) this->height());
+        float width = xpos / ((float) this->width());
 #define PI 3.1415926
         float newAngle = (PI/2) * width;
         qDebug() << newAngle << this->angle;
-        if (fabs(newAngle - this->angle) > 0.025) {
+        if (fabs(newAngle - this->angle) > 0.1) {
             this->angle = newAngle;
             this->genImage();
         }
