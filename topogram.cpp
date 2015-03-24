@@ -14,31 +14,44 @@ Topogram::Topogram(QWidget *parent) : QWidget(parent)
 }
 
 Topogram::Topogram(const QVector<Slice *> *pVecSlices, float angle,
-                   int width, int height, int sliceIndex,
-                   QWidget *parent) : QWidget(parent)
+                   int sliceIndex, QWidget *parent) : QWidget(parent)
 {
     qDebug() << Q_FUNC_INFO;
 
     /* By default the topogram is embedded into the GL Widget */
     this->amIEmbedded = true;
 
-    this->rawHeight = height;
-    this->rawWidth = width;
-    this->sliceIndex = sliceIndex;
-    this->totalSlices = height; // XXX
-
-    this->tmin = 0.0;
-    this->tmax = 0.2;
-
-    /* */
-    this->angle = angle;
-    this->pVecSlices = pVecSlices;
-    this->genData();
-
+    /* We would like a black background */
     this->setStyleSheet("background-color: rgba(0, 0, 0, 50%);");
 
+    /* Get (say) the first slice. We will need to read the width from it */
+    const Slice *pSlice = pVecSlices->at(0);
+    Q_ASSERT(pSlice);
+
+    this->rawHeight = pVecSlices->size();
+    this->rawWidth = pSlice->getWidth();
+    this->sliceIndex = sliceIndex;
+    this->totalSlices = pVecSlices->size();
+
+    /* Default window/width level */
+    this->tmin = 0.0;
+    this->tmax = 1.0;
+
+    /* Set the angle of view and the slices from which we will reconstruct
+       the topogram */
+    this->angle = angle;
+    this->pVecSlices = pVecSlices;
+
+    /* Setup the color table */
+    for (int i = 0; i < 256; i++) {
+        this->colorTable.push_back(qRgb(i,i,i));
+    }
+
+    /* Generate the initial topogram */
+    this->genImage();
+
     /* XXX: Take slice thickness into consideration for height */
-    this->setGeometry(0, 0, width/2, 2.5*height);
+    this->setGeometry(0, 0, this->rawWidth/2, 2.5*this->rawHeight);
  }
 
 Topogram::~Topogram()
@@ -72,7 +85,7 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         qDebug() << newAngle << this->angle;
         if (fabs(newAngle - this->angle) > 0.025) {
             this->angle = newAngle;
-            this->regenData();
+            this->genImage();
         }
     } else if (pEvent->buttons() & Qt::RightButton) {
         float newTmin;
@@ -91,21 +104,22 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         if (qAbs(newTmax - this->tmax) > 0.005) this->tmax = newTmax;
 
         if (this->tmin == newTmin || this->tmax == newTmax) {
-            this->genImage();
+            this->regenImage();
         }
     }
 }
 
 void Topogram::genImage(void)
 {
+    this->genRawData();
+    this->regenImage();
+}
+
+void Topogram::regenImage(void)
+{
     qDebug() << Q_FUNC_INFO;
 
-//    if (this->pImage) {
-//        delete this->pImage;
-//    }
-//    if (this->pConvertedData) {
-//        delete this->pConvertedData;
-//    }
+    /* At this point we assume that the raw pixel data have been already generated */
 
     /*
      * Convert floating point pixel data [0.0, 1.0] to unsigned char [0, 255].
@@ -126,10 +140,8 @@ void Topogram::genImage(void)
                 this->rawWidth, this->rawHeight, QImage::Format_Indexed8);
     Q_ASSERT(pNewImage);
 
-    /* Setup the color table */
-    QVector<QRgb> my_table;
-    for (int i = 0; i < 256; i++) my_table.push_back(qRgb(i,i,i));
-    pNewImage->setColorTable(my_table);
+    /* Set the default color table */
+    pNewImage->setColorTable(this->colorTable);
 
     this->pImage = pNewImage;
 
@@ -185,15 +197,7 @@ void Topogram::mouseReleaseEvent(QMouseEvent *pEvent)
     }
 }
 
-/* regenData() just calls genData() and is used for clarity.
- e.g. when the angle changes, we call regenData().
-*/
-void Topogram::regenData(void)
-{
-    this->genData();
-}
-
-void Topogram::genData(void)
+void Topogram::genRawData(void)
 {
     qDebug() << Q_FUNC_INFO << this->angle;
 
@@ -243,7 +247,4 @@ NEXT:;
             this->pRawData[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
         }
     }
-
-    this->genImage();
-    this->update();
 }

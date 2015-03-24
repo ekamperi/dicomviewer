@@ -660,7 +660,7 @@ void MyGLWidget::genTopogram(float angle)
     /* If there's no topogram at all, construct a new one */
     if (!this->pTopogram) {
         this->pTopogram = new Topogram(
-                    &this->vecSlices, angle, 512, this->vecSlices.size(), this->pSlice->getIndex());
+                    &this->vecSlices, angle, this->pSlice->getIndex());
 
         /* By default, the topogram is embedded in the GL widget.
          * XXX: In Mac OSX the embedded GL widget is not shown. Perhaps default to un-embedded

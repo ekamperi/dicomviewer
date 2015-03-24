@@ -12,7 +12,7 @@ class Topogram : public QWidget
     Q_OBJECT
 public:
     explicit Topogram(QWidget *parent = 0);
-    explicit Topogram(const QVector<Slice *> *pVecSlices, float angle, int width, int height,
+    explicit Topogram(const QVector<Slice *> *pVecSlices, float angle,
                       int sliceIndex, QWidget *parent = 0);
     ~Topogram();
 
@@ -32,28 +32,30 @@ signals:
 public slots:
 
 private:
-    QVBoxLayout *pLayout;
-    QLabel *pLabel;
     QImage* pImage;
-    QPixmap *pPixmap;
 
-    void genData(void);
-    void regenData(void);   // regenData() just calls genData(). It's used for clarity.
-
+    void genRawData(void);
     void genImage(void);
+    void regenImage(void);
 
     /* Raw data are the floating point original pixel values */
     float *pRawData;
+
+    /* Converted data are floating point pixel data [0.0, 1.0] converted
+     * to unsigned char [0, 255] */
     unsigned char *pConvertedData;
+
+    /* Default color table */
+    QVector<QRgb> colorTable;
 
     /* */
     int rawWidth;
     int rawHeight;
 
-    /* */
+    /* We need the slices to access their raw pixel data (among other things) */
     const QVector<Slice *> *pVecSlices;
 
-    /* Current angle in radians from where we are looking at */
+    /* Current angle of view in radians */
     float angle;
 
     /* Current slice index that we are looking at */
