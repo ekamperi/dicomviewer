@@ -23,13 +23,16 @@ public:
 protected:
     virtual void paintEvent(QPaintEvent *pEvent);
     virtual void mouseMoveEvent(QMouseEvent *pEvent);
+    virtual void mousePressEvent(QMouseEvent *pEvent);
     virtual void mouseReleaseEvent(QMouseEvent *pEvent);
 
 signals:
     void iWantToBreakFree(void);
+    void iWantToDock(void);
     void sliceChanged(int newSliceIndex);
 
-public slots:
+private slots:
+    void showContextMenu(const QPoint &pos);
 
 private:
     QImage* pImage;
@@ -68,6 +71,9 @@ private:
 
     /* Whether topogram is an autonomous window or embedded into the GLWidget */
     bool amIEmbedded;
+
+    bool intensity;
+
 };
 
 #endif // TOPOGRAM_H

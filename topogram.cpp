@@ -4,6 +4,7 @@
 #include <math.h>
 #include <QtGlobal>
 #include <QDebug>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QVBoxLayout>
@@ -52,6 +53,8 @@ Topogram::Topogram(const QVector<Slice *> *pVecSlices, float angle,
 
     /* XXX: Take slice thickness into consideration for height */
     this->setGeometry(0, 0, this->rawWidth/2, 2.5*this->rawHeight);
+
+    this->intensity = false;
  }
 
 Topogram::~Topogram()
@@ -63,8 +66,11 @@ Topogram::~Topogram()
 
 void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
 {
+    qDebug() << Q_FUNC_INFO;
+
     float xpos = pEvent->localPos().x();
     float ypos = pEvent->localPos().y();
+    pEvent->accept();
 
     /*
      * LEFT button changes the embedding status.
@@ -88,6 +94,7 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
             this->genImage();
         }
     } else if (pEvent->buttons() & Qt::RightButton) {
+        this->intensity = true;
         float newTmin;
         float newTmax;
 
@@ -106,6 +113,13 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         if (this->tmin == newTmin || this->tmax == newTmax) {
             this->regenImage();
         }
+    }
+}
+
+void Topogram::mousePressEvent(QMouseEvent *pEvent)
+{
+    if (pEvent->buttons() & Qt::RightButton) {
+        pEvent->accept();
     }
 }
 
@@ -194,6 +208,12 @@ void Topogram::mouseReleaseEvent(QMouseEvent *pEvent)
     if (pEvent->button() == Qt::LeftButton) {
         int ypos = this->totalSlices * pEvent->pos().y() / this->height();
         emit this->sliceChanged(ypos);
+    } else if (pEvent->button() == Qt::RightButton) {
+        qDebug() << "YESSSSSSSSSSSSSSS" << intensity;
+        if (!intensity) {
+            this->showContextMenu(pEvent->pos());
+        }
+        intensity = false;
     }
 }
 
@@ -246,5 +266,23 @@ NEXT:;
             int n = z*w + 512-idx-1;
             this->pRawData[n] = MyMath::sstep(0.0, 0.2, luminance / cnt);
         }
+    }
+}
+
+void Topogram::showContextMenu(const QPoint &pos)
+{
+    QPoint globalPos = this->mapToGlobal(pos);
+    QMenu ctxMenu;
+    if (this->isEmbedded()) {
+        ctxMenu.addAction("Un-dock");
+    } else {
+        ctxMenu.addAction("Dock");
+    }
+    ctxMenu.addSeparator();
+    ctxMenu.addAction("Reset view");
+
+    QAction *pSelectedItem = ctxMenu.exec(globalPos);
+    if (pSelectedItem) {
+        emit iWantToDock();
     }
 }

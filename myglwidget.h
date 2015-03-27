@@ -51,7 +51,8 @@ signals:
 
 private slots:
     void repaintSlice(float tmin, float tmax);
-    void setTheTopogramFree(void);
+    void undockTopogram(void);
+    void dockTopogram(void);
 
 protected:
     virtual void initializeGL();

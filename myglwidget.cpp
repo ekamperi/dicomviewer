@@ -670,7 +670,9 @@ void MyGLWidget::genTopogram(float angle)
 
         /* But also let the user un-embed it, should s/he want */
         connect(this->pTopogram, SIGNAL(iWantToBreakFree(void)),
-                this, SLOT(setTheTopogramFree(void)));
+                this, SLOT(undockTopogram(void)));
+        connect(this->pTopogram, SIGNAL(iWantToDock(void)),
+                this, SLOT(dockTopogram(void)));
         connect(this->pTopogram, SIGNAL(sliceChanged(int)),
                 this, SIGNAL(sliceChanged(int)));
 
@@ -684,16 +686,24 @@ void MyGLWidget::genTopogram(float angle)
     }
 }
 
-void MyGLWidget::setTheTopogramFree(void)
+void MyGLWidget::undockTopogram(void)
 {
-    qDebug() << Q_FUNC_INFO;
-
     this->pTopogram->setParent(NULL);
     this->pTopogram->move(
                 this->mapToGlobal(
                     QPoint(this->width()-pTopogram->width(), 0)));
-    this->pTopogram->show();
     this->pTopogram->setEmbedded(false);
+    this->pTopogram->show();
+}
+
+void MyGLWidget::dockTopogram(void)
+{
+    this->pTopogram->setParent(this);
+    this->pTopogram->setEmbedded(true);
+
+    /* Position the topogram at the top right corner */
+    this->pTopogram->move(this->width()-pTopogram->width(), 0);
+    this->pTopogram->show();
 }
 
 void MyGLWidget::resetViewMatrix(void)
