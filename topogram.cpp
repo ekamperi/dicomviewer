@@ -49,6 +49,7 @@ Topogram::Topogram(const QVector<Slice *> *pVecSlices, float angle,
     }
 
     /* Generate the initial topogram */
+    this->pRawData = NULL;
     this->genImage();
 
     /* XXX: Take slice thickness into consideration for height */
@@ -226,18 +227,22 @@ void Topogram::genRawData(void)
     }
 
     /* Allocate memory for the topogram */
-    this->pRawData = (float *)calloc(sizeof(float), 512 * 512);
+    const Slice *pzSlice = this->pVecSlices->at(0);
+    Q_ASSERT(pzSlice);
+
+    const unsigned int w = pzSlice->getWidth();
+    const unsigned int h = pzSlice->getHeight();
+    const unsigned int nSlices = this->pVecSlices->size();
+
+    this->pRawData = (float *)calloc(sizeof(float), w * nSlices);
     Q_ASSERT(this->pRawData);
 
-    for (int z = 0; z < this->pVecSlices->size(); z++) {
-        const Slice *pzSlice = this->pVecSlices->at(z);
+    for (unsigned int z = 0; z < nSlices; z++) {
+        pzSlice = this->pVecSlices->at(z);
         Q_ASSERT(pzSlice);
 
         float *pRawPixelData = pzSlice->getRawPixelData();
         Q_ASSERT(pRawPixelData);
-
-        int w = pzSlice->getWidth();
-        int h = pzSlice->getHeight();
 
         float a = tan(angle);
         float b1 = h;
