@@ -81,7 +81,7 @@ void Topogram::mouseMoveEvent(QMouseEvent *pEvent)
         int xpos = pEvent->pos().x();
         int ypos = pEvent->pos().y();
         if (ypos < 0 || xpos > this->width()) {
-            emit iWantToBreakFree();
+            emit iWantToUndock();
         }
     } else if (pEvent->buttons() & Qt::MiddleButton) {
         qDebug() << "MIDDLE BUTTON MOUSE MOVE!";
@@ -209,7 +209,6 @@ void Topogram::mouseReleaseEvent(QMouseEvent *pEvent)
         int ypos = this->totalSlices * pEvent->pos().y() / this->height();
         emit this->sliceChanged(ypos);
     } else if (pEvent->button() == Qt::RightButton) {
-        qDebug() << "YESSSSSSSSSSSSSSS" << intensity;
         if (!intensity) {
             this->showContextMenu(pEvent->pos());
         }
@@ -273,16 +272,23 @@ void Topogram::showContextMenu(const QPoint &pos)
 {
     QPoint globalPos = this->mapToGlobal(pos);
     QMenu ctxMenu;
+
+    /* We only support un-docking if we are docked */
+    QAction *pDockAction, *pUndockAction;
     if (this->isEmbedded()) {
-        ctxMenu.addAction("Un-dock");
+        pUndockAction = ctxMenu.addAction("Un-dock");
     } else {
-        ctxMenu.addAction("Dock");
+        pDockAction = ctxMenu.addAction("Dock");
     }
+
+    /* These are generic items */
     ctxMenu.addSeparator();
     ctxMenu.addAction("Reset view");
 
     QAction *pSelectedItem = ctxMenu.exec(globalPos);
-    if (pSelectedItem) {
+    if (pSelectedItem == pUndockAction) {
+        emit iWantToUndock();
+    } else if (pSelectedItem == pDockAction) {
         emit iWantToDock();
     }
 }

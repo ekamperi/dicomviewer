@@ -27,7 +27,7 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *pEvent);
 
 signals:
-    void iWantToBreakFree(void);
+    void iWantToUndock(void);
     void iWantToDock(void);
     void sliceChanged(int newSliceIndex);
 

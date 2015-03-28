@@ -669,7 +669,7 @@ void MyGLWidget::genTopogram(float angle)
         this->pTopogram->setParent(this);
 
         /* But also let the user un-embed it, should s/he want */
-        connect(this->pTopogram, SIGNAL(iWantToBreakFree(void)),
+        connect(this->pTopogram, SIGNAL(iWantToUndock(void)),
                 this, SLOT(undockTopogram(void)));
         connect(this->pTopogram, SIGNAL(iWantToDock(void)),
                 this, SLOT(dockTopogram(void)));
