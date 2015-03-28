@@ -405,8 +405,9 @@ void MainWindow::on_actionFlip_Vertically_triggered()
 
 void MainWindow::on_actionTopogram_triggered()
 {
+    qDebug() << Q_FUNC_INFO;
 #define PI 3.1415926
-    this->pGLWidget->genTopogram(30*PI/180.0);
+    this->pGLWidget->genTopogram(0*PI/180.0);
 }
 
 void MainWindow::on_actionOpen_DICOM_dir_triggered()
