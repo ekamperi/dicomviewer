@@ -70,6 +70,7 @@ private:
     void drawCurrentDensity(QPainter *pPainter);
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
+    void drawDistance(QPainter *pPainter, QLine line);
     void drawDebug(QPainter *pPainter);
 
     void resetViewMatrix(void);

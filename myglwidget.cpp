@@ -310,28 +310,11 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
 
 void MyGLWidget::drawCurrentDistance(QPainter *painter)
 {
-    QPen oldPen, myPen;
-    oldPen = painter->pen();
-    myPen.setWidth(3);
-    myPen.setColor(QColor(255, 0, 0, 128));
-    painter->setPen(myPen);
+    Q_ASSERT(painter);
 
     QLine line(this->startPoint, this->endPoint);
     painter->drawLine(line);
-
-    /* Calculate distance in physical units */
-    unsigned int physicalDist;
-    physicalDist = this->calcPhysicalDistance(&line);
-
-    /* Calculate the point coordinates where the text will be drawn */
-    myPen.setColor(Qt::yellow);
-    painter->setPen(myPen);
-    QPoint textPoint(
-                (this->startPoint.x()+this->endPoint.x())/2 - 15,
-                (this->startPoint.y()+this->endPoint.y())/2 - 15);
-    painter->drawText(textPoint, QString::number(physicalDist) + " mm");
-
-    painter->setPen(oldPen);
+    this->drawDistance(painter, line);
 }
 
 void MyGLWidget::drawCurrentDensity(QPainter *painter)
@@ -365,26 +348,40 @@ void MyGLWidget::drawDistances(QPainter *painter)
 {
     Q_ASSERT(painter);
 
+    for (int i = 0; i < this->vecDists.size(); i++) {
+       QLine line = this->vecDists.at(i);
+       this->drawDistance(painter, line);
+    }
+}
+
+void MyGLWidget::drawDistance(QPainter *pPainter, QLine line)
+{
+    Q_ASSERT(pPainter);
+
     QPen oldPen, linePen, textPen;
-    oldPen = painter->pen();
+
+    /* Save old pen */
+    oldPen = pPainter->pen();
+
+    /* Create pen for the line and the accompanying text */
     linePen.setWidth(3);
     linePen.setColor(Qt::red);
     textPen.setColor(Qt::yellow);
 
-    for (int i = 0; i < this->vecDists.size(); i++) {
-       QLine line = this->vecDists.at(i);
-       painter->setPen(linePen);
-       painter->drawLine(line);
+    /* Draw the actual line */
+    pPainter->setPen(linePen);
+    pPainter->drawLine(line);
 
-       unsigned int physicalDist = this->calcPhysicalDistance(&line);
-       painter->setPen(textPen);
-       QPoint textPoint(
-                   (line.p1().x()+line.p2().x())/2 - 15,
-                   (line.p1().y()+line.p2().y())/2 - 15);
-       painter->drawText(textPoint, QString::number(physicalDist) + " mm");
-    }
+    /* Calculate and draw the text corresponding the to physical distance */
+    unsigned int physicalDist = this->calcPhysicalDistance(&line);
+    pPainter->setPen(textPen);
+    QPoint textPoint(
+                (line.p1().x()+line.p2().x())/2 - 15,
+                (line.p1().y()+line.p2().y())/2 - 15);
+    pPainter->drawText(textPoint, QString::number(physicalDist) + " mm");
 
-    painter->setPen(oldPen);
+    /* Restore old pen */
+    pPainter->setPen(oldPen);
 }
 
 void MyGLWidget::drawDebug(QPainter *painter)
