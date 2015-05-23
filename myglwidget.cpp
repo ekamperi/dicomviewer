@@ -538,8 +538,20 @@ unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
     float vs = this->pSlice->pDicomFile->getVerticalSpacing();
     float sx = ((float)this->pSlice->getWidth()) / ((float)this->width());
     float sy = ((float)this->pSlice->getHeight()) / ((float)this->height());
-    float dx = sx * (pLine->p2().x() - pLine->p1().x());
-    float dy = sy * (pLine->p2().y() - pLine->p1().y());
+
+    /*
+     * We need to invert to account for e.g. any zoom. We could have saved the
+     * scaling factor as a member variable, but it's more robust to do it this way.
+     */
+    bool invertible = true;
+    QMatrix4x4 invertedVM = this->viewMatrix.inverted(&invertible);
+    Q_ASSERT(invertible);
+
+    QPoint np1 = invertedVM.map(pLine->p1());
+    QPoint np2 = invertedVM.map(pLine->p2());
+
+    float dx = sx * (np2.x() - np1.x());
+    float dy = sy * (np2.y() - np1.y());
     float len = sqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
 
 //    qDebug() << "sx =" << sx << " sy =" << sy << " dx =" << dx << " dy =" << dy
