@@ -25,7 +25,7 @@ public:
     void loadSlices(QVector<Slice *> vecSlices);
     void setSlice(Slice *pSlice);
     Slice *getSlice(void) const;
-    unsigned int getSliceIndex() const;
+    unsigned int getSliceIndex(void) const;
 
     void genTopogram(float angle);
 
@@ -82,7 +82,7 @@ private:
 
     void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
 
-    int calcMeanDensity(int dist);
+    int calcMeanDensity(QPoint centerPoint, float radius);
     unsigned int calcPhysicalDistance(QLine *pLine);
 
     /* A vector with all the lines corresponding to measured distances */

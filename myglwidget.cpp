@@ -345,7 +345,7 @@ void MyGLWidget::drawDensity(QPainter *painter, QLine line)
     painter->drawEllipse(line.p1(), dist, dist);
 
     /* Calculate mean density over the above region */
-    int meanDensity = this->calcMeanDensity(dist);
+    int meanDensity = this->calcMeanDensity(line.p1(), dist);
 
     /* Display result */
     painter->setPen(textPen);
@@ -510,18 +510,18 @@ Slice *MyGLWidget::getSlice(void) const
     return this->pSlice;
 }
 
-unsigned int MyGLWidget::getSliceIndex() const
+unsigned int MyGLWidget::getSliceIndex(void) const
 {
     Q_ASSERT(this->pSlice);
     return this->pSlice->getIndex();
 }
 
-int MyGLWidget::calcMeanDensity(int dist)
+int MyGLWidget::calcMeanDensity(QPoint centerPoint, float radius)
 {
     /* Get the points that are enclosed by the user-defined circle
      * with center 'this->startPoint' and radius 'dist' */
     QVector<QPoint> vecPoints;
-    this->getPointsInCircle(&vecPoints, this->startPoint, dist);
+    this->getPointsInCircle(&vecPoints, centerPoint, radius);
 
     /* Calculate average luminance over these points */
     float *pPixelData = this->pSlice->getRawPixelData();
