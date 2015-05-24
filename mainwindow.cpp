@@ -477,3 +477,9 @@ void MainWindow::on_action_Reset_triggered()
     qDebug() << Q_FUNC_INFO;
     this->pGLWidget->resetView();
 }
+
+void MainWindow::on_actionDeleteAllMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->deleteAllMeasures();
+}

@@ -68,6 +68,8 @@ private slots:
 
     void on_action_Reset_triggered();
 
+    void on_actionDeleteAllMeasures_triggered();
+
 private:
     Ui::MainWindow *ui;
 

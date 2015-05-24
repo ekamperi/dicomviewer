@@ -272,6 +272,7 @@ void MyGLWidget::paintEvent(QPaintEvent *event)
     }
 
     /* Draw any measuring densities */
+    this->drawDensities(&painter);
     if (this->measureDensity) {
         this->drawCurrentDensity(&painter);
     }
@@ -321,24 +322,34 @@ void MyGLWidget::drawCurrentDensity(QPainter *painter)
 {
     Q_ASSERT(painter);
 
+    QLine line(this->startPoint, this->endPoint);
+    this->drawDensity(painter, line);
+}
+
+void MyGLWidget::drawDensity(QPainter *painter, QLine line)
+{
+    Q_ASSERT(painter);
+
     /* Save old pen before replacing it */
-    QPen oldPen, myPen;
+    QPen oldPen, myPen, textPen;
     oldPen = painter->pen();
     myPen.setWidth(3);
-    myPen.setColor(QColor(255, 0, 0, 200));
+    myPen.setColor(Qt::red);
+    textPen.setColor(Qt::yellow);
     painter->setPen(myPen);
 
     /* Draw a circle with center at mouse cursor click and a varying radius */
-    float dx = this->endPoint.x() - this->startPoint.x();
-    float dy = this->endPoint.y() - this->startPoint.y();
+    float dx = line.p2().x() - line.p1().x();
+    float dy = line.p2().y() - line.p1().y();
     int dist = sqrt(dx*dx + dy*dy);
-    painter->drawEllipse(this->startPoint, dist, dist);
+    painter->drawEllipse(line.p1(), dist, dist);
 
     /* Calculate mean density over the above region */
     int meanDensity = this->calcMeanDensity(dist);
 
     /* Display result */
-    painter->drawText(this->startPoint, QString::number(meanDensity) + " HUs");
+    painter->setPen(textPen);
+    painter->drawText(line.p1(), QString::number(meanDensity) + " HUs");
 
     /* Restore old pen */
     painter->setPen(oldPen);
@@ -351,6 +362,16 @@ void MyGLWidget::drawDistances(QPainter *painter)
     for (int i = 0; i < this->vecDists.size(); i++) {
        QLine line = this->vecDists.at(i);
        this->drawDistance(painter, line);
+    }
+}
+
+void MyGLWidget::drawDensities(QPainter *painter)
+{
+    Q_ASSERT(painter);
+
+    for (int i = 0; i < this->vecDensities.size(); i++) {
+        QLine line = this->vecDensities.at(i);
+        this->drawDensity(painter, line);
     }
 }
 
@@ -466,6 +487,13 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
         /* Skip single points */
         if (this->startPoint != this->endPoint) {
             this->vecDists.push_back(QLine(this->startPoint, this->endPoint));
+            this->update();
+        }
+    } else if (this->measureDensity) {
+        this->endPoint = pEvent->pos();
+        /* Skip single points */
+        if (this->startPoint != this->endPoint) {
+            this->vecDensities.push_back(QLine(this->startPoint, this->endPoint));
             this->update();
         }
     } else if (this->panMode) {
@@ -767,4 +795,12 @@ void MyGLWidget::resetView(void)
     this->offsetY = 0.0;
     this->viewMatrix.setToIdentity();
     this->resetViewMatrix();
+}
+
+void MyGLWidget::deleteAllMeasures(void)
+{
+    this->vecDists.clear();
+    this->vecDensities.clear();
+    this->endPoint = this->startPoint;
+    this->update();
 }

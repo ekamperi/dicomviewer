@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -102,6 +102,8 @@
      <addaction name="actionDistance"/>
      <addaction name="actionAngle"/>
      <addaction name="actionDensity_HUs"/>
+     <addaction name="separator"/>
+     <addaction name="actionDeleteAllMeasures"/>
     </widget>
     <addaction name="menuMeasure"/>
     <addaction name="separator"/>
@@ -261,6 +263,11 @@
   <action name="actionSoft_tissue">
    <property name="text">
     <string>Soft tissue</string>
+   </property>
+  </action>
+  <action name="actionDeleteAllMeasures">
+   <property name="text">
+    <string>Delete all</string>
    </property>
   </action>
  </widget>

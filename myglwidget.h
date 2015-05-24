@@ -45,6 +45,9 @@ public:
     void setDensityMeasure(bool enabled) { this->measureDensity = enabled; }
     bool isDensityMeasureEnabled(void) const { return this->measureDensity; }
 
+    /* Delete all measures */
+    void deleteAllMeasures(void);
+
 signals:
     void windowChanged(int x);
     void sliceChanged(int newSliceIndex);
@@ -70,7 +73,9 @@ private:
     void drawCurrentDensity(QPainter *pPainter);
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
+    void drawDensities(QPainter *pPainter);
     void drawDistance(QPainter *pPainter, QLine line);
+    void drawDensity(QPainter *painter, QLine line);
     void drawDebug(QPainter *pPainter);
 
     void resetViewMatrix(void);
@@ -82,6 +87,9 @@ private:
 
     /* A vector with all the lines corresponding to measured distances */
     QVector<QLine> vecDists;
+
+    /* A vector with all the circles corresponding to measured densities */
+    QVector<QLine> vecDensities;
 
     /* Whether we are measuring distance at the moment or not */
     bool measureDistance;
