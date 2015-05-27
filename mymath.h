@@ -1,6 +1,9 @@
 #ifndef MYMATH_H
 #define MYMATH_H
 
+#include <QVector>
+#include <QPoint>
+
 class MyMath
 {
 public:
@@ -12,6 +15,8 @@ public:
 
     static unsigned char *floatToByte(float *pRawData, int width, int height);
     static unsigned char *floatToByte(float *pRawData, int width, int height, float tmin, float tmax);
+
+    static void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
 };
 
 #endif // MYMATH_H

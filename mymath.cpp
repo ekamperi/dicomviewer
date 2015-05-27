@@ -56,3 +56,27 @@ unsigned char *MyMath::floatToByte(float *pRawData, int width, int height, float
 
     return pNewData;
 }
+
+void MyMath::getPointsInCircle(QVector<QPoint> *pVecPoints,
+                                   QPoint centerPoint, float radius)
+{
+    Q_ASSERT(pVecPoints);
+
+    /* Calculate bounding box coordinates */
+    /* Discard points with negative (offscreen) coordinates */
+    int left   = qMax(0.0f, centerPoint.x() - radius);
+    int top    = qMax(0.0f, centerPoint.y() - radius);
+    int right  = centerPoint.x() + radius;
+    int bottom = centerPoint.y() + radius;
+
+    for (int x = left; x < right; x++) {
+        for (int y = top; y < bottom; y++) {
+            float dx = x - centerPoint.x();
+            float dy = y - centerPoint.y();
+            float distSquared = dx*dx + dy*dy;
+            if (distSquared < radius*radius) {
+                pVecPoints->push_back(QPoint(x, y));
+            }
+        }
+    }
+}

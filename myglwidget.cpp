@@ -547,7 +547,7 @@ int MyGLWidget::calcMeanDensity(QPoint centerPoint, float radius)
     /* Get the points that are enclosed by the user-defined circle
      * with center 'this->startPoint' and radius 'dist' */
     QVector<QPoint> vecPoints;
-    this->getPointsInCircle(&vecPoints, centerPoint, radius);
+    MyMath::getPointsInCircle(&vecPoints, centerPoint, radius);
 
     /* Calculate average luminance over these points */
     float *pPixelData = this->pSlice->getRawPixelData();
@@ -614,30 +614,6 @@ unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
     /* Physical distance unit is millimeter.
      * No need to have a resolution less than 1mm */
     return (unsigned int)len;
-}
-
-void MyGLWidget::getPointsInCircle(QVector<QPoint> *pVecPoints,
-                                   QPoint centerPoint, float radius)
-{
-    Q_ASSERT(pVecPoints);
-
-    /* Calculate bounding box coordinates */
-    /* Discard points with negative (offscreen) coordinates */
-    int left   = qMax(0.0f, centerPoint.x() - radius);
-    int top    = qMax(0.0f, centerPoint.y() - radius);
-    int right  = centerPoint.x() + radius;
-    int bottom = centerPoint.y() + radius;
-
-    for (int x = left; x < right; x++) {
-        for (int y = top; y < bottom; y++) {
-            float dx = x - centerPoint.x();
-            float dy = y - centerPoint.y();
-            float distSquared = dx*dx + dy*dy;
-            if (distSquared < radius*radius) {
-                pVecPoints->push_back(QPoint(x, y));
-            }
-        }
-    }
 }
 
 void MyGLWidget::repaintSlice(float tmin, float tmax)

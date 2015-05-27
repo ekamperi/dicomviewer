@@ -82,8 +82,6 @@ private:
 
     void resetViewMatrix(void);
 
-    void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
-
     int calcMeanDensity(QPoint centerPoint, float radius);
     unsigned int calcPhysicalDistance(QLine *pLine);
 
