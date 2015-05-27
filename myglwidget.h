@@ -3,6 +3,7 @@
 
 #include <QtOpenGL>
 
+#include "distline.h"
 #include "examdetails.h"
 #include "geomtransformation.h"
 #include "slice.h"
@@ -74,7 +75,7 @@ private:
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
     void drawDensities(QPainter *pPainter);
-    void drawDistance(QPainter *pPainter, QLine line);
+    void drawDistance(QPainter *pPainter, DistLine line);
     void drawDensity(QPainter *painter, QLine line);
     void drawDebug(QPainter *pPainter);
 
@@ -86,7 +87,7 @@ private:
     unsigned int calcPhysicalDistance(QLine *pLine);
 
     /* A vector with all the lines corresponding to measured distances */
-    QVector<QLine> vecDists;
+    QVector<DistLine> vecDists;
 
     /* A vector with all the circles corresponding to measured densities */
     QVector<QLine> vecDensities;

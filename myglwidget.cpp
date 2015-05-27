@@ -313,7 +313,7 @@ void MyGLWidget::drawCurrentDistance(QPainter *painter)
 {
     Q_ASSERT(painter);
 
-    QLine line(this->startPoint, this->endPoint);
+    DistLine line(this->startPoint, this->endPoint);
     painter->drawLine(line);
     this->drawDistance(painter, line);
 }
@@ -360,7 +360,7 @@ void MyGLWidget::drawDistances(QPainter *painter)
     Q_ASSERT(painter);
 
     for (int i = 0; i < this->vecDists.size(); i++) {
-       QLine line = this->vecDists.at(i);
+       DistLine line = this->vecDists.at(i);
        this->drawDistance(painter, line);
     }
 }
@@ -375,7 +375,7 @@ void MyGLWidget::drawDensities(QPainter *painter)
     }
 }
 
-void MyGLWidget::drawDistance(QPainter *pPainter, QLine line)
+void MyGLWidget::drawDistance(QPainter *pPainter, DistLine line)
 {
     Q_ASSERT(pPainter);
 
@@ -385,7 +385,10 @@ void MyGLWidget::drawDistance(QPainter *pPainter, QLine line)
     oldPen = pPainter->pen();
 
     /* Create pen for the line and the accompanying text */
-    linePen.setWidth(3);
+    if (line.isSelected())
+        linePen.setWidth(6);
+    else
+        linePen.setWidth(3);
     linePen.setColor(Qt::red);
     textPen.setColor(Qt::yellow);
 
@@ -478,6 +481,27 @@ void MyGLWidget::mousePressEvent(QMouseEvent *pEvent)
 {
     this->startPoint = pEvent->pos();
     this->endPoint = this->startPoint;
+
+    /* Check whether we clicked on a line segment */
+    QPointF currPoint = pEvent->localPos();
+    qDebug() << currPoint;
+
+    for (int i = 0; i < vecDists.size(); i++) {
+        QLine line = vecDists.at(i);
+        QPoint p1 = line.p1();
+        QPoint p2 = line.p2();
+        int v1x = currPoint.x() - p1.x();
+        int v1y = currPoint.y() - p1.y();
+        int v2x = p2.x() - p1.x();
+        int v2y = p2.y() - p1.y();
+        int cross = v1x * v2y - v2x * v1y;
+        if (abs(cross) < 1500) {
+            bool isSelected = this->vecDists[i].isSelected();
+            this->vecDists[i].setSelection(!isSelected); // toggle
+        }
+    }
+
+    this->update();
 }
 
 void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
@@ -486,14 +510,14 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
         this->endPoint = pEvent->pos();
         /* Skip single points */
         if (this->startPoint != this->endPoint) {
-            this->vecDists.push_back(QLine(this->startPoint, this->endPoint));
+            this->vecDists.push_back(DistLine(this->startPoint, this->endPoint));
             this->update();
         }
     } else if (this->measureDensity) {
         this->endPoint = pEvent->pos();
         /* Skip single points */
         if (this->startPoint != this->endPoint) {
-            this->vecDensities.push_back(QLine(this->startPoint, this->endPoint));
+            this->vecDensities.push_back(DistLine(this->startPoint, this->endPoint));
             this->update();
         }
     } else if (this->panMode) {
@@ -649,41 +673,32 @@ void MyGLWidget::wheelEvent(QWheelEvent *pEvent)
     pEvent->ignore();
 }
 
-void MyGLWidget::setGeomTransformation(Geometry::Transformation geomTransformation)
+void MyGLWidget::setGeomTransformation(Geometry::Transformation gt)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << gt;
 
-    this->geomTransformation = geomTransformation;
+    Geometry::Transformation ngt;
 
-    QGLShader *pNewVertexShader = new QGLShader(QGLShader::Vertex);
-    Q_ASSERT(pNewVertexShader);
-
-    bool rv = false;
-    switch (this->geomTransformation) {
+    switch(gt) {
     case Geometry::FLIP_HORIZONTALLY:
-        rv = pNewVertexShader->compileSourceFile("./flipHorVertex.sh");
+        if (this->geomTransformation == Geometry::FLIP_HORIZONTALLY) {
+            ngt = Geometry::NO_TRANSFORMATION;
+        } else { ngt = gt; }
         break;
     case Geometry::FLIP_VERTICALLY:
-        rv = pNewVertexShader->compileSourceFile("./flipVertVertex.sh");
+        if (this->geomTransformation == Geometry::FLIP_VERTICALLY) {
+            ngt = Geometry::NO_TRANSFORMATION;
+        } else { ngt = gt; }
         break;
-    case Geometry::NO_TRANSFORMATION:
-        rv = pNewVertexShader->compileSourceFile("./vertex.sh");
+    default:
+        ngt = Geometry::NO_TRANSFORMATION;
         break;
     }
-    Q_ASSERT(rv);
 
-    /* Remove the old vertex shader (the object is not deleted by 'removeShader()') */
-    Q_ASSERT(this->pVertexShader);
-    this->pProgram->removeShader(this->pVertexShader);
-    delete this->pVertexShader;
+    this->geomTransformation = ngt;
 
-    /* Add the new vertex shader */
-    rv = this->pProgram->addShader(pNewVertexShader);
-    Q_ASSERT(rv);
-    this->pVertexShader = pNewVertexShader;
-
-    /* Force a redraw */
-    this->update();
+    /* This function will cause a redraw so no need to call this->update() */
+    this->resetViewMatrix();
 }
 
 Geometry::Transformation
@@ -779,7 +794,18 @@ void MyGLWidget::resetViewMatrix(void)
     this->viewMatrix.translate(-dx, -dy);
     this->viewMatrix.scale(this->scaleFactor);
 
-    //qDebug() << this->viewMatrix;
+    switch(this->geomTransformation) {
+    case Geometry::FLIP_HORIZONTALLY:
+        this->viewMatrix.scale(1, -1);
+        this->viewMatrix.translate(0, -1);
+        break;
+    case Geometry::FLIP_VERTICALLY:
+        this->viewMatrix.scale(-1, 1);
+        this->viewMatrix.translate(-1, 0);
+        break;
+    case Geometry::NO_TRANSFORMATION:
+        break;
+    }
 
     /* Update the view */
     this->update();

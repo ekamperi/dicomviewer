@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     myimagewidget.cpp \
     topogram.cpp \
     mymath.cpp \
-    startupmenu.cpp
+    startupmenu.cpp \
+    distline.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -36,7 +37,8 @@ HEADERS  += mainwindow.h \
     myimagewidget.h \
     topogram.h \
     mymath.h \
-    startupmenu.h
+    startupmenu.h \
+    distline.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \
