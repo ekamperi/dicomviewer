@@ -385,10 +385,12 @@ void MyGLWidget::drawDistance(QPainter *pPainter, DistLine line)
     oldPen = pPainter->pen();
 
     /* Create pen for the line and the accompanying text */
-    if (line.isSelected())
-        linePen.setWidth(6);
-    else
-        linePen.setWidth(3);
+    if (line.isSelected()) {
+        linePen.setStyle(Qt::DashLine);
+        linePen.setWidth(4);
+    } else {
+        linePen.setWidth(2);
+    }
     linePen.setColor(Qt::red);
     textPen.setColor(Qt::yellow);
 
@@ -825,8 +827,22 @@ void MyGLWidget::resetView(void)
 
 void MyGLWidget::deleteAllMeasures(void)
 {
+    qDebug() << Q_FUNC_INFO;
+
     this->vecDists.clear();
     this->vecDensities.clear();
     this->endPoint = this->startPoint;
+    this->update();
+}
+
+void MyGLWidget::deleteSelectedMeasures(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    for (int i = 0; i < vecDists.size(); i++) {
+        if (vecDists[i].isSelected()) {
+            vecDists.remove(i);
+        }
+    }
     this->update();
 }

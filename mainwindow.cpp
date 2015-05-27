@@ -482,3 +482,9 @@ void MainWindow::on_actionDeleteAllMeasures_triggered()
     qDebug() << Q_FUNC_INFO;
     this->pGLWidget->deleteAllMeasures();
 }
+
+void MainWindow::on_actionDeleteSelectedMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pGLWidget->deleteSelectedMeasures();
+}

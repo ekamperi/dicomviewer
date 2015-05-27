@@ -70,6 +70,8 @@ private slots:
 
     void on_actionDeleteAllMeasures_triggered();
 
+    void on_actionDeleteSelectedMeasures_triggered();
+
 private:
     Ui::MainWindow *ui;
 

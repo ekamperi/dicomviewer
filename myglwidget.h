@@ -46,8 +46,9 @@ public:
     void setDensityMeasure(bool enabled) { this->measureDensity = enabled; }
     bool isDensityMeasureEnabled(void) const { return this->measureDensity; }
 
-    /* Delete all measures */
+    /* Delete all/selected measures */
     void deleteAllMeasures(void);
+    void deleteSelectedMeasures(void);
 
 signals:
     void windowChanged(int x);

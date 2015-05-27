@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -104,6 +104,8 @@
      <addaction name="actionDensity_HUs"/>
      <addaction name="separator"/>
      <addaction name="actionDeleteAllMeasures"/>
+     <addaction name="actionDeleteSelectedMeasures"/>
+     <addaction name="separator"/>
     </widget>
     <addaction name="menuMeasure"/>
     <addaction name="separator"/>
@@ -268,6 +270,11 @@
   <action name="actionDeleteAllMeasures">
    <property name="text">
     <string>Delete all</string>
+   </property>
+  </action>
+  <action name="actionDeleteSelectedMeasures">
+   <property name="text">
+    <string>Delete selected</string>
    </property>
   </action>
  </widget>
