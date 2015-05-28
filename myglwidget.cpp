@@ -360,7 +360,7 @@ void MyGLWidget::drawDistances(QPainter *painter)
     Q_ASSERT(painter);
 
     for (int i = 0; i < this->vecDists.size(); i++) {
-       DistLine line = this->vecDists.at(i);
+       DistLine line = *this->vecDists.at(i);
        this->drawDistance(painter, line);
     }
 }
@@ -375,7 +375,7 @@ void MyGLWidget::drawDensities(QPainter *painter)
     }
 }
 
-void MyGLWidget::drawDistance(QPainter *pPainter, DistLine line)
+void MyGLWidget::drawDistance(QPainter *pPainter, const DistLine &line)
 {
     Q_ASSERT(pPainter);
 
@@ -399,7 +399,7 @@ void MyGLWidget::drawDistance(QPainter *pPainter, DistLine line)
     pPainter->drawLine(line);
 
     /* Calculate and draw the text corresponding the to physical distance */
-    unsigned int physicalDist = this->calcPhysicalDistance(&line);
+    unsigned int physicalDist = this->calcPhysicalDistance(line);
     pPainter->setPen(textPen);
     QPoint textPoint(
                 (line.p1().x()+line.p2().x())/2 - 15,
@@ -486,22 +486,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent *pEvent)
 
     /* Check whether we clicked on a line segment */
     QPointF currPoint = pEvent->localPos();
-    qDebug() << currPoint;
-
-    for (int i = 0; i < vecDists.size(); i++) {
-        QLine line = vecDists.at(i);
-        QPoint p1 = line.p1();
-        QPoint p2 = line.p2();
-        int v1x = currPoint.x() - p1.x();
-        int v1y = currPoint.y() - p1.y();
-        int v2x = p2.x() - p1.x();
-        int v2y = p2.y() - p1.y();
-        int cross = v1x * v2y - v2x * v1y;
-        if (abs(cross) < 1500) {
-            bool isSelected = this->vecDists[i].isSelected();
-            this->vecDists[i].setSelection(!isSelected); // toggle
-        }
-    }
+    MyMath::getSelectedLines(&this->vecDists, currPoint);
 
     this->update();
 }
@@ -512,7 +497,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
         this->endPoint = pEvent->pos();
         /* Skip single points */
         if (this->startPoint != this->endPoint) {
-            this->vecDists.push_back(DistLine(this->startPoint, this->endPoint));
+            this->vecDists.push_back(new DistLine(this->startPoint, this->endPoint));
             this->update();
         }
     } else if (this->measureDensity) {
@@ -584,10 +569,8 @@ int MyGLWidget::calcMeanDensity(QPoint centerPoint, float radius)
     return (int) (meanHUs);
 }
 
-unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
+unsigned int MyGLWidget::calcPhysicalDistance(const QLine &line)
 {
-    Q_ASSERT(pLine);
-
     float hs = this->pSlice->pDicomFile->getHorizontalSpacing();
     float vs = this->pSlice->pDicomFile->getVerticalSpacing();
     float sx = ((float)this->pSlice->getWidth()) / ((float)this->width());
@@ -601,8 +584,8 @@ unsigned int MyGLWidget::calcPhysicalDistance(QLine *pLine)
     QMatrix4x4 invertedVM = this->viewMatrix.inverted(&invertible);
     Q_ASSERT(invertible);
 
-    QPoint np1 = invertedVM.map(pLine->p1());
-    QPoint np2 = invertedVM.map(pLine->p2());
+    QPoint np1 = invertedVM.map(line.p1());
+    QPoint np2 = invertedVM.map(line.p2());
 
     float dx = sx * (np2.x() - np1.x());
     float dy = sy * (np2.y() - np1.y());
@@ -815,10 +798,19 @@ void MyGLWidget::deleteSelectedMeasures(void)
 {
     qDebug() << Q_FUNC_INFO;
 
-    for (int i = 0; i < vecDists.size(); i++) {
-        if (vecDists[i].isSelected()) {
-            vecDists.remove(i);
+    /*
+     * Don't be tempted to use a QVectorIterator or a for-loop over 0..size()
+     * because as we remove items on the go, size() will change and we won't
+     * be able to iterate over all elements. Use a mutable iterator instead.
+     */
+    QMutableVectorIterator<DistLine *> it(this->vecDists);
+    while (it.hasNext()) {
+        DistLine *pLine = it.next();
+        if (pLine && pLine->isSelected()) {
+            it.remove();
+            delete pLine;
         }
     }
+
     this->update();
 }

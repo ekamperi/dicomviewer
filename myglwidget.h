@@ -76,17 +76,17 @@ private:
     void drawCurrentDistance(QPainter *pPainter);
     void drawDistances(QPainter *pPainter);
     void drawDensities(QPainter *pPainter);
-    void drawDistance(QPainter *pPainter, DistLine line);
+    void drawDistance(QPainter *pPainter, const DistLine &pLine);
     void drawDensity(QPainter *painter, QLine line);
     void drawDebug(QPainter *pPainter);
 
     void resetViewMatrix(void);
 
     int calcMeanDensity(QPoint centerPoint, float radius);
-    unsigned int calcPhysicalDistance(QLine *pLine);
+    unsigned int calcPhysicalDistance(const QLine &line);
 
     /* A vector with all the lines corresponding to measured distances */
-    QVector<DistLine> vecDists;
+    QVector<DistLine*> vecDists;
 
     /* A vector with all the circles corresponding to measured densities */
     QVector<QLine> vecDensities;

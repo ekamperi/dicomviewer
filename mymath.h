@@ -4,6 +4,8 @@
 #include <QVector>
 #include <QPoint>
 
+#include "distline.h"
+
 class MyMath
 {
 public:
@@ -17,6 +19,7 @@ public:
     static unsigned char *floatToByte(float *pRawData, int width, int height, float tmin, float tmax);
 
     static void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
+    static void getSelectedLines(const QVector<DistLine*> *pVecDistLines, const QPointF &currPoint);
 };
 
 #endif // MYMATH_H
