@@ -320,36 +320,43 @@ void MyGLWidget::drawCurrentDistance(QPainter *painter)
 
 void MyGLWidget::drawCurrentDensity(QPainter *painter)
 {
+    qDebug() << Q_FUNC_INFO;
     Q_ASSERT(painter);
+    qDebug() << this->startPoint << this->endPoint;
 
-    QLine line(this->startPoint, this->endPoint);
-    this->drawDensity(painter, line);
+    DensCircle circle(this->startPoint, this->endPoint);
+    this->drawDensity(painter, circle);
 }
 
-void MyGLWidget::drawDensity(QPainter *painter, QLine line)
+void MyGLWidget::drawDensity(QPainter *painter, const DensCircle &circle)
 {
     Q_ASSERT(painter);
 
     /* Save old pen before replacing it */
     QPen oldPen, myPen, textPen;
     oldPen = painter->pen();
-    myPen.setWidth(3);
     myPen.setColor(Qt::red);
     textPen.setColor(Qt::yellow);
+
+    if (circle.isSelected()) {
+        myPen.setStyle(Qt::DashLine);
+        myPen.setWidth(4);
+    } else {
+        myPen.setWidth(2);
+    }
     painter->setPen(myPen);
 
     /* Draw a circle with center at mouse cursor click and a varying radius */
-    float dx = line.p2().x() - line.p1().x();
-    float dy = line.p2().y() - line.p1().y();
-    int dist = sqrt(dx*dx + dy*dy);
-    painter->drawEllipse(line.p1(), dist, dist);
+    QPoint center = circle.center();
+    int radius = circle.radius();
+    painter->drawEllipse(center, radius, radius);
 
     /* Calculate mean density over the above region */
-    int meanDensity = this->calcMeanDensity(line.p1(), dist);
+    int meanDensity = this->calcMeanDensity(center, radius);
 
     /* Display result */
     painter->setPen(textPen);
-    painter->drawText(line.p1(), QString::number(meanDensity) + " HUs");
+    painter->drawText(center, QString::number(meanDensity) + " HUs");
 
     /* Restore old pen */
     painter->setPen(oldPen);
@@ -370,8 +377,8 @@ void MyGLWidget::drawDensities(QPainter *painter)
     Q_ASSERT(painter);
 
     for (int i = 0; i < this->vecDensities.size(); i++) {
-        QLine line = this->vecDensities.at(i);
-        this->drawDensity(painter, line);
+        DensCircle densCircle = *this->vecDensities.at(i);
+        this->drawDensity(painter, densCircle);
     }
 }
 
@@ -488,6 +495,9 @@ void MyGLWidget::mousePressEvent(QMouseEvent *pEvent)
     QPointF currPoint = pEvent->localPos();
     MyMath::getSelectedLines(&this->vecDists, currPoint);
 
+    /* Check whether we clicked on a circle segment */
+    MyMath::getSelectedCircles(&this->vecDensities, currPoint);
+
     this->update();
 }
 
@@ -504,7 +514,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent *pEvent)
         this->endPoint = pEvent->pos();
         /* Skip single points */
         if (this->startPoint != this->endPoint) {
-            this->vecDensities.push_back(DistLine(this->startPoint, this->endPoint));
+            this->vecDensities.push_back(new DensCircle(this->startPoint, this->endPoint));
             this->update();
         }
     } else if (this->panMode) {
@@ -803,14 +813,25 @@ void MyGLWidget::deleteSelectedMeasures(void)
      * because as we remove items on the go, size() will change and we won't
      * be able to iterate over all elements. Use a mutable iterator instead.
      */
-    QMutableVectorIterator<DistLine *> it(this->vecDists);
-    while (it.hasNext()) {
-        DistLine *pLine = it.next();
+    QMutableVectorIterator<DistLine *> it1(this->vecDists);
+    while (it1.hasNext()) {
+        DistLine *pLine = it1.next();
         if (pLine && pLine->isSelected()) {
-            it.remove();
+            it1.remove();
             delete pLine;
         }
     }
 
+    /* Same for circles */
+    QMutableVectorIterator<DensCircle *> it2(this->vecDensities);
+    while (it2.hasNext()) {
+        DensCircle *pCircle = it2.next();
+        if (pCircle && pCircle->isSelected()) {
+            it2.remove();
+            delete pCircle;
+        }
+    }
+
+    /* Update view */
     this->update();
 }

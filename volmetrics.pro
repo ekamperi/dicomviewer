@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     topogram.cpp \
     mymath.cpp \
     startupmenu.cpp \
-    distline.cpp
+    distline.cpp \
+    selectable.cpp \
+    denscircle.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -38,7 +40,9 @@ HEADERS  += mainwindow.h \
     topogram.h \
     mymath.h \
     startupmenu.h \
-    distline.h
+    distline.h \
+    selectable.h \
+    denscircle.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

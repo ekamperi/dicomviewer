@@ -124,11 +124,35 @@ void MyMath::getSelectedLines(const QVector<DistLine*> *pVecDistLines, const QPo
         }
 
         /* If current point is on the line that p1, p2 define AND is
-         * between p1 and p2, then we have a match
+         * between p1 and p2, then we have a match.
          */
         if (onLine && betweenPoints) {
             bool isSelected = pLine->isSelected();
             pLine->setSelection(!isSelected); // toggle
+        }
+    }
+}
+
+void MyMath::getSelectedCircles(const QVector<DensCircle*> *pvDensCircles, const QPointF &currPoint)
+{
+    qDebug() << Q_FUNC_INFO;
+    Q_ASSERT(pvDensCircles);
+
+    for (int i = 0; i < pvDensCircles->size(); i++) {
+        DensCircle *pDensCircle = pvDensCircles->at(i);
+        Q_ASSERT(pDensCircle);
+
+        QPoint center = pDensCircle->center();
+        int radius = pDensCircle->radius();
+
+        int d = (currPoint.x() - center.x()) * (currPoint.x() - center.x()) +
+                (currPoint.y() - center.y()) * (currPoint.y() - center.y()) -
+                radius * radius;
+
+        qDebug() << d;
+        if (abs(d) < THRESH_SEL) {
+            bool isSelected = pDensCircle->isSelected();
+            pDensCircle->setSelection(!isSelected); // toggle
         }
     }
 }

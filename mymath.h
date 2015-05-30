@@ -5,6 +5,7 @@
 #include <QPoint>
 
 #include "distline.h"
+#include "denscircle.h"
 
 class MyMath
 {
@@ -20,6 +21,7 @@ public:
 
     static void getPointsInCircle(QVector<QPoint> *pVecPoints, QPoint centerPoint, float radius);
     static void getSelectedLines(const QVector<DistLine*> *pVecDistLines, const QPointF &currPoint);
+    static void getSelectedCircles(const QVector<DensCircle*> *pvDensCircles, const QPointF &currPoint);
 };
 
 #endif // MYMATH_H
