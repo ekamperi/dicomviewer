@@ -19,23 +19,23 @@ public:
     Slice(QString filename, unsigned int index);
     ~Slice();
 
-    unsigned int getIndex() const {
+    unsigned int getIndex(void) const {
         return this->index;
     }
 
-    float *getRawPixelData() const {
+    float *getRawPixelData(void) const {
         return this->pRawPixelData;
     }
 
-    unsigned int getWidth() const {
+    unsigned int getWidth(void) const {
         return this->width;
     }
 
-    unsigned int getHeight() const {
+    unsigned int getHeight(void) const {
         return this->height;
     }
 
-    GLint getFormat() const {
+    GLint getFormat(void) const {
         return this->format;
     }
 
