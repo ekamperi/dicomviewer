@@ -10,6 +10,7 @@
 #include "mainwindow.h"
 #include "myglwidget.h"
 #include "myimagewidget.h"
+#include "patientexplorer.h"
 #include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */
@@ -436,6 +437,9 @@ void MainWindow::on_actionOpen_DICOM_dir_triggered()
         }
 
     this->loadDCMFiles(res);
+
+    // XXX
+    PatientExplorer pe(dir);
 }
 
 void MainWindow::loadDCMFiles(QStringList fileNames)

@@ -26,7 +26,10 @@ SOURCES += main.cpp\
     startupmenu.cpp \
     distline.cpp \
     selectable.cpp \
-    denscircle.cpp
+    denscircle.cpp \
+    patientexplorer.cpp \
+    imageseries.cpp \
+    study.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -42,7 +45,10 @@ HEADERS  += mainwindow.h \
     startupmenu.h \
     distline.h \
     selectable.h \
-    denscircle.h
+    denscircle.h \
+    patientexplorer.h \
+    imageseries.h \
+    study.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

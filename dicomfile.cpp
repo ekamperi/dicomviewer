@@ -365,12 +365,13 @@ ExamDetails DicomFile::getExamDetails(void)
     /* Get the modality of the exam (CT, MRI, etc) */
     OFString result;
     OFCondition status = this->pDcmDataset->findAndGetOFString(DCM_Modality, result);
-    Q_ASSERT(status.good());
-    if (result == "CT") {
-    } else if (result == "MRI") {
-    } else {
-        qDebug() << "Unknown imaging modality. We will not show examination " \
-                    "specific details";
+    if (status.good()) {
+        if (result == "CT") {
+        } else if (result == "MRI") {
+        } else {
+            qDebug() << "Unknown imaging modality. We will not show examination " \
+                        "specific details";
+        }
     }
 
     return ExamDetails(this->examDetails);
