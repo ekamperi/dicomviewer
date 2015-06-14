@@ -4,7 +4,7 @@
 
 Slice::Slice(QString filename, unsigned int index)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     /* Index to numerically identify a slice */
     this->index = index;
@@ -41,7 +41,7 @@ Slice::~Slice()
 void Slice::normalizePixels(float globalMaxPixel)
 {
     //Q_ASSERT(maxPixel > 0.0);
-    qDebug() << Q_FUNC_INFO << " globalMaxPixel =" << globalMaxPixel;
+//    qDebug() << Q_FUNC_INFO << " globalMaxPixel =" << globalMaxPixel;
 
     this->globalMaxPixel = globalMaxPixel;
 

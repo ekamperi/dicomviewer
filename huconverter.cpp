@@ -6,7 +6,7 @@
 
 HUConverter::HUConverter()
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     this->slope = 0.0;
     this->intercept = 0.0;
     this->maxPixel = 1.0;
@@ -14,7 +14,7 @@ HUConverter::HUConverter()
 
 HUConverter::HUConverter(float slope, float intercept)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     this->slope = slope;
     this->intercept = intercept;
 }
@@ -82,7 +82,7 @@ HUConverter::getNormalizedRangeFromTemplate(HUWindows::window window) const
 
 void HUConverter::normalize(float maxPixel)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     this->maxPixel = maxPixel;
 }

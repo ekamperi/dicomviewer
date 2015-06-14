@@ -26,7 +26,7 @@ MyImageWidget::~MyImageWidget()
 
 void MyImageWidget::setSlice(Slice *pSlice)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;

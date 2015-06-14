@@ -106,7 +106,7 @@ void MyMath::getSelectedLines(const QVector<DistLine*> *pVecDistLines, const QPo
         int v2y = p2.y() - p1.y();
         qint64 cross = v1x * v2y - v2x * v1y;
 
-        if (abs(cross) < THRESH_SEL) {
+        if (qAbs(cross) < THRESH_SEL) {
             onLine = true;
         }
 

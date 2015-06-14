@@ -19,11 +19,9 @@ public:
     PatientExplorer(QString path);
 
 private:
-    void getPatientName(QString path);
+    void extract(QString path);
 
     QMap<QString, QMap<QString, QString> > myMap;
-
-    DcmFileFormat dcmFile;
 };
 
 #endif // PATIENTEXPLORER_H

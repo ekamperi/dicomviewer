@@ -279,7 +279,7 @@ void Topogram::showContextMenu(const QPoint &pos)
     QMenu ctxMenu;
 
     /* We only support un-docking if we are docked */
-    QAction *pDockAction, *pUndockAction;
+    QAction *pDockAction, *pUndockAction = NULL;
     if (this->isEmbedded()) {
         pUndockAction = ctxMenu.addAction("Un-dock");
     } else {

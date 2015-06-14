@@ -7,6 +7,7 @@
 //#include "Magick++.h"
 
 #include "dicomfile.h"
+#include "dicomhelper.h"
 #include "huconverter.h"
 
 /* XXX: This is needed for compile */
@@ -314,23 +315,6 @@ unsigned char *DicomFile::jp2k_to_png(Uint8* pixelData, Uint32 length)
     return NULL;
 }
 
-QString DicomFile::getDcmTagKeyAsQString(const DcmTagKey &dcmTagKey)
-{
-    /*
-     * Retrieve the value of 'dcmTagKey', e.g. 'dcmTagKey' may be
-     * DCM_PatientName.
-    */
-    OFString result;
-    OFCondition status = this->pDcmDataset->findAndGetOFString(
-                dcmTagKey, result);
-    if (status.good()) {
-        return QString(result.c_str());
-    } else {
-        qDebug() << status.text();
-        return QString("N/A");
-    }
-}
-
 ExamDetails DicomFile::getExamDetails(void)
 {
     struct {
@@ -358,7 +342,7 @@ ExamDetails DicomFile::getExamDetails(void)
 
     /* Retrieve values for keys and populate the map */
     for (unsigned int i = 0; i < len; i++) {
-        QString result = getDcmTagKeyAsQString(details[i].key);
+        QString result = DicomHelper::getDcmTagKeyAsQString(this->pDcmDataset, details[i].key);
         this->examDetails.insert(details[i].desc, result);
     }
 
