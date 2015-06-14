@@ -2,6 +2,7 @@
 #define PATIENTEXPLORERWIDGET_H
 
 #include <QWidget>
+#include <QTreeWidgetItem>
 
 namespace Ui {
 class PatientExplorerWidget;
@@ -22,6 +23,9 @@ private slots:
     void on_btnBrowse_clicked();
 
 private:
+    QTreeWidgetItem *addTreeRoot(QString name);
+    void addTreeChild(QTreeWidgetItem *parent, QString name);
+
     Ui::PatientExplorerWidget *ui;
 };
 

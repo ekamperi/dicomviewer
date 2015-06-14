@@ -54,8 +54,34 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
     /* Populate the tree widget */
     QList<QString> patients = pe.getPatients();
     for (unsigned int i = 0; i < patients.size(); i++) {
-        QTreeWidgetItem *it = new QTreeWidgetItem();
-        it->setText(0, patients.at(i));
-        ui->treePatients->addTopLevelItem(it);
+        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i));
+
+        /* For every patient, add the related studies */
+        QList<QString> studies = pe.getStudies(patients.at(i));
+        for (unsigned int j = 0; j < studies.size(); j++) {
+            this->addTreeChild(parent, studies.at(j));
+        }
     }
+}
+
+QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem(ui->treePatients);
+    Q_ASSERT(treeItem);
+    treeItem->setText(0, name);
+
+    return treeItem;
+}
+
+void PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent,
+                  QString name)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+    Q_ASSERT(treeItem);
+    treeItem->setText(0, name);
+    parent->addChild(treeItem);
 }

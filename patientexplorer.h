@@ -13,12 +13,15 @@
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dctk.h"
 
+typedef QMap<QString, QMap<QString, QString> >  StudyMap;
+
 class PatientExplorer
 {
 public:
     PatientExplorer(QString path);
 
     QList<QString> getPatients(void);
+    QList<QString> getStudies(const QString &patientName);
 
 private:
     void extract(QString path);
