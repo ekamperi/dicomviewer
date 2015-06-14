@@ -24,6 +24,11 @@ void StartupMenu::on_btnOpenDICOMDir_clicked()
     emit openDICOM_dir();
 }
 
+void StartupMenu::on_btnOpenPatientExplorer_clicked()
+{
+    emit openPatientExplorer();
+}
+
 void StartupMenu::on_btnExit_clicked()
 {
     QCoreApplication::exit(0);

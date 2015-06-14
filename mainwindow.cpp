@@ -10,7 +10,7 @@
 #include "mainwindow.h"
 #include "myglwidget.h"
 #include "myimagewidget.h"
-#include "patientexplorer.h"
+#include "patientexplorerwidget.h"
 #include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */
@@ -42,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(on_actionOpenDICOM_triggered()));
     connect(this->pStartupMenu, SIGNAL(openDICOM_dir()),
             this, SLOT(on_actionOpen_DICOM_dir_triggered()));
+    connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
+            this, SLOT(on_actionOpen_patient_explorer_triggered()));
 
     this->pGLWidget = new MyGLWidget();
     QVBoxLayout *pLayout = new QVBoxLayout();
@@ -437,9 +439,6 @@ void MainWindow::on_actionOpen_DICOM_dir_triggered()
         }
 
     this->loadDCMFiles(res);
-
-    // XXX
-    PatientExplorer pe(dir);
 }
 
 void MainWindow::loadDCMFiles(QStringList fileNames)
@@ -491,4 +490,11 @@ void MainWindow::on_actionDeleteSelectedMeasures_triggered()
 {
     qDebug() << Q_FUNC_INFO;
     this->pGLWidget->deleteSelectedMeasures();
+}
+
+void MainWindow::on_actionOpen_patient_explorer_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    PatientExplorerWidget *pew = new PatientExplorerWidget();
+    pew->show();
 }

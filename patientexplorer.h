@@ -18,10 +18,13 @@ class PatientExplorer
 public:
     PatientExplorer(QString path);
 
+    QList<QString> getPatients(void);
+
 private:
     void extract(QString path);
 
-    QMap<QString, QMap<QString, QString> > myMap;
+    /* <Patient, <Study, <Series, Path>>> */
+    QMap<QString, QMap<QString, QMap<QString, QString> > > myMap;
 };
 
 #endif // PATIENTEXPLORER_H

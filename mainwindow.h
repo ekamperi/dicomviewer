@@ -72,6 +72,8 @@ private slots:
 
     void on_actionDeleteSelectedMeasures_triggered();
 
+    void on_actionOpen_patient_explorer_triggered();
+
 private:
     Ui::MainWindow *ui;
 

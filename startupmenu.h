@@ -18,12 +18,12 @@ public:
 signals:
     void openDICOM_files(void);
     void openDICOM_dir(void);
+    void openPatientExplorer(void);
 
 private slots:
     void on_btnOpenDICOMFiles_clicked();
-
     void on_btnOpenDICOMDir_clicked();
-
+    void on_btnOpenPatientExplorer_clicked();
     void on_btnExit_clicked();
 
 private:

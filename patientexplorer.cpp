@@ -10,7 +10,6 @@ PatientExplorer::PatientExplorer(QString path)
 
     /* Iterate RECURSIVELY over all files in a directory */
     QDirIterator it(path, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-
     while (it.hasNext()) {
         this->extract(it.next());
     }
@@ -35,15 +34,31 @@ void PatientExplorer::extract(QString path)
         return;
     }
 
-    DcmTagKey keys[] = { DCM_PatientID, DCM_PatientName, DCM_StudyDate, DCM_StudyTime,
-                         DCM_StudyInstanceUID };
+    /* Patient > Study > Series */
+    DcmTagKey keys[] = { DCM_PatientName, DCM_StudyInstanceUID, DCM_SeriesInstanceUID };
 
     /* Calculate size of array */
     size_t len = sizeof(keys) / sizeof(keys[0]);
 
     /* Retrieve values for keys and populate the map */
+    QString *res = new QString[len];
     for (unsigned int i = 0; i < len; i++) {
-        QString result = DicomHelper::getDcmTagKeyAsQString(pDcmDataset, keys[i]);
-        qDebug() << "->" << result;
-    }
+        res[i] = DicomHelper::getDcmTagKeyAsQString(pDcmDataset, keys[i]);
+   }
+
+    /* Add item to map */
+    QString patientName = res[0];
+    QString studyID     = res[1];
+    QString seriesID    = res[2];
+    this->myMap[patientName][studyID][seriesID] = path;
+
+    delete[] res;
+}
+
+QList<QString> PatientExplorer::getPatients(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QList<QString> patients = this->myMap.keys();
+    return patients;
 }
