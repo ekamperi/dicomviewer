@@ -29,7 +29,9 @@ SOURCES += main.cpp\
     denscircle.cpp \
     patientexplorer.cpp \
     imageseries.cpp \
-    study.cpp
+    study.cpp \
+    dicomhelper.cpp \
+    patientexplorerwidget.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -48,12 +50,15 @@ HEADERS  += mainwindow.h \
     denscircle.h \
     patientexplorer.h \
     imageseries.h \
-    study.h
+    study.h \
+    dicomhelper.h \
+    patientexplorerwidget.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \
     dicomfile.ui \
-    startupmenu.ui
+    startupmenu.ui \
+    patientexplorerwidget.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
  -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \

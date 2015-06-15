@@ -70,7 +70,10 @@ QList<QString> PatientExplorer::getStudies(const QString &patientName)
     QList<QString> studies;
     QMap<QString, StudyMap>::const_iterator it = this->myMap.find(patientName);
     while (it != this->myMap.end() && it.key() == patientName) {
-        studies.append(it.value().keys().at(0));
+        QList<QString> keys = it.value().keys();
+        for (unsigned int j = 0; j < keys.size(); j++) {
+            studies.append(keys.at(j));
+        }
         ++it;
     }
     return studies;

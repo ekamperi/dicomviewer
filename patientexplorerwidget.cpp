@@ -12,9 +12,6 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     ui(new Ui::PatientExplorerWidget)
 {
     ui->setupUi(this);
-
-//    connect(ui->treePatients, SIGNAL(itemSelectionChanged()),
-//            this, SLOT(on_itemSelectionChanged()));
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
@@ -30,10 +27,13 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
 void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
 {
     qDebug() << Q_FUNC_INFO;
+    qDebug() << "YES!";
 
     if (pEvent->key() == Qt::Key_Escape) {
         this->close();
+        return;
     } else if (pEvent->key() == Qt::Key_Space) {
+        /* XXX: This needs to be fixed (use an event filter?) */
         QList<QTreeWidgetItem *> selectedItems = ui->treePatients->selectedItems();
         for (unsigned int i = 0; i < selectedItems.size(); i++) {
             QTreeWidgetItem *pItem = selectedItems.at(i);
@@ -71,13 +71,13 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
 
     /* Populate the tree widget */
     QList<QString> patients = pe.getPatients();
-    for (unsigned int i = 0; i < patients.size(); i++) {
+    for (int i = 0; i < patients.size(); i++) {
         QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i));
         Q_ASSERT(parent);
 
         /* For every patient, add the related studies */
         QList<QString> studies = pe.getStudies(patients.at(i));
-        for (unsigned int j = 0; j < studies.size(); j++) {
+        for (int j = 0; j < studies.size(); j++) {
             QTreeWidgetItem *parent2 = this->addTreeChild(parent, studies.at(j));
             Q_ASSERT(parent2);
 
@@ -88,6 +88,11 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
             }
         }
     }
+
+    /* Update the status bar */
+    ui->lblStatusBar->setText(
+                QString::number(pe.getPatients().size()) +
+                " patient(s) were found.");
 }
 
 QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name)
