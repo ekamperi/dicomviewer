@@ -12,6 +12,9 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     ui(new Ui::PatientExplorerWidget)
 {
     ui->setupUi(this);
+
+//    connect(ui->treePatients, SIGNAL(itemSelectionChanged()),
+//            this, SLOT(on_itemSelectionChanged()));
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
@@ -19,10 +22,25 @@ PatientExplorerWidget::~PatientExplorerWidget()
     delete ui;
 }
 
+void PatientExplorerWidget::on_itemSelectionChanged(void)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
 void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
 {
+    qDebug() << Q_FUNC_INFO;
+
     if (pEvent->key() == Qt::Key_Escape) {
         this->close();
+    } else if (pEvent->key() == Qt::Key_Space) {
+        QList<QTreeWidgetItem *> selectedItems = ui->treePatients->selectedItems();
+        for (unsigned int i = 0; i < selectedItems.size(); i++) {
+            QTreeWidgetItem *pItem = selectedItems.at(i);
+            bool expand = pItem->isExpanded();
+            selectedItems.at(i)->setExpanded(!expand);
+            QWidget::keyPressEvent(pEvent);
+        }
     } else {
         QWidget::keyPressEvent(pEvent);
     }
@@ -55,11 +73,19 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
     QList<QString> patients = pe.getPatients();
     for (unsigned int i = 0; i < patients.size(); i++) {
         QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i));
+        Q_ASSERT(parent);
 
         /* For every patient, add the related studies */
         QList<QString> studies = pe.getStudies(patients.at(i));
         for (unsigned int j = 0; j < studies.size(); j++) {
-            this->addTreeChild(parent, studies.at(j));
+            QTreeWidgetItem *parent2 = this->addTreeChild(parent, studies.at(j));
+            Q_ASSERT(parent2);
+
+            /* For every study, add the related series */
+            QList<QString> series = pe.getSeries(patients.at(i), studies.at(j));
+            for (unsigned k = 0; k < series.size(); k++) {
+                this->addTreeChild(parent2, series.at(k));
+            }
         }
     }
 }
@@ -75,7 +101,7 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name)
     return treeItem;
 }
 
-void PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent,
+QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent,
                   QString name)
 {
     qDebug() << Q_FUNC_INFO;
@@ -84,4 +110,6 @@ void PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent,
     Q_ASSERT(treeItem);
     treeItem->setText(0, name);
     parent->addChild(treeItem);
+
+    return treeItem;
 }

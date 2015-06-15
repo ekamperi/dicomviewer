@@ -14,6 +14,7 @@
 #include "dcmtk/dcmdata/dctk.h"
 
 typedef QMap<QString, QMap<QString, QString> >  StudyMap;
+typedef QMap<QString, QString> SeriesMap;
 
 class PatientExplorer
 {
@@ -22,6 +23,7 @@ public:
 
     QList<QString> getPatients(void);
     QList<QString> getStudies(const QString &patientName);
+    QList<QString> getSeries(const QString &patientName, const QString &studyID);
 
 private:
     void extract(QString path);

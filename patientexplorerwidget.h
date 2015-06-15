@@ -21,10 +21,11 @@ protected:
 
 private slots:
     void on_btnBrowse_clicked();
+    void on_itemSelectionChanged(void);
 
 private:
     QTreeWidgetItem *addTreeRoot(QString name);
-    void addTreeChild(QTreeWidgetItem *parent, QString name);
+    QTreeWidgetItem *addTreeChild(QTreeWidgetItem *parent, QString name);
 
     Ui::PatientExplorerWidget *ui;
 };

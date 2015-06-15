@@ -68,12 +68,18 @@ QList<QString> PatientExplorer::getStudies(const QString &patientName)
     qDebug() << Q_FUNC_INFO;
 
     QList<QString> studies;
-
     QMap<QString, StudyMap>::const_iterator it = this->myMap.find(patientName);
     while (it != this->myMap.end() && it.key() == patientName) {
         studies.append(it.value().keys().at(0));
         ++it;
     }
-
     return studies;
+}
+
+QList<QString> PatientExplorer::getSeries(const QString &patientName, const QString &studyID)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QList<QString> series;
+    return series;
 }
