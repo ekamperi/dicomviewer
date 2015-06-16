@@ -94,6 +94,9 @@
        <property name="text">
         <string>Open Patient Explorer...</string>
        </property>
+       <property name="icon">
+        <iconset theme="edit-find"/>
+       </property>
       </widget>
      </item>
      <item>
