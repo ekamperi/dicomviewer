@@ -7,12 +7,14 @@
 PatientExplorer::PatientExplorer(QObject *parent) : QObject(parent)
 {
     qDebug() << Q_FUNC_INFO;
+    abort = false;
 }
 
 PatientExplorer::PatientExplorer(QString path, QObject *parent) : QObject(parent)
 {
     qDebug() << Q_FUNC_INFO;
     this->path = path;
+    abort = false;
 }
 
 void PatientExplorer::doScan(void)
@@ -28,7 +30,7 @@ void PatientExplorer::doScan(void)
     /* Iterate RECURSIVELY over all files in a directory */
     QDirIterator it(path, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     unsigned int scannedFiles = 0;
-    while (it.hasNext()) {
+    while (it.hasNext() && !this->abort) {
         this->extract(it.next());
         ++scannedFiles;
         /* Every now and then emit a signal to update the progress bar, if any */
@@ -110,4 +112,10 @@ QList<QString> PatientExplorer::getSeries(const QString &patientName, const QStr
 
     QList<QString> series;
     return series;
+}
+
+void PatientExplorer::abortScanning(void)
+{
+    qDebug() << Q_FUNC_INFO;
+    this->abort = true;
 }

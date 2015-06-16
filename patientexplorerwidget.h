@@ -28,8 +28,9 @@ private slots:
 
     /* This is triggered when then FindDicomWorker is finished */
     void filesScanned();
-
     void readProgress(unsigned int scannedFiles);
+    void progressDialogCanceled();
+
 
 private:
     QTreeWidgetItem *addTreeRoot(QString name);

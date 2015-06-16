@@ -31,6 +31,8 @@ public:
     QList<QString> getStudies(const QString &patientName) const;
     QList<QString> getSeries(const QString &patientName, const QString &studyID) const;
 
+    void abortScanning(void);
+
 signals:
     void reportProgress(unsigned int scannedFiles);
 
@@ -38,6 +40,7 @@ private:
     void extract(QString path);
 
     QString path;
+    bool abort;
 
     /* <Patient, <Study, <Series, Path>>> */
     QMap<QString, QMap<QString, QMap<QString, QString> > > myMap;

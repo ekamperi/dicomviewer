@@ -88,6 +88,8 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
     Q_ASSERT(this->progressDialog);
     this->progressDialog->setWindowTitle("Scanning for DICOM files");
     this->progressDialog->setWindowModality(Qt::WindowModal);
+    connect(this->progressDialog, SIGNAL(canceled()),
+            this, SLOT(progressDialogCanceled()));
     this->progressDialog->show();
 
     /* Fire off the worker thread! (it doesn't block) */
@@ -165,4 +167,10 @@ void PatientExplorerWidget::readProgress(unsigned int scannedFiles)
         QString newString = QString("This may take a while... (%1 found)").arg(scannedFiles);
         this->progressDialog->setLabelText(newString);
     }
+}
+
+void PatientExplorerWidget::progressDialogCanceled()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pPatientExplorer->abortScanning();
 }
