@@ -74,6 +74,7 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
        block the main GUI thread.
     */
     this->pPatientExplorer->setPath(dir);
+
     FindDicomThread *findDicomThread = new FindDicomThread(this->pPatientExplorer, this);
     Q_ASSERT(findDicomThread);
 

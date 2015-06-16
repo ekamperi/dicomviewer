@@ -40,6 +40,9 @@ void PatientExplorer::doScan(void)
     }
 
     emit this->reportProgress(scannedFiles);
+
+    /* Clear it or it will become sticky and affect subsequent scans */
+    this->abort = false;
 }
 
 void PatientExplorer::extract(QString path)
