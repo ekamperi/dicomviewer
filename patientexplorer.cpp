@@ -4,14 +4,37 @@
 #include <QDirIterator>
 #include <QDebug>
 
-PatientExplorer::PatientExplorer(QString path)
+PatientExplorer::PatientExplorer(QObject *parent) : QObject(parent)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+PatientExplorer::PatientExplorer(QString path, QObject *parent) : QObject(parent)
+{
+    qDebug() << Q_FUNC_INFO;
+    this->path = path;
+}
+
+void PatientExplorer::doScan(void)
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* Make sure path is not empty */
+    Q_ASSERT(!this->path.isEmpty());
+
+    /* Remove any old items in the resultant map */
+    this->myMap.clear();
+
     /* Iterate RECURSIVELY over all files in a directory */
     QDirIterator it(path, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    unsigned int scannedFiles = 0;
     while (it.hasNext()) {
         this->extract(it.next());
+        ++scannedFiles;
+        /* Every now and then emit a signal to update the progress bar, if any */
+        if (scannedFiles > 100) {
+            emit this->reportProgress(scannedFiles);
+        }
     }
 }
 
@@ -55,7 +78,7 @@ void PatientExplorer::extract(QString path)
     delete[] res;
 }
 
-QList<QString> PatientExplorer::getPatients(void)
+QList<QString> PatientExplorer::getPatients(void) const
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -63,7 +86,7 @@ QList<QString> PatientExplorer::getPatients(void)
     return patients;
 }
 
-QList<QString> PatientExplorer::getStudies(const QString &patientName)
+QList<QString> PatientExplorer::getStudies(const QString &patientName) const
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -71,7 +94,7 @@ QList<QString> PatientExplorer::getStudies(const QString &patientName)
     QMap<QString, StudyMap>::const_iterator it = this->myMap.find(patientName);
     while (it != this->myMap.end() && it.key() == patientName) {
         QList<QString> keys = it.value().keys();
-        for (unsigned int j = 0; j < keys.size(); j++) {
+        for (int j = 0; j < keys.size(); j++) {
             studies.append(keys.at(j));
         }
         ++it;
@@ -79,7 +102,7 @@ QList<QString> PatientExplorer::getStudies(const QString &patientName)
     return studies;
 }
 
-QList<QString> PatientExplorer::getSeries(const QString &patientName, const QString &studyID)
+QList<QString> PatientExplorer::getSeries(const QString &patientName, const QString &studyID) const
 {
     qDebug() << Q_FUNC_INFO;
 

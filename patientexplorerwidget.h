@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QTreeWidgetItem>
 
+#include "patientexplorer.h"
+
 namespace Ui {
 class PatientExplorerWidget;
 }
@@ -23,9 +25,14 @@ private slots:
     void on_btnBrowse_clicked();
     void on_itemSelectionChanged(void);
 
+    /* This is triggered when then FindDicomWorker is finished */
+    void filesScanned();
+
 private:
     QTreeWidgetItem *addTreeRoot(QString name);
     QTreeWidgetItem *addTreeChild(QTreeWidgetItem *parent, QString name);
+
+    PatientExplorer *pPatientExplorer;
 
     Ui::PatientExplorerWidget *ui;
 };

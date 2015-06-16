@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     imageseries.cpp \
     study.cpp \
     dicomhelper.cpp \
-    patientexplorerwidget.cpp
+    patientexplorerwidget.cpp \
+    finddicomworker.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     imageseries.h \
     study.h \
     dicomhelper.h \
-    patientexplorerwidget.h
+    patientexplorerwidget.h \
+    finddicomworker.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

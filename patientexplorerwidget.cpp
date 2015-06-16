@@ -1,6 +1,7 @@
 #include "patientexplorerwidget.h"
 #include "ui_patientexplorerwidget.h"
 
+#include "finddicomworker.h"
 #include "patientexplorer.h"
 
 #include <QDebug>
@@ -12,11 +13,14 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     ui(new Ui::PatientExplorerWidget)
 {
     ui->setupUi(this);
+    this->pPatientExplorer = new PatientExplorer();
+    Q_ASSERT(this->pPatientExplorer);
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
 {
     delete ui;
+    delete this->pPatientExplorer;
 }
 
 void PatientExplorerWidget::on_itemSelectionChanged(void)
@@ -35,7 +39,7 @@ void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
     } else if (pEvent->key() == Qt::Key_Space) {
         /* XXX: This needs to be fixed (use an event filter?) */
         QList<QTreeWidgetItem *> selectedItems = ui->treePatients->selectedItems();
-        for (unsigned int i = 0; i < selectedItems.size(); i++) {
+        for (int i = 0; i < selectedItems.size(); i++) {
             QTreeWidgetItem *pItem = selectedItems.at(i);
             bool expand = pItem->isExpanded();
             selectedItems.at(i)->setExpanded(!expand);
@@ -63,36 +67,22 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
 
     ui->editPath->setText(dir);
 
-    /* XXX: This shall go to its own thread */
-    PatientExplorer pe(dir);
+    /*
+     * The actual scanning shall go to its own thread, so that it doesn't
+       block the main GUI thread.
+    */
+    this->pPatientExplorer->setPath(dir);
+    FindDicomThread *findDicomThread = new FindDicomThread(this->pPatientExplorer, this);
+    Q_ASSERT(findDicomThread);
 
-    /* Remove old items */
-    ui->treePatients->clear();
+    connect(findDicomThread, SIGNAL(finished()),
+            findDicomThread, SLOT(deleteLater()));
+    connect(findDicomThread, SIGNAL(finished()),
+            this, SLOT(filesScanned()));
 
-    /* Populate the tree widget */
-    QList<QString> patients = pe.getPatients();
-    for (int i = 0; i < patients.size(); i++) {
-        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i));
-        Q_ASSERT(parent);
+    this->setCursor(Qt::WaitCursor);
 
-        /* For every patient, add the related studies */
-        QList<QString> studies = pe.getStudies(patients.at(i));
-        for (int j = 0; j < studies.size(); j++) {
-            QTreeWidgetItem *parent2 = this->addTreeChild(parent, studies.at(j));
-            Q_ASSERT(parent2);
-
-            /* For every study, add the related series */
-            QList<QString> series = pe.getSeries(patients.at(i), studies.at(j));
-            for (unsigned k = 0; k < series.size(); k++) {
-                this->addTreeChild(parent2, series.at(k));
-            }
-        }
-    }
-
-    /* Update the status bar */
-    ui->lblStatusBar->setText(
-                QString::number(pe.getPatients().size()) +
-                " patient(s) were found.");
+    findDicomThread->start();
 }
 
 QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name)
@@ -117,4 +107,43 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent,
     parent->addChild(treeItem);
 
     return treeItem;
+}
+
+void PatientExplorerWidget::filesScanned()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Restore mouse cursor */
+    this->setCursor(Qt::ArrowCursor);
+
+    /* Remove old items */
+    ui->treePatients->clear();
+
+    /* Populate the tree widget */
+    const PatientExplorer &pe = *this->pPatientExplorer;
+    Q_ASSERT(this->pPatientExplorer);
+
+    QList<QString> patients = this->pPatientExplorer->getPatients();
+    for (int i = 0; i < patients.size(); i++) {
+        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i));
+        Q_ASSERT(parent);
+
+        /* For every patient, add the related studies */
+        QList<QString> studies = pe.getStudies(patients.at(i));
+        for (int j = 0; j < studies.size(); j++) {
+            QTreeWidgetItem *parent2 = this->addTreeChild(parent, studies.at(j));
+            Q_ASSERT(parent2);
+
+            /* For every study, add the related series */
+            QList<QString> series = pe.getSeries(patients.at(i), studies.at(j));
+            for (int k = 0; k < series.size(); k++) {
+                this->addTreeChild(parent2, series.at(k));
+            }
+        }
+    }
+
+    /* Update the status bar */
+    ui->lblStatusBar->setText(
+                QString::number(pe.getPatients().size()) +
+                " patient(s) were found.");
 }

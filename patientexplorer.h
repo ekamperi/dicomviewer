@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QString>
 #include <QVector>
+#include <QObject>
 
 #include "study.h"
 
@@ -16,17 +17,27 @@
 typedef QMap<QString, QMap<QString, QString> >  StudyMap;
 typedef QMap<QString, QString> SeriesMap;
 
-class PatientExplorer
+class PatientExplorer : public QObject
 {
-public:
-    PatientExplorer(QString path);
+    Q_OBJECT
 
-    QList<QString> getPatients(void);
-    QList<QString> getStudies(const QString &patientName);
-    QList<QString> getSeries(const QString &patientName, const QString &studyID);
+public:
+    PatientExplorer(QObject *parent = NULL);
+    PatientExplorer(QString path, QObject *parent = NULL);
+    void setPath(const QString &path) { this->path = path; }
+    void doScan(void);
+
+    QList<QString> getPatients(void) const;
+    QList<QString> getStudies(const QString &patientName) const;
+    QList<QString> getSeries(const QString &patientName, const QString &studyID) const;
+
+signals:
+    void reportProgress(unsigned int scannedFiles);
 
 private:
     void extract(QString path);
+
+    QString path;
 
     /* <Patient, <Study, <Series, Path>>> */
     QMap<QString, QMap<QString, QMap<QString, QString> > > myMap;
