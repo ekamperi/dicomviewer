@@ -2,6 +2,7 @@
 #define PATIENTEXPLORERWIDGET_H
 
 #include <QWidget>
+#include <QProgressDialog>
 #include <QTreeWidgetItem>
 
 #include "patientexplorer.h"
@@ -28,11 +29,14 @@ private slots:
     /* This is triggered when then FindDicomWorker is finished */
     void filesScanned();
 
+    void readProgress(unsigned int scannedFiles);
+
 private:
     QTreeWidgetItem *addTreeRoot(QString name);
     QTreeWidgetItem *addTreeChild(QTreeWidgetItem *parent, QString name);
 
     PatientExplorer *pPatientExplorer;
+    QProgressDialog *progressDialog;
 
     Ui::PatientExplorerWidget *ui;
 };

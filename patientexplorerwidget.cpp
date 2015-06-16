@@ -15,6 +15,8 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     ui->setupUi(this);
     this->pPatientExplorer = new PatientExplorer();
     Q_ASSERT(this->pPatientExplorer);
+    connect(this->pPatientExplorer, SIGNAL(reportProgress(uint)),
+            this, SLOT(readProgress(uint)));
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
@@ -80,8 +82,15 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
     connect(findDicomThread, SIGNAL(finished()),
             this, SLOT(filesScanned()));
 
-    this->setCursor(Qt::WaitCursor);
+    /* Show a progress dialog */
+    this->progressDialog = new QProgressDialog(
+                "This may take a while...", "Abort operation", 0, 0, this);
+    Q_ASSERT(this->progressDialog);
+    this->progressDialog->setWindowTitle("Scanning for DICOM files");
+    this->progressDialog->setWindowModality(Qt::WindowModal);
+    this->progressDialog->show();
 
+    /* Fire off the worker thread! (it doesn't block) */
     findDicomThread->start();
 }
 
@@ -113,8 +122,8 @@ void PatientExplorerWidget::filesScanned()
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* Restore mouse cursor */
-    this->setCursor(Qt::ArrowCursor);
+    /* Close the progress dialog */
+    this->progressDialog->deleteLater();
 
     /* Remove old items */
     ui->treePatients->clear();
@@ -146,4 +155,14 @@ void PatientExplorerWidget::filesScanned()
     ui->lblStatusBar->setText(
                 QString::number(pe.getPatients().size()) +
                 " patient(s) were found.");
+}
+
+void PatientExplorerWidget::readProgress(unsigned int scannedFiles)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    if (!this->progressDialog->wasCanceled()) {
+        QString newString = QString("This may take a while... (%1 found)").arg(scannedFiles);
+        this->progressDialog->setLabelText(newString);
+    }
 }

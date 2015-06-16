@@ -32,10 +32,12 @@ void PatientExplorer::doScan(void)
         this->extract(it.next());
         ++scannedFiles;
         /* Every now and then emit a signal to update the progress bar, if any */
-        if (scannedFiles > 100) {
+        if (scannedFiles > 500) {
             emit this->reportProgress(scannedFiles);
         }
     }
+
+    emit this->reportProgress(scannedFiles);
 }
 
 void PatientExplorer::extract(QString path)
