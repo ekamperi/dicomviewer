@@ -14,6 +14,7 @@
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dctk.h"
 
+/* <Patient Name, <Study, <Series, File>>> */
 typedef QMap<QString, QMap<QString, QString> >  StudyMap;
 typedef QMap<QString, QString> SeriesMap;
 

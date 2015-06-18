@@ -113,8 +113,9 @@ QList<QString> PatientExplorer::getSeries(const QString &patientName, const QStr
 {
     qDebug() << Q_FUNC_INFO;
 
-    QList<QString> series;
-    return series;
+    SeriesMap mySeriesMap = this->myMap[patientName][studyID];
+
+    return mySeriesMap.keys();;
 }
 
 void PatientExplorer::abortScanning(void)
