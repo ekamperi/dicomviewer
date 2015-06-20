@@ -2,6 +2,13 @@
 
 #include <QDate>
 
+Series::Series()
+{
+    this->uid = "HAHA";
+    this->desc = "HAHA";
+    this->date = "HAHA";
+}
+
 Series::Series(QString seriesUID, QString seriesDesc, QString seriesDate)
 {
     this->uid = seriesUID;
@@ -30,4 +37,11 @@ QString Series::getDate(void) const
 bool Series::operator<(const Series &series) const
 {
     return this->uid < series.getUID();
+}
+
+Series::Series(const Series &obj)
+{
+    this->uid = obj.getUID();
+    this->desc = obj.getDesc();
+    this->date = obj.getDate();
 }

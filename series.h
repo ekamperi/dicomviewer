@@ -1,12 +1,16 @@
 #ifndef SERIES_H
 #define SERIES_H
 
+#include <QMetaType>
 #include <QString>
 
 class Series
 {
 public:
+    Series();
     Series(QString seriesUID, QString seriesDesc, QString seriesDate);
+    Series(const Series &obj);
+    ~Series() {}
 
     QString getUID(void) const;
     QString getDesc(void) const;
@@ -20,5 +24,7 @@ private:
     QString desc;
     QString date;
 };
+
+Q_DECLARE_METATYPE(Series)
 
 #endif // SERIES_H

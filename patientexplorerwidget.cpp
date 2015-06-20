@@ -24,6 +24,10 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     Q_ASSERT(this->pPatientExplorer);
     connect(this->pPatientExplorer, SIGNAL(reportProgress(uint)),
             this, SLOT(readProgress(uint)));
+
+    /* We want to be notified when item selection changes */
+    connect(ui->treePatients, SIGNAL(itemSelectionChanged()),
+            this, SLOT(on_itemSelectionChanged()));
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
@@ -31,11 +35,6 @@ PatientExplorerWidget::~PatientExplorerWidget()
     delete ui;
     Q_ASSERT(this->pPatientExplorer);
     delete this->pPatientExplorer;
-}
-
-void PatientExplorerWidget::on_itemSelectionChanged(void)
-{
-    qDebug() << Q_FUNC_INFO;
 }
 
 void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
@@ -143,6 +142,7 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeSeries(QTreeWidgetItem *parent,
     treeItem->setText(0, series.getDesc());
     treeItem->setText(1, series.getDate());
     treeItem->setText(2, series.getUID());
+    treeItem->setData(0, Qt::UserRole, &series);
 
     parent->addChild(treeItem);
 
@@ -202,4 +202,15 @@ void PatientExplorerWidget::progressDialogCanceled()
 {
     qDebug() << Q_FUNC_INFO;
     this->pPatientExplorer->abortScanning();
+}
+
+void PatientExplorerWidget::on_itemSelectionChanged(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QList<QTreeWidgetItem *> selItems = ui->treePatients->selectedItems();
+    for (int i = 0; i < selItems.size(); i++) {
+        Series s = selItems[i]->data(0, Qt::UserRole).value<Series>();
+        qDebug() << s.getDesc();
+    }
 }

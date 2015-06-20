@@ -117,7 +117,6 @@ QList<Series> PatientExplorer::getSeries(const QString &patientName, const Study
     qDebug() << Q_FUNC_INFO;
 
     SeriesMap mySeriesMap = this->myMap[patientName][study];
-
     return mySeriesMap.keys();
 }
 
