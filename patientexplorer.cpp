@@ -65,7 +65,10 @@ void PatientExplorer::extract(QString path)
     }
 
     /* Patient > Study > Series */
-    DcmTagKey keys[] = { DCM_PatientName, DCM_StudyInstanceUID, DCM_SeriesInstanceUID };
+    DcmTagKey keys[] = {
+        DCM_PatientName,
+        DCM_StudyInstanceUID, DCM_StudyDescription, DCM_StudyDate,
+        DCM_SeriesInstanceUID, DCM_SeriesDescription, DCM_SeriesDate };
 
     /* Calculate size of array */
     size_t len = sizeof(keys) / sizeof(keys[0]);
@@ -77,10 +80,10 @@ void PatientExplorer::extract(QString path)
    }
 
     /* Add item to map */
-    QString patientName = res[0];
-    QString studyID     = res[1];
-    QString seriesID    = res[2];
-    this->myMap[patientName][studyID][seriesID] = path;
+    QString patientName = res[0];   
+    Study   study(res[1], res[2], res[3]);
+    Series series(res[4], res[5], res[6]);
+    this->myMap[patientName][study][series] = path;
 
     delete[] res;
 }
@@ -93,14 +96,14 @@ QList<QString> PatientExplorer::getPatients(void) const
     return patients;
 }
 
-QList<QString> PatientExplorer::getStudies(const QString &patientName) const
+QList<Study> PatientExplorer::getStudies(const QString &patientName) const
 {
     qDebug() << Q_FUNC_INFO;
 
-    QList<QString> studies;
+    QList<Study> studies;
     QMap<QString, StudyMap>::const_iterator it = this->myMap.find(patientName);
     while (it != this->myMap.end() && it.key() == patientName) {
-        QList<QString> keys = it.value().keys();
+        QList<Study> keys = it.value().keys();
         for (int j = 0; j < keys.size(); j++) {
             studies.append(keys.at(j));
         }
@@ -109,13 +112,13 @@ QList<QString> PatientExplorer::getStudies(const QString &patientName) const
     return studies;
 }
 
-QList<QString> PatientExplorer::getSeries(const QString &patientName, const QString &studyID) const
+QList<Series> PatientExplorer::getSeries(const QString &patientName, const Study &study) const
 {
     qDebug() << Q_FUNC_INFO;
 
-    SeriesMap mySeriesMap = this->myMap[patientName][studyID];
+    SeriesMap mySeriesMap = this->myMap[patientName][study];
 
-    return mySeriesMap.keys();;
+    return mySeriesMap.keys();
 }
 
 void PatientExplorer::abortScanning(void)

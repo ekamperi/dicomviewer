@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QObject>
 
+#include "series.h"
 #include "study.h"
 
 /* XXX: This is needed for compile */
@@ -15,8 +16,8 @@
 #include "dcmtk/dcmdata/dctk.h"
 
 /* <Patient Name, <Study, <Series, File>>> */
-typedef QMap<QString, QMap<QString, QString> >  StudyMap;
-typedef QMap<QString, QString> SeriesMap;
+typedef QMap<Study, QMap<Series, QString> >  StudyMap;
+typedef QMap<Series, QString> SeriesMap;
 
 class PatientExplorer : public QObject
 {
@@ -29,8 +30,8 @@ public:
     void doScan(void);
 
     QList<QString> getPatients(void) const;
-    QList<QString> getStudies(const QString &patientName) const;
-    QList<QString> getSeries(const QString &patientName, const QString &studyID) const;
+    QList<Study> getStudies(const QString &patientName) const;
+    QList<Series> getSeries(const QString &patientName, const Study &study) const;
 
     void abortScanning(void);
 
@@ -44,7 +45,7 @@ private:
     bool abort;
 
     /* <Patient, <Study, <Series, Path>>> */
-    QMap<QString, QMap<QString, QMap<QString, QString> > > myMap;
+    QMap<QString, QMap<Study, QMap<Series, QString> > > myMap;
 };
 
 #endif // PATIENTEXPLORER_H

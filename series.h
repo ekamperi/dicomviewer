@@ -1,19 +1,19 @@
-#ifndef STUDY_H
-#define STUDY_H
+#ifndef SERIES_H
+#define SERIES_H
 
-#include "imageseries.h"
+#include <QString>
 
-class Study
+class Series
 {
 public:
-    Study(QString studyUID, QString studyDesc, QString studyDate);
+    Series(QString seriesUID, QString seriesDesc, QString seriesDate);
 
     QString getUID(void) const;
     QString getDesc(void) const;
     QString getDate(void) const;
 
     /* The key type of a QMap must provide operator<() specifying a total order. */
-    bool operator<(const Study &study) const;
+    bool operator<(const Series &series) const;
 
 private:
     QString uid;
@@ -21,4 +21,4 @@ private:
     QString date;
 };
 
-#endif // STUDY_H
+#endif // SERIES_H

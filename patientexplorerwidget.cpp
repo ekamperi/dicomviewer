@@ -13,6 +13,13 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     ui(new Ui::PatientExplorerWidget)
 {
     ui->setupUi(this);
+
+    /* Setup column width in the tree widget */
+    ui->treePatients->setColumnWidth(0, 400);
+    ui->treePatients->setColumnWidth(1, 100);
+    ui->treePatients->setColumnWidth(2, 150);
+
+    /* Create a patient explorer object that will do the actuall scanning */
     this->pPatientExplorer = new PatientExplorer();
     Q_ASSERT(this->pPatientExplorer);
     connect(this->pPatientExplorer, SIGNAL(reportProgress(uint)),
@@ -22,6 +29,7 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
 PatientExplorerWidget::~PatientExplorerWidget()
 {
     delete ui;
+    Q_ASSERT(this->pPatientExplorer);
     delete this->pPatientExplorer;
 }
 
@@ -97,25 +105,45 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
     findDicomThread->start();
 }
 
-QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name)
+QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name, QString desc)
 {
     qDebug() << Q_FUNC_INFO;
 
     QTreeWidgetItem *treeItem = new QTreeWidgetItem(ui->treePatients);
     Q_ASSERT(treeItem);
     treeItem->setText(0, name);
+    treeItem->setText(1, desc);
 
     return treeItem;
 }
 
 QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent,
-                  QString name)
+                  const Study &study)
 {
     qDebug() << Q_FUNC_INFO;
 
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     Q_ASSERT(treeItem);
-    treeItem->setText(0, name);
+    treeItem->setText(0, study.getDesc());
+    treeItem->setText(1, study.getDate());
+    treeItem->setText(2, study.getUID());
+
+    parent->addChild(treeItem);
+
+    return treeItem;
+}
+
+QTreeWidgetItem *PatientExplorerWidget::addTreeSeries(QTreeWidgetItem *parent,
+                  const Series &series)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+    Q_ASSERT(treeItem);
+    treeItem->setText(0, series.getDesc());
+    treeItem->setText(1, series.getDate());
+    treeItem->setText(2, series.getUID());
+
     parent->addChild(treeItem);
 
     return treeItem;
@@ -132,24 +160,24 @@ void PatientExplorerWidget::filesScanned()
     ui->treePatients->clear();
 
     /* Populate the tree widget */
-    const PatientExplorer &pe = *this->pPatientExplorer;
     Q_ASSERT(this->pPatientExplorer);
+    const PatientExplorer &pe = *this->pPatientExplorer;   
 
     QList<QString> patients = this->pPatientExplorer->getPatients();
     for (int i = 0; i < patients.size(); i++) {
-        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i));
+        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i), "");
         Q_ASSERT(parent);
 
         /* For every patient, add the related studies */
-        QList<QString> studies = pe.getStudies(patients.at(i));
+        QList<Study> studies = pe.getStudies(patients.at(i));
         for (int j = 0; j < studies.size(); j++) {
             QTreeWidgetItem *parent2 = this->addTreeChild(parent, studies.at(j));
             Q_ASSERT(parent2);
 
             /* For every study, add the related series */
-            QList<QString> series = pe.getSeries(patients.at(i), studies.at(j));
+            QList<Series> series = pe.getSeries(patients.at(i), studies.at(j));
             for (int k = 0; k < series.size(); k++) {
-                this->addTreeChild(parent2, series.at(k));
+                this->addTreeSeries(parent2, series.at(k));
             }
         }
     }
