@@ -2,6 +2,13 @@
 
 #include <QDate>
 
+Study::Study()
+{
+    this->uid = "Study default";
+    this->desc = "Study default";
+    this->date = "Study default";
+}
+
 Study::Study(QString studyUID, QString studyDesc, QString studyDate)
 {
     this->uid = studyUID;
@@ -30,4 +37,11 @@ QString Study::getDate(void) const
 bool Study::operator<(const Study &study) const
 {
     return this->uid < study.getUID();
+}
+
+Study::Study(const Study &obj)
+{
+    this->uid = obj.getUID();
+    this->desc = obj.getDesc();
+    this->date = obj.getDate();
 }

@@ -4,9 +4,9 @@
 
 Series::Series()
 {
-    this->uid = "HAHA";
-    this->desc = "HAHA";
-    this->date = "HAHA";
+    this->uid = "Series default";
+    this->desc = "Series default";
+    this->date = "Series default";
 }
 
 Series::Series(QString seriesUID, QString seriesDesc, QString seriesDate)

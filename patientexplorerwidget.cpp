@@ -142,7 +142,7 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeSeries(QTreeWidgetItem *parent,
     treeItem->setText(0, series.getDesc());
     treeItem->setText(1, series.getDate());
     treeItem->setText(2, series.getUID());
-    treeItem->setData(0, Qt::UserRole, &series);
+    treeItem->setData(0, Qt::UserRole, QVariant::fromValue(series));
 
     parent->addChild(treeItem);
 
@@ -210,7 +210,20 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
 
     QList<QTreeWidgetItem *> selItems = ui->treePatients->selectedItems();
     for (int i = 0; i < selItems.size(); i++) {
-        Series s = selItems[i]->data(0, Qt::UserRole).value<Series>();
-        qDebug() << s.getDesc();
+        QTreeWidgetItem *pItem = selItems[i];
+        Study study;
+        Series series;
+        switch(pItem->type()) {
+        case TypePatient:
+            break;
+        case TypeStudy:
+            study = pItem->data(0, Qt::UserRole).value<Study>();
+            break;
+        case TypeSeries:
+            series = pItem->data(0, Qt::UserRole).value<Series>();
+            break;
+        default:
+            qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
+        }
     }
 }

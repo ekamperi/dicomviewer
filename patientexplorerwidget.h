@@ -11,6 +11,12 @@ namespace Ui {
 class PatientExplorerWidget;
 }
 
+// Qt documentation states that user types should begin at this value.
+// Values smaller than these are reserved by Qt.
+static const int TypePatient = QTreeWidgetItem::UserType;
+static const int TypeStudy   = QTreeWidgetItem::UserType + 1;
+static const int TypeSeries  = QTreeWidgetItem::UserType + 2;
+
 class PatientExplorerWidget : public QWidget
 {
     Q_OBJECT

@@ -2,11 +2,15 @@
 #define STUDY_H
 
 #include "imageseries.h"
+#include <QMetaType>
 
 class Study
 {
 public:
+    Study();
     Study(QString studyUID, QString studyDesc, QString studyDate);
+    Study(const Study &obj);
+    ~Study() {}
 
     QString getUID(void) const;
     QString getDesc(void) const;
@@ -20,5 +24,7 @@ private:
     QString desc;
     QString date;
 };
+
+Q_DECLARE_METATYPE(Study)
 
 #endif // STUDY_H
