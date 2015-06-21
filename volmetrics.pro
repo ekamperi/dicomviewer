@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     dicomhelper.cpp \
     patientexplorerwidget.cpp \
     finddicomworker.cpp \
-    series.cpp
+    series.cpp \
+    patient.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -56,7 +57,8 @@ HEADERS  += mainwindow.h \
     dicomhelper.h \
     patientexplorerwidget.h \
     finddicomworker.h \
-    series.h
+    series.h \
+    patient.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \
