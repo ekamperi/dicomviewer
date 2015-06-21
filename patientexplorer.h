@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QObject>
 
+#include "patient.h"
 #include "series.h"
 #include "study.h"
 
@@ -29,9 +30,10 @@ public:
     void setPath(const QString &path) { this->path = path; }
     void doScan(void);
 
-    QList<QString> getPatients(void) const;
-    QList<Study> getStudies(const QString &patientName) const;
-    QList<Series> getSeries(const QString &patientName, const Study &study) const;
+    QList<Patient> getPatients(void) const;
+    QList<Study> getStudies(const Patient &patient) const;
+    QList<Series> getSeries(const Patient &patient, const Study &study) const;
+    int getNumberOfImages(const Patient &patient, const Study &study, const Series &series) const;
 
     void abortScanning(void);
 
@@ -45,7 +47,7 @@ private:
     bool abort;
 
     /* <Patient, <Study, <Series, Path>>> */
-    QMap<QString, QMap<Study, QMap<Series, QString> > > myMap;
+    QMap<Patient, QMap<Study, QMap<Series, QString> > > myMap;
 };
 
 #endif // PATIENTEXPLORER_H

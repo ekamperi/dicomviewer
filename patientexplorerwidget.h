@@ -40,9 +40,7 @@ private slots:
 
 private:
     QTreeWidgetItem *addTreeRoot(QString name, QString desc);
-    QTreeWidgetItem *addTreeChild(QTreeWidgetItem *parent, const Study &study);
-    QTreeWidgetItem *addTreeSeries(QTreeWidgetItem *parent, const Series &series);
-
+    QTreeWidgetItem *addTreeChild(QTreeWidgetItem *parent, const void *obj, int type);
     PatientExplorer *pPatientExplorer;
     QProgressDialog *progressDialog;
 

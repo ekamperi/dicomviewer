@@ -116,34 +116,29 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name, QString desc)
     return treeItem;
 }
 
-QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent,
-                  const Study &study)
+QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent, const void *obj, int type)
 {
     qDebug() << Q_FUNC_INFO;
 
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     Q_ASSERT(treeItem);
-    treeItem->setText(0, study.getDesc());
-    treeItem->setText(1, study.getDate());
-    treeItem->setText(2, study.getUID());
 
-    parent->addChild(treeItem);
+    Q_ASSERT(obj);
+    if (type == TypeStudy) {
+        Study study = *(const Study *)obj;
+        treeItem->setText(0, study.getDesc());
+        treeItem->setText(1, study.getDate());
+        treeItem->setText(2, study.getUID());
+        treeItem->setData(0, Qt::UserRole, QVariant::fromValue(study));
+    } else if (type == TypeSeries) {
+        Series series = *(const Series *)obj;
+        treeItem->setText(0, series.getDesc());
+        treeItem->setText(1, series.getDate());
+        treeItem->setText(2, series.getUID());
+        treeItem->setData(0, Qt::UserRole, QVariant::fromValue(series));
+    }
 
-    return treeItem;
-}
-
-QTreeWidgetItem *PatientExplorerWidget::addTreeSeries(QTreeWidgetItem *parent,
-                  const Series &series)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-    Q_ASSERT(treeItem);
-    treeItem->setText(0, series.getDesc());
-    treeItem->setText(1, series.getDate());
-    treeItem->setText(2, series.getUID());
-    treeItem->setData(0, Qt::UserRole, QVariant::fromValue(series));
-
+    /* Add child to tree */
     parent->addChild(treeItem);
 
     return treeItem;
@@ -163,21 +158,22 @@ void PatientExplorerWidget::filesScanned()
     Q_ASSERT(this->pPatientExplorer);
     const PatientExplorer &pe = *this->pPatientExplorer;   
 
-    QList<QString> patients = this->pPatientExplorer->getPatients();
+    QList<Patient> patients = this->pPatientExplorer->getPatients();
     for (int i = 0; i < patients.size(); i++) {
-        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i), "");
+        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i).getName(), "");
         Q_ASSERT(parent);
 
         /* For every patient, add the related studies */
         QList<Study> studies = pe.getStudies(patients.at(i));
         for (int j = 0; j < studies.size(); j++) {
-            QTreeWidgetItem *parent2 = this->addTreeChild(parent, studies.at(j));
+            QTreeWidgetItem *parent2 = this->addTreeChild(parent, &studies.at(j), TypeStudy);
             Q_ASSERT(parent2);
 
             /* For every study, add the related series */
             QList<Series> series = pe.getSeries(patients.at(i), studies.at(j));
             for (int k = 0; k < series.size(); k++) {
-                this->addTreeSeries(parent2, series.at(k));
+                qDebug() << pe.getNumberOfImages(patients.at(i), studies.at(j), series.at(k));
+                this->addTreeChild(parent2, &series.at(k), TypeSeries);
             }
         }
     }
@@ -218,12 +214,14 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
             break;
         case TypeStudy:
             study = pItem->data(0, Qt::UserRole).value<Study>();
+            qDebug() << study.getDesc();
             break;
         case TypeSeries:
             series = pItem->data(0, Qt::UserRole).value<Series>();
+            qDebug() << series.getDesc();
             break;
         default:
-            qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
+           ;// qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
         }
     }
 }

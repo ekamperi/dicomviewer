@@ -80,29 +80,29 @@ void PatientExplorer::extract(QString path)
    }
 
     /* Add item to map */
-    QString patientName = res[0];   
+    Patient patient(res[0]);
     Study   study(res[1], res[2], res[3]);
     Series series(res[4], res[5], res[6]);
-    this->myMap[patientName][study][series] = path;
+    this->myMap[patient][study][series] = path;
 
     delete[] res;
 }
 
-QList<QString> PatientExplorer::getPatients(void) const
+QList<Patient> PatientExplorer::getPatients(void) const
 {
     qDebug() << Q_FUNC_INFO;
 
-    QList<QString> patients = this->myMap.keys();
+    QList<Patient> patients = this->myMap.keys();
     return patients;
 }
 
-QList<Study> PatientExplorer::getStudies(const QString &patientName) const
+QList<Study> PatientExplorer::getStudies(const Patient &patient) const
 {
     qDebug() << Q_FUNC_INFO;
 
     QList<Study> studies;
-    QMap<QString, StudyMap>::const_iterator it = this->myMap.find(patientName);
-    while (it != this->myMap.end() && it.key() == patientName) {
+    QMap<Patient, StudyMap>::const_iterator it = this->myMap.find(patient);
+    while (it != this->myMap.end() && it.key().getName() == patient.getName()) {
         QList<Study> keys = it.value().keys();
         for (int j = 0; j < keys.size(); j++) {
             studies.append(keys.at(j));
@@ -112,12 +112,18 @@ QList<Study> PatientExplorer::getStudies(const QString &patientName) const
     return studies;
 }
 
-QList<Series> PatientExplorer::getSeries(const QString &patientName, const Study &study) const
+QList<Series> PatientExplorer::getSeries(const Patient &patient, const Study &study) const
 {
     qDebug() << Q_FUNC_INFO;
 
-    SeriesMap mySeriesMap = this->myMap[patientName][study];
+    SeriesMap mySeriesMap = this->myMap[patient][study];
     return mySeriesMap.keys();
+}
+
+int PatientExplorer::getNumberOfImages(const Patient &patient, const Study &study, const Series &series) const
+{
+    qDebug() << Q_FUNC_INFO;
+    return this->myMap[patient][study][series].size();
 }
 
 void PatientExplorer::abortScanning(void)
