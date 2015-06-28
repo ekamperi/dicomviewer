@@ -104,14 +104,16 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
     findDicomThread->start();
 }
 
-QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name, QString desc)
+QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(const void *obj, int type)
 {
     qDebug() << Q_FUNC_INFO;
 
-    QTreeWidgetItem *treeItem = new QTreeWidgetItem(ui->treePatients);
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem(ui->treePatients, type);
     Q_ASSERT(treeItem);
-    treeItem->setText(0, name);
-    treeItem->setText(1, desc);
+
+    Patient patient = *(const Patient *)obj;
+    treeItem->setText(0, patient.getName());
+    treeItem->setData(0, Qt::UserRole, QVariant::fromValue(patient));
 
     return treeItem;
 }
@@ -119,11 +121,15 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeRoot(QString name, QString desc)
 QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent, const void *obj, int type)
 {
     qDebug() << Q_FUNC_INFO;
+    Q_ASSERT(obj);
+    Q_ASSERT(type == TypeStudy || type == TypeSeries);
 
-    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+    /* Wee need to pass `type' to constructor, otherwise we won't be able to
+     * deduce what item type was clicked in `on_itemSelectionChanged()`
+     */
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem(type);
     Q_ASSERT(treeItem);
 
-    Q_ASSERT(obj);
     if (type == TypeStudy) {
         Study study = *(const Study *)obj;
         treeItem->setText(0, study.getDesc());
@@ -136,6 +142,8 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent, co
         treeItem->setText(1, series.getDate());
         treeItem->setText(2, series.getUID());
         treeItem->setData(0, Qt::UserRole, QVariant::fromValue(series));
+    } else {
+        qDebug() << "Unsupported item type (shouldn't happen)!";
     }
 
     /* Add child to tree */
@@ -160,7 +168,7 @@ void PatientExplorerWidget::filesScanned()
 
     QList<Patient> patients = this->pPatientExplorer->getPatients();
     for (int i = 0; i < patients.size(); i++) {
-        QTreeWidgetItem *parent = this->addTreeRoot(patients.at(i).getName(), "");
+        QTreeWidgetItem *parent = this->addTreeRoot(&patients.at(i), TypePatient);
         Q_ASSERT(parent);
 
         /* For every patient, add the related studies */
@@ -172,7 +180,6 @@ void PatientExplorerWidget::filesScanned()
             /* For every study, add the related series */
             QList<Series> series = pe.getSeries(patients.at(i), studies.at(j));
             for (int k = 0; k < series.size(); k++) {
-                qDebug() << pe.getNumberOfImages(patients.at(i), studies.at(j), series.at(k));
                 this->addTreeChild(parent2, &series.at(k), TypeSeries);
             }
         }
@@ -207,21 +214,24 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
     QList<QTreeWidgetItem *> selItems = ui->treePatients->selectedItems();
     for (int i = 0; i < selItems.size(); i++) {
         QTreeWidgetItem *pItem = selItems[i];
+        Patient patient;
         Study study;
         Series series;
         switch(pItem->type()) {
         case TypePatient:
+            patient = pItem->data(0, Qt::UserRole).value<Patient>();
+            qDebug() << "Patient: " << patient.getName();
             break;
         case TypeStudy:
             study = pItem->data(0, Qt::UserRole).value<Study>();
-            qDebug() << study.getDesc();
+            qDebug() << "Study: " << study.getDesc();
             break;
         case TypeSeries:
             series = pItem->data(0, Qt::UserRole).value<Series>();
-            qDebug() << series.getDesc();
+            qDebug() << "Desc: " << series.getDesc();
             break;
         default:
-           ;// qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
+           qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
         }
     }
 }
