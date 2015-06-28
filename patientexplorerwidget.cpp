@@ -40,7 +40,6 @@ PatientExplorerWidget::~PatientExplorerWidget()
 void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
 {
     qDebug() << Q_FUNC_INFO;
-    qDebug() << "YES!";
 
     if (pEvent->key() == Qt::Key_Escape) {
         this->close();
@@ -220,15 +219,16 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
         switch(pItem->type()) {
         case TypePatient:
             patient = pItem->data(0, Qt::UserRole).value<Patient>();
-            qDebug() << "Patient: " << patient.getName();
+            qDebug() << "Patient:" << patient.getName();
             break;
         case TypeStudy:
             study = pItem->data(0, Qt::UserRole).value<Study>();
-            qDebug() << "Study: " << study.getDesc();
+            patient = pItem->parent()->data(0, Qt::UserRole).value<Patient>();
             break;
         case TypeSeries:
             series = pItem->data(0, Qt::UserRole).value<Series>();
-            qDebug() << "Desc: " << series.getDesc();
+            study = pItem->parent()->data(0, Qt::UserRole).value<Study>();
+            patient = pItem->parent()->parent()->data(0, Qt::UserRole).value<Patient>();
             break;
         default:
            qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
