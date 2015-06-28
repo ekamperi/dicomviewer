@@ -185,9 +185,14 @@ void PatientExplorerWidget::filesScanned()
     }
 
     /* Update the status bar */
-    ui->lblStatusBar->setText(
-                QString::number(pe.getPatients().size()) +
-                " patient(s) were found.");
+    int nPatients = pe.getPatients().size();
+    QString newText;
+    if (nPatients == 1) {
+        newText = "1 patient was found.";
+    } else {
+        newText = QString::number(nPatients) + " patients were found.";
+    }
+    ui->lblStatusBar->setText(newText);
 }
 
 void PatientExplorerWidget::readProgress(unsigned int scannedFiles)
