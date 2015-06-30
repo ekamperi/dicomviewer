@@ -1,6 +1,7 @@
 #include "series.h"
 
 #include <QDate>
+#include <QDebug>
 
 Series::Series()
 {
@@ -19,8 +20,10 @@ Series::Series(QString seriesUID, QString seriesDesc, QString seriesDate, QStrin
     QDate myQDate = QDate::fromString(seriesDate, "yyyyMMdd");
     this->date = myQDate.toString("dd-MM-yyyy");
 
-    QTime myQTime = QTime::fromString(seriesTime, "hhmmss");
-   // Q_ASSERT(myQTime.isValid());
+    QTime myQTime = QTime::fromString(seriesTime.left(6), "hhmmss");
+    if (!myQTime.isValid()) {
+        qDebug() << Q_FUNC_INFO << "Time was not valid: " << seriesTime.left(6);
+    }
     this->time = myQTime.toString("hh:mm:ss");
 }
 

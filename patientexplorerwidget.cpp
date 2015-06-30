@@ -16,7 +16,7 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
 
     /* Setup column width in the tree widget */
     ui->treePatients->setColumnWidth(0, 400);
-    ui->treePatients->setColumnWidth(1, 100);
+    ui->treePatients->setColumnWidth(1, 150);
     ui->treePatients->setColumnWidth(2, 150);
 
     /* Create a patient explorer object that will do the actuall scanning */
@@ -138,7 +138,7 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent, co
     } else if (type == TypeSeries) {
         Series series = *(const Series *)obj;
         treeItem->setText(0, series.getDesc());
-        treeItem->setText(1, series.getDate());
+        treeItem->setText(1, series.getDate() + " " + series.getTime());
         treeItem->setText(2, series.getUID());
         treeItem->setData(0, Qt::UserRole, QVariant::fromValue(series));
     } else {

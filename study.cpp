@@ -20,8 +20,10 @@ Study::Study(QString studyUID, QString studyDesc, QString studyDate, QString stu
     QDate myQDate = QDate::fromString(studyDate, "yyyyMMdd");
     this->date = myQDate.toString("dd-MM-yyyy");
 
-    QTime myQTime = QTime::fromString(studyTime, "hhmmss");
-    //Q_ASSERT(myQTime.isValid());
+    QTime myQTime = QTime::fromString(studyTime.left(6), "hhmmss");
+    if (!myQTime.isValid()) {
+        qDebug() << Q_FUNC_INFO << "Time was not valid: " << studyTime.left(6);
+    }
     this->time = myQTime.toString("hh:mm:ss");
 }
 
