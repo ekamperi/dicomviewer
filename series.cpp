@@ -7,13 +7,21 @@ Series::Series()
     this->uid = "Series default";
     this->desc = "Series default";
     this->date = "Series default";
+    this->time = "Series default";
 }
 
-Series::Series(QString seriesUID, QString seriesDesc, QString seriesDate)
+Series::Series(QString seriesUID, QString seriesDesc, QString seriesDate, QString seriesTime)
 {
     this->uid = seriesUID;
     this->desc = seriesDesc;
-    this->date = seriesDate;
+
+    /* Convert series date from e.g. 20120618 to 18-06-2012 */
+    QDate myQDate = QDate::fromString(seriesDate, "yyyyMMdd");
+    this->date = myQDate.toString("dd-MM-yyyy");
+
+    QTime myQTime = QTime::fromString(seriesTime, "hhmmss");
+   // Q_ASSERT(myQTime.isValid());
+    this->time = myQTime.toString("hh:mm:ss");
 }
 
 QString Series::getUID(void) const
@@ -28,9 +36,12 @@ QString Series::getDesc(void) const
 
 QString Series::getDate(void) const
 {
-    /* Convert series date from e.g. 20120618 to 18-06-2012 */
-    QDate myQDate = QDate::fromString(this->date, "yyyyMMdd");
-    return myQDate.toString("dd-MM-yyyy");
+    return this->date;
+}
+
+QString Series::getTime(void) const
+{
+    return this->time;
 }
 
 /* The key type of a QMap must provide operator<() specifying a total order. */
@@ -44,4 +55,5 @@ Series::Series(const Series &obj)
     this->uid = obj.getUID();
     this->desc = obj.getDesc();
     this->date = obj.getDate();
+    this->time = obj.getTime();
 }

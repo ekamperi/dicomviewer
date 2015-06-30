@@ -67,8 +67,8 @@ void PatientExplorer::extract(QString path)
     /* Patient > Study > Series */
     DcmTagKey keys[] = {
         DCM_PatientName,
-        DCM_StudyInstanceUID, DCM_StudyDescription, DCM_StudyDate,
-        DCM_SeriesInstanceUID, DCM_SeriesDescription, DCM_SeriesDate };
+        DCM_StudyInstanceUID, DCM_StudyDescription, DCM_StudyDate, DCM_StudyTime,
+        DCM_SeriesInstanceUID, DCM_SeriesDescription, DCM_SeriesDate, DCM_SeriesTime };
 
     /* Calculate size of array */
     size_t len = sizeof(keys) / sizeof(keys[0]);
@@ -81,8 +81,8 @@ void PatientExplorer::extract(QString path)
 
     /* Add item to map */
     Patient patient(res[0]);
-    Study   study(res[1], res[2], res[3]);
-    Series series(res[4], res[5], res[6]);
+    Study   study(res[1], res[2], res[3], res[4]);
+    Series series(res[5], res[6], res[7], res[8]);
     this->myMap[patient][study][series] = path;
 
     delete[] res;

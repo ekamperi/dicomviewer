@@ -132,7 +132,7 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent, co
     if (type == TypeStudy) {
         Study study = *(const Study *)obj;
         treeItem->setText(0, study.getDesc());
-        treeItem->setText(1, study.getDate());
+        treeItem->setText(1, study.getDate() + " " + study.getTime());
         treeItem->setText(2, study.getUID());
         treeItem->setData(0, Qt::UserRole, QVariant::fromValue(study));
     } else if (type == TypeSeries) {
