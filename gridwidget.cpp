@@ -36,8 +36,14 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
 
     this->pContainerWidget->setLayout(this->flowLayout);
     this->setWidget(this->pContainerWidget);
-    this->setBackgroundRole(QPalette::Dark);
+    //this->setBackgroundRole(QPalette::Dark);
     this->setWidgetResizable(true);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    /* Set background color */
+    QPalette pal(palette());
+    pal.setColor(QPalette::Background, QColor("#CFCFCF"));  // XXX: find best color
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
 }
 
