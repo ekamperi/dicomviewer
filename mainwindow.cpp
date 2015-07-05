@@ -212,13 +212,6 @@ void MainWindow::on_actionClose_triggered()
     this->statusBar()->showMessage("Ready.");
 }
 
-//void MainWindow::sliceDoubleClicked(Slice *pSlice)
-//{
-//    Q_ASSERT(pSlice);
-//    qDebug() << Q_FUNC_INFO << "sliceIndex =" << pSlice->getIndex();
-//    gotoSlice(pSlice->getIndex());
-//}
-
 bool MainWindow::event(QEvent *pEvent)
 {
     if (pEvent->type() == QEvent::KeyPress) {
