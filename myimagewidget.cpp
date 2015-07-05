@@ -64,7 +64,7 @@ void MyImageWidget::loadTexture(float* pRawPixel,
 void MyImageWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
     qDebug() << Q_FUNC_INFO;
-    emit sliceDoubleClicked(this->pSlice);
+    emit sliceDoubleClicked((const Slice *)this->pSlice);
 }
 
 void MyImageWidget::drawOutline(QPainter *pPainter)

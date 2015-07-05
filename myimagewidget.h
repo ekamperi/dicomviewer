@@ -40,7 +40,7 @@ protected:
     virtual void leaveEvent(QEvent *event);
 
 signals:
-    void sliceDoubleClicked(Slice *pSlice);
+    void sliceDoubleClicked(const Slice *pSlice);
     void sliceIndexChanged(unsigned int sliceIndex);
 
 public slots:

@@ -26,8 +26,10 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
         pSlice->setImageWidget(pMyImageWidget);
         pMyImageWidget->setSlice(pSlice);
 
-        connect(pMyImageWidget, SIGNAL(sliceDoubleClicked(Slice*)),
-                this, SLOT(sliceDoubleClicked(Slice*)));
+        /* If user double clicks on a slice, we'd like to load it.
+         * Hence, propagate the signa.  */
+        connect(pMyImageWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
+                          this, SIGNAL(sliceDoubleClicked(const Slice *)));
 
         this->flowLayout->addWidget(pMyImageWidget);
     }
@@ -39,9 +41,3 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
-void GridWidget::sliceDoubleClicked(Slice *pSlice)
-{
-    Q_ASSERT(pSlice);
-    qDebug() << Q_FUNC_INFO << "sliceIndex =" << pSlice->getIndex();
-// XXX    gotoSlice(pSlice->getIndex());
-}

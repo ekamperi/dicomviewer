@@ -11,7 +11,6 @@ class GridWidget : public QScrollArea
     Q_OBJECT
 public:
     explicit GridWidget(QWidget *parent = 0);
-
     void addSlices(const QVector<Slice *> &vecSlices);
 
 private:
@@ -19,11 +18,7 @@ private:
     FlowLayout *flowLayout;
 
 signals:
-
-public slots:
-
-private slots:
-    void sliceDoubleClicked(Slice *pSlice);
+    void sliceDoubleClicked(const Slice *pSlice);
 };
 
 #endif // GRIDWIDGET_H
