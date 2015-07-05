@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     patientexplorerwidget.cpp \
     finddicomworker.cpp \
     series.cpp \
-    patient.cpp
+    patient.cpp \
+    gridwidget.cpp
 
 HEADERS  += mainwindow.h \
     myglwidget.h \
@@ -58,7 +59,8 @@ HEADERS  += mainwindow.h \
     patientexplorerwidget.h \
     finddicomworker.h \
     series.h \
-    patient.h
+    patient.h \
+    gridwidget.h
 
 FORMS    += mainwindow.ui \
     myglwidget.ui \

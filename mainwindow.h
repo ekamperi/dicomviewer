@@ -8,6 +8,7 @@
 #include <QProgressDialog>
 
 #include "flowlayout.h"
+#include "gridwidget.h"
 #include "loaddicomworker.h"
 #include "myglwidget.h"
 #include "startupmenu.h"
@@ -31,7 +32,6 @@ protected:
 private slots:
     void on_actionAbout_triggered();
     void on_actionOpenDICOM_triggered();
-    void sliceDoubleClicked(Slice *pSlice);
     void gotoSlice(int sliceIndex);
 
     void getProgress(unsigned int cnt);
@@ -77,17 +77,13 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    /* XXX */
-    QScrollArea *scrollArea;
-
     /* Slices are arranged into a grid layout */
-    FlowLayout *flowLayout;
     QVBoxLayout *pLayout;
 
     /* This container widget contains the grid layout and is in turn put
      * into the scroll area. QScrollarea needs a QWidget.
      */
-    QWidget *containerWidget;
+    GridWidget *gridWidget;
     QWidget *containerWidget2;
     StartupMenu *pStartupMenu;
 

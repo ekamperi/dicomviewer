@@ -27,12 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->scrollArea = new QScrollArea;
-    this->flowLayout = new FlowLayout;
-    this->containerWidget = new QWidget;
+    this->gridWidget = new GridWidget;
     this->containerWidget2 = new QWidget;
     this->pStartupMenu = new StartupMenu;
-    ui->stackedWidget->addWidget(containerWidget);
+    ui->stackedWidget->addWidget(gridWidget);
     ui->stackedWidget->addWidget(containerWidget2);
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
@@ -96,8 +94,7 @@ MainWindow::~MainWindow()
      * be destroyed!
      */
     delete ui;
-    delete this->flowLayout;
-    delete this->containerWidget;
+    delete this->gridWidget;
     delete this->containerWidget2;
 
     /* Deregister decompression codecs */
@@ -170,34 +167,11 @@ void MainWindow::filesLoaded()
         pSlice->normalizePixels(maxPixel);
     }
 
-    /* Populate the flow grid layout */
-    for (int i = 0; i < howMany; i++) {
-        Slice *pSlice = this->vecSlices.at(i);
-        Q_ASSERT(pSlice);
-
-        MyImageWidget *pMyImageWidget = new MyImageWidget();
-        Q_ASSERT(pMyImageWidget);
-
-        pSlice->setImageWidget(pMyImageWidget);
-        pMyImageWidget->setSlice(pSlice);
-
-        connect(pMyImageWidget, SIGNAL(sliceDoubleClicked(Slice*)),
-                this, SLOT(sliceDoubleClicked(Slice*)));
-
-        this->flowLayout->addWidget(pMyImageWidget);
-    }
-
     /* Load the slices to gpu */
     this->pGLWidget->loadSlices(this->vecSlices);
 
-    containerWidget->setLayout(this->flowLayout);
-    containerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    scrollArea->setBackgroundRole(QPalette::Dark);
-    scrollArea->setWidget(containerWidget);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    ui->stackedWidget->addWidget(scrollArea);
-    ui->stackedWidget->setCurrentWidget(scrollArea);
+    this->gridWidget->addSlices(this->vecSlices);
+    ui->stackedWidget->setCurrentWidget(gridWidget);
 
     this->setCursor(Qt::ArrowCursor);
 
@@ -215,13 +189,13 @@ void MainWindow::on_actionClose_triggered()
 {
     /* Check whether we are returning from full screen */
     if (ui->stackedWidget->currentWidget() == this->containerWidget2) {
-        ui->stackedWidget->setCurrentWidget(this->scrollArea);
+        ui->stackedWidget->setCurrentWidget(this->gridWidget);
     } else {
         /* Remove all GL widgets from the flow layout */
         QLayoutItem *pLayoutItem;
-        while ((pLayoutItem = this->flowLayout->takeAt(0)) != NULL) {
-            delete pLayoutItem->widget();
-        }
+//        while ((pLayoutItem = this->flowLayout->takeAt(0)) != NULL) {
+//            delete pLayoutItem->widget();
+//        }
 
         /* Also remove the slices */
         QVector<Slice *>::iterator it;
@@ -235,12 +209,12 @@ void MainWindow::on_actionClose_triggered()
     this->statusBar()->showMessage("Ready.");
 }
 
-void MainWindow::sliceDoubleClicked(Slice *pSlice)
-{
-    Q_ASSERT(pSlice);
-    qDebug() << Q_FUNC_INFO << "sliceIndex =" << pSlice->getIndex();
-    gotoSlice(pSlice->getIndex());
-}
+//void MainWindow::sliceDoubleClicked(Slice *pSlice)
+//{
+//    Q_ASSERT(pSlice);
+//    qDebug() << Q_FUNC_INFO << "sliceIndex =" << pSlice->getIndex();
+//    gotoSlice(pSlice->getIndex());
+//}
 
 bool MainWindow::event(QEvent *pEvent)
 {
