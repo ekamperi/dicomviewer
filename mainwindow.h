@@ -32,6 +32,7 @@ protected:
 private slots:
     void on_actionAbout_triggered();
     void on_actionOpenDICOM_triggered();
+    void gotoSlice(const Slice *pSlice);
     void gotoSlice(int sliceIndex);
 
     void getProgress(unsigned int cnt);

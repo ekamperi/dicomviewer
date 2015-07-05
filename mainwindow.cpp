@@ -167,13 +167,16 @@ void MainWindow::filesLoaded()
         pSlice->normalizePixels(maxPixel);
     }
 
-    /* Load the slices to gpu */
-    this->pGLWidget->loadSlices(this->vecSlices);
-
+    /* Create a grid with the slices as thumbnail images */
+    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice*)),
+            this, SLOT(gotoSlice(const Slice*)));
     this->gridWidget->addSlices(this->vecSlices);
     ui->stackedWidget->setCurrentWidget(gridWidget);
 
     this->setCursor(Qt::ArrowCursor);
+
+    /* Load the slices to gpu */
+    this->pGLWidget->loadSlices(this->vecSlices);
 
     this->statusBar()->showMessage(
                 QString::number(this->vecSlices.size()) +
@@ -294,6 +297,12 @@ void MainWindow::gotoSlice(int idx)
 
     /* Update the status bar accordingly */
     updateStatusBarForSlice();
+}
+
+void MainWindow::gotoSlice(const Slice *pSlice)
+{
+    Q_ASSERT(pSlice);
+    gotoSlice(pSlice->getIndex());
 }
 
 void MainWindow::updateStatusBarForSlice(void) const
