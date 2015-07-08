@@ -28,10 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->gridWidget = new GridWidget;
-    this->containerWidget2 = new QWidget;
+    this->pSliceWidget = new SliceWidget(&this->vecSlices);
     this->pStartupMenu = new StartupMenu;
-    ui->stackedWidget->addWidget(gridWidget);
-    ui->stackedWidget->addWidget(containerWidget2);
+    ui->stackedWidget->addWidget(this->gridWidget);
+    ui->stackedWidget->addWidget(this->pSliceWidget);
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
 
@@ -43,19 +43,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
             this, SLOT(on_actionOpen_patient_explorer_triggered()));
 
-    this->pGLWidget = new MyGLWidget();
-    QVBoxLayout *pLayout = new QVBoxLayout();
-    pLayout->addWidget(this->pGLWidget);
-    containerWidget2->setLayout(pLayout);
-    connect(this->pGLWidget, SIGNAL(sliceChanged(int)),
-            this, SLOT(gotoSlice(int)));
-
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
 
     /* XXX: This is a temporary hack or else Unity won't show any menu
-     * at all (if the indicator-appmenus is removed.
+     * at all (if the indicator-appmenus is removed).
      */
     this->menuBar()->setNativeMenuBar(false);
 
@@ -95,7 +88,7 @@ MainWindow::~MainWindow()
      */
     delete ui;
     delete this->gridWidget;
-    delete this->containerWidget2;
+    delete this->pSliceWidget;
 
     /* Deregister decompression codecs */
     DcmRLEDecoderRegistration::cleanup();
@@ -128,7 +121,7 @@ void MainWindow::on_actionOpenDICOM_triggered()
         return;
     }
 
-    this->loadDCMFiles(fileNames);
+    this->loadDicomFiles(fileNames);
 }
 
 void MainWindow::getProgress(unsigned int cnt)
@@ -143,46 +136,6 @@ void MainWindow::progressDialogCanceled()
     loadDicomThread->abortOperation();
 }
 
-void MainWindow::filesLoaded()
-{
-    this->setCursor(Qt::WaitCursor);
-
-    int howMany = (int)this->vecSlices.size();
-    float maxPixel = -1.0;
-
-    /* Keep track of maximum pixel value acros all slices */
-    for (int i = 0; i < howMany; i++) {
-        Slice *pSlice = this->vecSlices.at(i);
-        Q_ASSERT(pSlice);
-        float val = pSlice->getMaxPixel();
-        if (val > maxPixel) {
-            maxPixel = val;
-        }
-    }
-
-    /* Normalize CT values across all slices */
-    for (int i = 0; i < howMany; i++) {
-        Slice *pSlice = this->vecSlices.at(i);
-        Q_ASSERT(pSlice);
-        pSlice->normalizePixels(maxPixel);
-    }
-
-    /* Create a grid with the slices as thumbnail images */
-    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice*)),
-            this, SLOT(gotoSlice(const Slice*)));
-    this->gridWidget->addSlices(this->vecSlices);
-    ui->stackedWidget->setCurrentWidget(gridWidget);
-
-    this->setCursor(Qt::ArrowCursor);
-
-    /* Load the slices to gpu */
-    this->pGLWidget->loadSlices(this->vecSlices);
-
-    this->statusBar()->showMessage(
-                QString::number(this->vecSlices.size()) +
-                " files were loaded succesfully.");
-}
-
 void MainWindow::on_actionExit_triggered()
 {
     QCoreApplication::exit(0);
@@ -190,202 +143,101 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {
-    /* Check whether we are returning from full screen */
-    if (ui->stackedWidget->currentWidget() == this->containerWidget2) {
-        ui->stackedWidget->setCurrentWidget(this->gridWidget);
-    } else {
-        /* Remove all GL widgets from the flow layout */
-        QLayoutItem *pLayoutItem;
-//        while ((pLayoutItem = this->flowLayout->takeAt(0)) != NULL) {
-//            delete pLayoutItem->widget();
+//    /* Check whether we are returning from full screen */
+//    if (ui->stackedWidget->currentWidget() == this->pSliceWidget) {
+//        ui->stackedWidget->setCurrentWidget(this->gridWidget);
+//    } else {
+//        /* Remove all GL widgets from the flow layout */
+//        QLayoutItem *pLayoutItem;
+////        while ((pLayoutItem = this->flowLayout->takeAt(0)) != NULL) {
+////            delete pLayoutItem->widget();
+////        }
+
+//        /* Also remove the slices */
+//        QVector<Slice *>::iterator it;
+//        for (it = vecSlices.begin(); it != vecSlices.end(); it++) {
+//            delete *it;
 //        }
-
-        /* Also remove the slices */
-        QVector<Slice *>::iterator it;
-        for (it = vecSlices.begin(); it != vecSlices.end(); it++) {
-            delete *it;
-        }
-        vecSlices.clear();
-        ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
-    }
-    ui->stackedWidget->update();
-    this->statusBar()->showMessage("Ready.");
-}
-
-bool MainWindow::event(QEvent *pEvent)
-{
-    if (pEvent->type() == QEvent::KeyPress) {
-        QKeyEvent *pke = static_cast<QKeyEvent *>(pEvent);
-        int key = pke->key();
-        if (key == Qt::Key_Escape) {
-            this->on_actionClose_triggered();
-            return true;
-        } else if (key == Qt::Key_A
-                   && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
-            selectAllSlices();
-            return true;
-        } else if (key == Qt::Key_PageUp) {
-            gotoPrevSlice();
-            return true;
-        } else if (key == Qt::Key_PageDown || key == Qt::Key_Space) {
-            gotoNextSlice();
-            return true;
-        } else if (key == Qt::Key_Home) {
-            gotoSlice(0);
-        } else if (key == Qt::Key_End) {
-            gotoSlice(vecSlices.size() - 1);
-        }
-    }
-
-    return QWidget::event(pEvent);
-}
-
-void MainWindow::selectAllSlices(void)
-{
-    QVector<Slice *>::iterator it;
-    for (it = vecSlices.begin(); it != vecSlices.end(); it++) {
-        Slice *pSlice = *it;
-        Q_ASSERT(pSlice);
-        bool isSelected = pSlice->isSelected();
-        pSlice->setSelected(!isSelected);
-        pSlice->getImageWidget()->update();
-    }
-}
-
-void MainWindow::gotoNextSlice(void)
-{
-    this->gotoSlice(SliceDirection::Next);
-}
-
-void MainWindow::gotoPrevSlice(void)
-{
-    this->gotoSlice(SliceDirection::Prev);
-}
-
-void MainWindow::gotoSlice(SliceDirection::is dir)
-{
-    Q_ASSERT(dir == SliceDirection::Prev || dir == SliceDirection::Next);
-
-    unsigned int idx = this->pGLWidget->getSliceIndex();
-
-    if (dir == SliceDirection::Next) {
-        gotoSlice(idx+1);
-    } else {
-        gotoSlice(idx-1);
-    }
-}
-
-void MainWindow::gotoSlice(int idx)
-{
-    /* Check whether we are inside the bounds or we are recycling */
-    if (idx < 0) {
-        idx = vecSlices.size() - 1;
-    } else if (idx > vecSlices.size()-1) {
-        idx = 0;
-    }
-
-    /* Set new slice */
-    ui->stackedWidget->setCurrentWidget(containerWidget2);
-    this->pGLWidget->setSlice(this->vecSlices[idx]);
-
-    /* Update the status bar accordingly */
-    updateStatusBarForSlice();
-}
-
-void MainWindow::gotoSlice(const Slice *pSlice)
-{
-    Q_ASSERT(pSlice);
-    gotoSlice(pSlice->getIndex());
+//        vecSlices.clear();
+//        ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
+//    }
+//    ui->stackedWidget->update();
+//    this->statusBar()->showMessage("Ready.");
 }
 
 void MainWindow::updateStatusBarForSlice(void) const
 {
-    QLayout *pLayout = containerWidget2->layout();
-    Q_ASSERT(pLayout);
-    MyGLWidget *pMyGLWidget = (MyGLWidget *)
-            pLayout->itemAt(0)->widget();
-    unsigned int idx = pMyGLWidget->getSliceIndex() + 1;
+//    QLayout *pLayout = containerWidget2->layout();
+//    Q_ASSERT(pLayout);
+//    MyGLWidget *pMyGLWidget = (MyGLWidget *)
+//            pLayout->itemAt(0)->widget();
+//    unsigned int idx = pMyGLWidget->getSliceIndex() + 1;
 
-    this->statusBar()->showMessage(
-                QString("Slice: %1 / %2").arg(idx).arg(vecSlices.size()));
-}
-
-void MainWindow::wheelEvent(QWheelEvent *pEvent)
-{
-    if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        pEvent->ignore();
-    } else {
-        pEvent->accept();
-        int delta = pEvent->delta();
-        if (delta > 0) {
-            this->gotoPrevSlice();
-        } else {
-            this->gotoNextSlice();
-        }
-    }
+//    this->statusBar()->showMessage(
+//                QString("Slice: %1 / %2").arg(idx).arg(vecSlices.size()));
 }
 
 void MainWindow::on_actionDistance_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    bool flag = this->pGLWidget->isDistanceMeasureEnabled();
-    this->pGLWidget->setDistanceMeasure(!flag);  // toggle
+    bool flag = this->pSliceWidget->pGLWidget->isDistanceMeasureEnabled();
+    this->pSliceWidget->pGLWidget->setDistanceMeasure(!flag);  // toggle
 }
 
 void MainWindow::on_actionDensity_HUs_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    bool flag = this->pGLWidget->isDensityMeasureEnabled();
-    this->pGLWidget->setDensityMeasure(!flag);  // toggle
+    bool flag = this->pSliceWidget->pGLWidget->isDensityMeasureEnabled();
+    this->pSliceWidget->pGLWidget->setDensityMeasure(!flag);  // toggle
 }
 
 void MainWindow::on_actionAbdomen_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->getSlice()->setWindow(HUWindows::ABDOMEN);
+    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::ABDOMEN);
 }
 
 void MainWindow::on_actionBone_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->getSlice()->setWindow(HUWindows::BONE);
+    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::BONE);
 }
 
 void MainWindow::on_actionLung_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->getSlice()->setWindow(HUWindows::LUNG);
+    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::LUNG);
 }
 
 void MainWindow::on_actionHead_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->getSlice()->setWindow(HUWindows::HEAD);
+    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::HEAD);
 }
 
 void MainWindow::on_actionMediastinum_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->getSlice()->setWindow(HUWindows::MEDIASTINUM);
+    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::MEDIASTINUM);
 }
 
 void MainWindow::on_actionFlip_Horizontally_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->setGeomTransformation(Geometry::FLIP_HORIZONTALLY);
+    this->pSliceWidget->pGLWidget->setGeomTransformation(Geometry::FLIP_HORIZONTALLY);
 }
 
 void MainWindow::on_actionFlip_Vertically_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->setGeomTransformation(Geometry::FLIP_VERTICALLY);
+    this->pSliceWidget->pGLWidget->setGeomTransformation(Geometry::FLIP_VERTICALLY);
 }
 
 void MainWindow::on_actionTopogram_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 #define PI 3.1415926
-    this->pGLWidget->genTopogram(0*PI/180.0);
+    this->pSliceWidget->pGLWidget->genTopogram(0*PI/180.0);
 }
 
 void MainWindow::on_actionOpen_DICOM_dir_triggered()
@@ -414,23 +266,57 @@ void MainWindow::on_actionOpen_DICOM_dir_triggered()
             res[count].prepend (dir + "/");
         }
 
-    this->loadDCMFiles(res);
+    this->loadDicomFiles(res);
 }
 
-void MainWindow::loadDCMFiles(QStringList fileNames)
+void MainWindow::on_actionPan_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    qDebug() << fileNames;
+    bool flag = this->pSliceWidget->pGLWidget->isPanMode();
+    this->pSliceWidget->pGLWidget->setPanMode(!flag);  // toggle
+}
 
+void MainWindow::on_action_Reset_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->resetView();
+}
+
+void MainWindow::on_actionDeleteAllMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->deleteAllMeasures();
+}
+
+void MainWindow::on_actionDeleteSelectedMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->deleteSelectedMeasures();
+}
+
+void MainWindow::on_actionOpen_patient_explorer_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    PatientExplorerWidget *pew = new PatientExplorerWidget();
+    pew->show();
+}
+
+void MainWindow::loadDicomFiles(QStringList fileNames)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Create a progress dialog */
     this->progressDialog = new QProgressDialog(
                 "Loading DICOM files...",
                 "Abort operation", 1, fileNames.size(), this);
     this->progressDialog->setWindowModality(Qt::WindowModal);
     this->progressDialog->show();
 
-    loadDicomThread = new LoadDicomThread(fileNames, &vecSlices, this);
+    /* Create the worker thread */
+    loadDicomThread = new LoadDicomThread(fileNames, &this->vecSlices, this);
     Q_ASSERT(loadDicomThread);
 
+    /* Connect the signals */
     connect(loadDicomThread, SIGNAL(finished()),
             loadDicomThread, SLOT(deleteLater()));
     connect(loadDicomThread, SIGNAL(finished()),
@@ -440,37 +326,61 @@ void MainWindow::loadDCMFiles(QStringList fileNames)
     connect(progressDialog, SIGNAL(canceled()),
             this, SLOT(progressDialogCanceled()));
 
+    /* This doesn't block */
     loadDicomThread->start();
 }
 
-void MainWindow::on_actionPan_triggered()
+void MainWindow::filesLoaded(void)
 {
     qDebug() << Q_FUNC_INFO;
-    bool flag = this->pGLWidget->isPanMode();
-    this->pGLWidget->setPanMode(!flag);  // toggle
+
+    /* This is going to take a while */
+    this->setCursor(Qt::WaitCursor);
+
+    /* Keep track of maximum pixel value acros all slices */
+    int howMany = (int)this->vecSlices.size();
+    float maxPixel = -1.0;
+    for (int i = 0; i < howMany; i++) {
+        Slice *pSlice = this->vecSlices.at(i);
+        Q_ASSERT(pSlice);
+        float val = pSlice->getMaxPixel();
+        if (val > maxPixel) {
+            maxPixel = val;
+        }
+    }
+
+    /* Normalize CT values across all slices */
+    for (int i = 0; i < howMany; i++) {
+        Slice *pSlice = this->vecSlices.at(i);
+        Q_ASSERT(pSlice);
+        pSlice->normalizePixels(maxPixel);
+    }
+
+    /* Create a grid with the slices as thumbnail images */
+    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
+            this, SLOT(gotoSlice(const Slice *)));
+    this->gridWidget->addSlices(this->vecSlices);
+    ui->stackedWidget->setCurrentWidget(gridWidget);
+
+    /* Let the slice widget know about the vec slices XXX */
+
+    /* Load the slices to gpu (XXX: this could be done upon double clicking the thumbnail) */
+    this->pSliceWidget->pGLWidget->loadSlices(this->vecSlices);
+
+    /* We are done */
+    this->setCursor(Qt::ArrowCursor);
+    this->statusBar()->showMessage(
+                QString::number(this->vecSlices.size()) +
+                " files were loaded succesfully.");
 }
 
-void MainWindow::on_action_Reset_triggered()
+void MainWindow::gotoSlice(const Slice *pSlice)
 {
     qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->resetView();
-}
+    qDebug() << "gotoSlice() ->" << pSlice->getIndex();
 
-void MainWindow::on_actionDeleteAllMeasures_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->deleteAllMeasures();
-}
+    this->pSliceWidget->pGLWidget->setSlice((Slice *)pSlice);
 
-void MainWindow::on_actionDeleteSelectedMeasures_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pGLWidget->deleteSelectedMeasures();
-}
-
-void MainWindow::on_actionOpen_patient_explorer_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    PatientExplorerWidget *pew = new PatientExplorerWidget();
-    pew->show();
+    /* Change view from the grid widget to the (single) slice widget */
+    ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
 }

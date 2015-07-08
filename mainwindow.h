@@ -12,6 +12,7 @@
 #include "loaddicomworker.h"
 #include "myglwidget.h"
 #include "startupmenu.h"
+#include "slicewidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,19 +26,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-protected:
-    bool event(QEvent *pEvent);
-    void wheelEvent(QWheelEvent *event);
-
 private slots:
     void on_actionAbout_triggered();
     void on_actionOpenDICOM_triggered();
-    void gotoSlice(const Slice *pSlice);
-    void gotoSlice(int sliceIndex);
 
     void getProgress(unsigned int cnt);
     void progressDialogCanceled();
     void filesLoaded();
+    void gotoSlice(const Slice *pSlice);
 
     void on_actionExit_triggered();
 
@@ -78,6 +74,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    QVector<Slice *> vecSlices;
+    void loadDicomFiles(QStringList fileNames);
+
     /* Slices are arranged into a grid layout */
     QVBoxLayout *pLayout;
 
@@ -85,23 +84,12 @@ private:
      * into the scroll area. QScrollarea needs a QWidget.
      */
     GridWidget *gridWidget;
-    QWidget *containerWidget2;
+    SliceWidget *pSliceWidget;
     StartupMenu *pStartupMenu;
-
-    MyGLWidget *pGLWidget;
 
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
-    QVector<Slice *> vecSlices;
 
-    void loadDCMFiles(QStringList filenames);
-
-    void selectAllSlices(void);
-
-    struct SliceDirection { enum is { Prev, Next }; };
-    void gotoSlice(SliceDirection::is dir);
-    void gotoNextSlice();
-    void gotoPrevSlice();
     void updateStatusBarForSlice(void) const;
 };
 
