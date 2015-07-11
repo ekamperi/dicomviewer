@@ -7,23 +7,27 @@ SliceWidget::SliceWidget(QVector<Slice *> *pVecSlices, QWidget *parent) : QWidge
     Q_ASSERT(pVecSlices);
     this->vecSlices = pVecSlices;
 
-    /* Create a container widget that will hold all other stuff */
-    this->pContainerWidget = new QWidget;
-    Q_ASSERT(this->pContainerWidget);
-
     /* The GL Widget is responsible for drawing the graphics */
     this->pGLWidget = new MyGLWidget();
     Q_ASSERT(this->pGLWidget);
 
-    QVBoxLayout *pVLayout = new QVBoxLayout();
-    Q_ASSERT(pVLayout);
+    this->pHLayout = new QHBoxLayout();
+    Q_ASSERT(this->pHLayout);
 
-    pVLayout->addWidget(this->pGLWidget);
-    this->setLayout(pVLayout);
+    this->pHLayout->addWidget(this->pGLWidget);
+    this->setLayout(this->pHLayout);
 
     /* Connect the signals */
     connect(this->pGLWidget, SIGNAL(sliceChanged(int)),
             this, SLOT(gotoSlice(int)));
+
+    /* We also need a vertical scrollbar to navigate through slices */
+    this->pScrollBar = new QScrollBar;
+    Q_ASSERT(this->pScrollBar);
+    this->pScrollBar->setMinimum(0);    // XXX
+    connect(this->pScrollBar, SIGNAL(valueChanged(int)),
+            this, SLOT(scrollBarValueChanged(int)));
+    this->pHLayout->addWidget(this->pScrollBar);
 }
 
 SliceWidget::~SliceWidget()
@@ -98,6 +102,9 @@ void SliceWidget::wheelEvent(QWheelEvent *pEvent)
 
 void SliceWidget::gotoSlice(int idx)
 {
+    // XXX: Hack
+    this->pScrollBar->setMaximum(this->vecSlices->size()-1);
+
     /* Check whether we are inside the bounds or we are recycling */
     if (idx < 0) {
         idx = vecSlices->size() - 1;
@@ -109,6 +116,9 @@ void SliceWidget::gotoSlice(int idx)
     //ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
     this->pGLWidget->setSlice(this->vecSlices->at(idx));
 
+    /* Update scrollbar value */
+    this->pScrollBar->setValue(idx);
+
     /* Update the status bar accordingly */
     //updateStatusBarForSlice();
 }
@@ -118,3 +128,10 @@ void SliceWidget::gotoSlice(const Slice *pSlice)
     Q_ASSERT(pSlice);
     gotoSlice(pSlice->getIndex());
 }
+
+void SliceWidget::scrollBarValueChanged(int value)
+{
+    qDebug() << Q_FUNC_INFO << value;
+    this->gotoSlice(value);
+}
+

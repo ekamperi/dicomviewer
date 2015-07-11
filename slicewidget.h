@@ -2,7 +2,10 @@
 #define SLICEWIDGET_H
 
 #include <QWidget>
+#include <QVBoxLayout>
+
 #include "myglwidget.h"
+
 class SliceWidget : public QWidget
 {
     Q_OBJECT
@@ -19,7 +22,8 @@ protected:
 
 private:
     QVector<Slice *> *vecSlices;
-    QWidget *pContainerWidget;
+    QHBoxLayout *pHLayout;
+    QScrollBar *pScrollBar;
 
     struct SliceDirection { enum is { Prev, Next }; };
     void gotoSlice(SliceDirection::is dir);
@@ -29,6 +33,7 @@ private:
 
 private slots:
     void gotoSlice(int idx);
+    void scrollBarValueChanged(int value);
 };
 
 #endif // SLICEWIDGET_H
