@@ -19,10 +19,10 @@ protected:
     bool event(QEvent *pEvent);
 
 private:
-    QVBoxLayout *vl;
+    QVBoxLayout *pVLayout;
     QScrollArea *pScrollArea;
     QWidget *pContainerWidget;
-    FlowLayout *flowLayout;
+    FlowLayout *pFlowLayout;
 
     const QVector<Slice *> *pVecSlices;
 

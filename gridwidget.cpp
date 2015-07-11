@@ -10,8 +10,8 @@ GridWidget::GridWidget(QWidget *parent) :
 {    
     this->pScrollArea = new QScrollArea;
     this->pContainerWidget = new QWidget;
-    this->flowLayout = new FlowLayout(this);
-    this->vl = new QVBoxLayout;
+    this->pFlowLayout = new FlowLayout(this);
+    this->pVLayout = new QVBoxLayout;
 }
 
 void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
@@ -37,24 +37,21 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
         connect(pMyImageWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
                           this, SIGNAL(sliceDoubleClicked(const Slice *)));
 
-        this->flowLayout->addWidget(pMyImageWidget);
+        this->pFlowLayout->addWidget(pMyImageWidget);
     }
 
     this->pContainerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    this->pContainerWidget->setLayout(this->flowLayout);
+    this->pContainerWidget->setLayout(this->pFlowLayout);
     this->pScrollArea->setWidgetResizable(true);
     this->pScrollArea->setWidget(this->pContainerWidget);
-    this->setLayout(this->vl);
-    this->vl->addWidget(this->pScrollArea);
-
+    this->setLayout(this->pVLayout);
+    this->pVLayout->addWidget(this->pScrollArea);
 
     /* Set background color */
     QPalette pal(palette());
-    pal.setColor(QPalette::Background, Qt::red);
-    this->setAutoFillBackground(true);
+    pal.setColor(QPalette::Background, QColor("#D3D3D3"));
+    this->pContainerWidget->setAutoFillBackground(true);
     this->pContainerWidget->setPalette(pal);
-    pal.setColor(QPalette::Background, Qt::blue);
-    this->setPalette(pal);
 }
 
 void GridWidget::selectAllSlices(void)
