@@ -138,26 +138,15 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {
-//    /* Check whether we are returning from full screen */
-//    if (ui->stackedWidget->currentWidget() == this->pSliceWidget) {
-//        ui->stackedWidget->setCurrentWidget(this->gridWidget);
-//    } else {
-//        /* Remove all GL widgets from the flow layout */
-//        QLayoutItem *pLayoutItem;
-////        while ((pLayoutItem = this->flowLayout->takeAt(0)) != NULL) {
-////            delete pLayoutItem->widget();
-////        }
-
-//        /* Also remove the slices */
-//        QVector<Slice *>::iterator it;
-//        for (it = vecSlices.begin(); it != vecSlices.end(); it++) {
-//            delete *it;
-//        }
-//        vecSlices.clear();
-//        ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
-//    }
-//    ui->stackedWidget->update();
-//    this->statusBar()->showMessage("Ready.");
+    /* Check whether we are returning from full screen */
+    if (ui->stackedWidget->currentWidget() == this->pSliceWidget) {
+        ui->stackedWidget->setCurrentWidget(this->gridWidget);
+    } else {
+        // XXX: cleanup
+        ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
+    }
+    ui->stackedWidget->update();
+    this->statusBar()->showMessage("Ready.");
 }
 
 void MainWindow::updateStatusBarForSlice(int idx) const
@@ -391,4 +380,13 @@ void MainWindow::connectSignals(void) const
     /* Connect signals from the slice widget to the main window */
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
             this, SLOT(updateStatusBarForSlice(int)));
+    connect(this->pSliceWidget, SIGNAL(backToGridWidget()),
+            this, SLOT(backToGridWidget()));
+}
+
+void MainWindow::backToGridWidget(void) const
+{
+    qDebug() << Q_FUNC_INFO;
+
+    ui->stackedWidget->setCurrentWidget(this->gridWidget);
 }

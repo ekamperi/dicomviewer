@@ -32,7 +32,8 @@ private:
     void gotoPrevSlice(void);
 
 signals:
-    void sliceChanged(int idx);
+    void sliceChanged(int idx) const;
+    void backToGridWidget(void) const;
 
 private slots:
     void gotoSlice(int idx);

@@ -67,7 +67,7 @@ bool SliceWidget::event(QEvent *pEvent)
         QKeyEvent *pke = static_cast<QKeyEvent *>(pEvent);
         int key = pke->key();
         if (key == Qt::Key_Escape) {
-            //this->on_actionClose_triggered();
+            emit this->backToGridWidget();
             return true;
         } else if (key == Qt::Key_PageUp) {
             gotoPrevSlice();
