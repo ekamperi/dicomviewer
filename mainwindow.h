@@ -91,7 +91,7 @@ private:
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
 
-    void updateStatusBarForSlice(void) const;
+    void connectSignals(void) const;
 };
 
 #endif // MAINWINDOW_H

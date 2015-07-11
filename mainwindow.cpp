@@ -35,17 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
 
-    /* Connect signals from the startup menu widget to the main window */
-    connect(this->pStartupMenu, SIGNAL(openDICOM_files()),
-            this, SLOT(on_actionOpenDICOM_triggered()));
-    connect(this->pStartupMenu, SIGNAL(openDICOM_dir()),
-            this, SLOT(on_actionOpen_DICOM_dir_triggered()));
-    connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
-            this, SLOT(on_actionOpen_patient_explorer_triggered()));
-
-    /* Connect signals from the slice widget to the main window */
-    connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
-            this, SLOT(updateStatusBarForSlice(int)));
+    /* Guess what this does :) */
+    this->connectSignals();
 
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
@@ -357,8 +348,6 @@ void MainWindow::filesLoaded(void)
     }
 
     /* Create a grid with the slices as thumbnail images */
-    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
-            this, SLOT(gotoSlice(const Slice *)));
     this->gridWidget->addSlices(this->vecSlices);
     ui->stackedWidget->setCurrentWidget(gridWidget);
 
@@ -381,4 +370,25 @@ void MainWindow::gotoSlice(const Slice *pSlice)
 
     /* Change view from the grid widget to the (single) slice widget */
     ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
+}
+
+void MainWindow::connectSignals(void) const
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Connect signals from the startup menu widget to the main window */
+    connect(this->pStartupMenu, SIGNAL(openDICOM_files()),
+            this, SLOT(on_actionOpenDICOM_triggered()));
+    connect(this->pStartupMenu, SIGNAL(openDICOM_dir()),
+            this, SLOT(on_actionOpen_DICOM_dir_triggered()));
+    connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
+            this, SLOT(on_actionOpen_patient_explorer_triggered()));
+
+    /* Connect signals from the grid widget to the main window */
+    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
+            this, SLOT(gotoSlice(const Slice *)));
+
+    /* Connect signals from the slice widget to the main window */
+    connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
+            this, SLOT(updateStatusBarForSlice(int)));
 }
