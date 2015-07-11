@@ -19,7 +19,7 @@ SliceWidget::SliceWidget(QVector<Slice *> *pVecSlices, QWidget *parent) : QWidge
     Q_ASSERT(pVLayout);
 
     pVLayout->addWidget(this->pGLWidget);
-    this->pContainerWidget->setLayout(pVLayout);
+    this->setLayout(pVLayout);
 
     /* Connect the signals */
     connect(this->pGLWidget, SIGNAL(sliceChanged(int)),

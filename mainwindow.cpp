@@ -362,8 +362,6 @@ void MainWindow::filesLoaded(void)
     this->gridWidget->addSlices(this->vecSlices);
     ui->stackedWidget->setCurrentWidget(gridWidget);
 
-    /* Let the slice widget know about the vec slices XXX */
-
     /* Load the slices to gpu (XXX: this could be done upon double clicking the thumbnail) */
     this->pSliceWidget->pGLWidget->loadSlices(this->vecSlices);
 
