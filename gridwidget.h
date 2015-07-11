@@ -7,7 +7,7 @@
 #include "flowlayout.h"
 #include "slice.h"
 
-class GridWidget : public QScrollArea
+class GridWidget : public QWidget
 {
     Q_OBJECT
 public:
@@ -19,6 +19,8 @@ protected:
     bool event(QEvent *pEvent);
 
 private:
+    QVBoxLayout *vl;
+    QScrollArea *pScrollArea;
     QWidget *pContainerWidget;
     FlowLayout *flowLayout;
 

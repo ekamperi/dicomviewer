@@ -136,6 +136,7 @@ QSize FlowLayout::minimumSize() const
         size = size.expandedTo(item->minimumSize());
 
     size += QSize(2*margin(), 2*margin());
+    qDebug() << Q_FUNC_INFO << size;
     return size;
 }
 
@@ -175,6 +176,7 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
     }
     return y + lineHeight - rect.y() + bottom;
 }
+
 int FlowLayout::smartSpacing(QStyle::PixelMetric pm) const
 {
     QObject *parent = this->parent();

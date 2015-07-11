@@ -6,10 +6,12 @@
 #include <QKeyEvent>
 
 GridWidget::GridWidget(QWidget *parent) :
-    QScrollArea(parent)
-{
+    QWidget(parent)
+{    
+    this->pScrollArea = new QScrollArea;
     this->pContainerWidget = new QWidget;
-    this->flowLayout = new FlowLayout;
+    this->flowLayout = new FlowLayout(this);
+    this->vl = new QVBoxLayout;
 }
 
 void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
@@ -40,13 +42,15 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
 
     this->pContainerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     this->pContainerWidget->setLayout(this->flowLayout);
-    this->flowLayout->setSizeConstraint(QLayout::SetMaximumSize);
-    this->setWidget(this->pContainerWidget);
-    this->setWidgetResizable(true);
+    this->pScrollArea->setWidgetResizable(true);
+    this->pScrollArea->setWidget(this->pContainerWidget);
+    this->setLayout(this->vl);
+    this->vl->addWidget(this->pScrollArea);
+
 
     /* Set background color */
     QPalette pal(palette());
-    pal.setColor(QPalette::Background, Qt::red);  // XXX: find best color
+    pal.setColor(QPalette::Background, Qt::red);
     this->setAutoFillBackground(true);
     this->pContainerWidget->setPalette(pal);
     pal.setColor(QPalette::Background, Qt::blue);
@@ -69,8 +73,6 @@ void GridWidget::selectAllSlices(void)
 
 bool GridWidget::event(QEvent *pEvent)
 {
-    qDebug() << Q_FUNC_INFO;
-
     if (pEvent->type() == QEvent::KeyPress) {
         QKeyEvent *pke = static_cast<QKeyEvent *>(pEvent);
         int key = pke->key();
