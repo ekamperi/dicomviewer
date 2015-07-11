@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->gridWidget = new GridWidget;
     this->pSliceWidget = new SliceWidget(&this->vecSlices);
     this->pStartupMenu = new StartupMenu;
-    //ui->stackedWidget->addWidget(this->gridWidget);
+    ui->stackedWidget->addWidget(this->gridWidget);
     ui->stackedWidget->addWidget(this->pSliceWidget);
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
@@ -360,7 +360,6 @@ void MainWindow::filesLoaded(void)
     connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
             this, SLOT(gotoSlice(const Slice *)));
     this->gridWidget->addSlices(this->vecSlices);
-    ui->stackedWidget->addWidget(this->gridWidget);
     ui->stackedWidget->setCurrentWidget(gridWidget);
 
     /* Let the slice widget know about the vec slices XXX */
