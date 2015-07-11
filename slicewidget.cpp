@@ -113,14 +113,16 @@ void SliceWidget::gotoSlice(int idx)
     }
 
     /* Set new slice */
-    //ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
     this->pGLWidget->setSlice(this->vecSlices->at(idx));
 
     /* Update scrollbar value */
     this->pScrollBar->setValue(idx);
 
-    /* Update the status bar accordingly */
-    //updateStatusBarForSlice();
+    /*
+     * Notify others that the current slice has changed (e.g. main window
+     * and the global status bar.
+    */
+    emit this->sliceChanged(idx);
 }
 
 void SliceWidget::gotoSlice(const Slice *pSlice)

@@ -292,7 +292,7 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
     QFont font = pPainter->font();
     font.setPointSize(10);
     pPainter->setFont(font);
-    pPainter->setPen(Qt::gray);
+    pPainter->setPen(Qt::yellow);
     ExamDetails examDetails = this->pSlice->getExamDetails();
 
     /* Draw generic examination details (patient name, age, sex, etc) */

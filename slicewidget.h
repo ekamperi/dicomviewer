@@ -31,6 +31,9 @@ private:
     void gotoNextSlice(void);
     void gotoPrevSlice(void);
 
+signals:
+    void sliceChanged(int idx);
+
 private slots:
     void gotoSlice(int idx);
     void scrollBarValueChanged(int value);

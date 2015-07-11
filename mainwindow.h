@@ -34,6 +34,7 @@ private slots:
     void progressDialogCanceled();
     void filesLoaded();
     void gotoSlice(const Slice *pSlice);
+    void updateStatusBarForSlice(int idx) const;
 
     void on_actionExit_triggered();
 

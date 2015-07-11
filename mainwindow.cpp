@@ -43,6 +43,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
             this, SLOT(on_actionOpen_patient_explorer_triggered()));
 
+    /* Connect signals from the slice widget to the main window */
+    connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
+            this, SLOT(updateStatusBarForSlice(int)));
+
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
@@ -165,16 +169,12 @@ void MainWindow::on_actionClose_triggered()
 //    this->statusBar()->showMessage("Ready.");
 }
 
-void MainWindow::updateStatusBarForSlice(void) const
+void MainWindow::updateStatusBarForSlice(int idx) const
 {
-//    QLayout *pLayout = containerWidget2->layout();
-//    Q_ASSERT(pLayout);
-//    MyGLWidget *pMyGLWidget = (MyGLWidget *)
-//            pLayout->itemAt(0)->widget();
-//    unsigned int idx = pMyGLWidget->getSliceIndex() + 1;
-
-//    this->statusBar()->showMessage(
-//                QString("Slice: %1 / %2").arg(idx).arg(vecSlices.size()));
+    int current = idx + 1;
+    int total = this->vecSlices.size();
+    this->statusBar()->showMessage(
+                QString("Slice: %1 / %2").arg(current).arg(total));
 }
 
 void MainWindow::on_actionDistance_triggered()
