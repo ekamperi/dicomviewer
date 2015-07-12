@@ -77,6 +77,8 @@ void GridWidget::changeWindow(HUWindows::window newWindow)
 {
     qDebug() << Q_FUNC_INFO;
 
+    emit this->heavyTaskInitiated();
+
     int nSlices = this->pVecSlices->size();
     for (int i = 0; i < nSlices; i++) {
         Slice *pSlice = this->pVecSlices->at(i);
@@ -86,6 +88,8 @@ void GridWidget::changeWindow(HUWindows::window newWindow)
          * widgets will get notified (myimagewidget, myglwidget, etc). */
         pSlice->setWindow(newWindow);
     }
+
+    emit this->heavyTaskCompleted();
 }
 
 bool GridWidget::event(QEvent *pEvent)

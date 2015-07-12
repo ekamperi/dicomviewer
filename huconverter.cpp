@@ -74,6 +74,9 @@ HUConverter::getNormalizedRangeFromTemplate(HUWindows::window window) const
         huCenter =-50;
         huWidth = 400;
     } else {
+        qDebug() << "BUG:" << window;
+        huCenter = -50;
+        huWidth = 400;
         //Q_ASSERT(false);
     }
 

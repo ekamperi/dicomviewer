@@ -174,13 +174,13 @@ void MainWindow::on_actionDensity_HUs_triggered()
 void MainWindow::on_actionAbdomen_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::ABDOMEN);
+    emit this->windowChanged(HUWindows::ABDOMEN);
 }
 
 void MainWindow::on_actionBone_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::BONE);
+        emit this->windowChanged(HUWindows::BONE);
 }
 
 // ΧΧΧ
@@ -193,13 +193,13 @@ void MainWindow::on_actionLung_triggered()
 void MainWindow::on_actionHead_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::HEAD);
+    emit this->windowChanged(HUWindows::HEAD);
 }
 
 void MainWindow::on_actionMediastinum_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::MEDIASTINUM);
+    emit this->windowChanged(HUWindows::MEDIASTINUM);
 }
 
 void MainWindow::on_actionFlip_Horizontally_triggered()
@@ -379,6 +379,10 @@ void MainWindow::connectSignals(void) const
             this, SLOT(gotoSlice(const Slice *)));
     connect(this, SIGNAL(windowChanged(HUWindows::window)),
             this->gridWidget, SLOT(changeWindow(HUWindows::window)));
+    connect(this->gridWidget, SIGNAL(heavyTaskInitiated()),
+            this, SLOT(displayWaitCursor()));
+    connect(this->gridWidget, SIGNAL(heavyTaskCompleted()),
+            this, SLOT(displayArrowCursor()));
 
     /* Connect signals from the slice widget to the main window */
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
@@ -392,4 +396,14 @@ void MainWindow::backToGridWidget(void) const
     qDebug() << Q_FUNC_INFO;
 
     ui->stackedWidget->setCurrentWidget(this->gridWidget);
+}
+
+void MainWindow::displayWaitCursor(void)
+{
+    this->setCursor(Qt::WaitCursor);
+}
+
+void MainWindow::displayArrowCursor(void)
+{
+    this->setCursor(Qt::ArrowCursor);
 }

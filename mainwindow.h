@@ -39,6 +39,8 @@ private slots:
     void gotoSlice(const Slice *pSlice);
     void updateStatusBarForSlice(int idx) const;
     void backToGridWidget(void) const;
+    void displayWaitCursor(void);
+    void displayArrowCursor(void);
 
     void on_actionExit_triggered();
 

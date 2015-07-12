@@ -28,6 +28,8 @@ private:
 
 signals:
     void sliceDoubleClicked(const Slice *pSlice);
+    void heavyTaskInitiated(void) const;  // So that others display wait cursor,
+    void heavyTaskCompleted(void) const;  // should the want to.
 
 private slots:
     void changeWindow(HUWindows::window newWindow);
