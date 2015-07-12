@@ -29,8 +29,13 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
         MyImageWidget *pMyImageWidget = new MyImageWidget();
         Q_ASSERT(pMyImageWidget);
 
+        /* Associate slice <---> image widget */
         pSlice->setImageWidget(pMyImageWidget);
         pMyImageWidget->setSlice(pSlice);
+
+        /* */
+        connect(pSlice, SIGNAL(iNeedRepaint(float,float)),
+                pMyImageWidget, SLOT(changeWindow(float, float)));
 
         /* If user double clicks on a slice, we'd like to load it.
          * Hence, propagate the signa.  */
@@ -76,6 +81,9 @@ void GridWidget::changeWindow(HUWindows::window newWindow)
     for (int i = 0; i < nSlices; i++) {
         Slice *pSlice = this->pVecSlices->at(i);
         Q_ASSERT(pSlice);
+
+        /* This will trigger an 'iNeedRepaint' signal and all connected
+         * widgets will get notified (myimagewidget, myglwidget, etc). */
         pSlice->setWindow(newWindow);
     }
 }

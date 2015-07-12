@@ -43,7 +43,8 @@ signals:
     void sliceDoubleClicked(const Slice *pSlice);
     void sliceIndexChanged(unsigned int sliceIndex);
 
-public slots:
+private slots:
+    void changeWindow(float, float);
 };
 
 #endif // MYIMAGEWIDGET_H

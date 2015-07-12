@@ -55,10 +55,11 @@ void MyImageWidget::genImage()
     if (this->pData) {
         delete this->pData;
     }
+    QPair<float, float> tMinMax = this->pSlice->getWindowLevelWidth();
     this->pData =
             MyMath::floatToByte(
                 pRawData, width, height,
-                0.0, 0.4);
+                tMinMax.first, tMinMax.second);
 
     /* Create the image, but first delete the old one, if any */
     if (this->pImage) {
@@ -119,3 +120,7 @@ void MyImageWidget::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
+void MyImageWidget::changeWindow(float tmin, float tmax)
+{
+    this->genImage();
+}

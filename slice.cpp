@@ -53,6 +53,8 @@ void Slice::normalizePixels(float globalMaxPixel)
     this->pHUConverter->normalize(globalMaxPixel);
 }
 
+/* Perhaps the window should belong to MyImageWidget, MyGLWidget etc and
+ * slice should serve as a 'model'. */
 void Slice::setWindow(HUWindows::window huWindow)
 {
     qDebug() << Q_FUNC_INFO;
@@ -67,4 +69,15 @@ void Slice::setWindow(HUWindows::window huWindow)
      * to repaint the data because thw window/level has changed.
      */
     emit this->iNeedRepaint(tMinMax.first, tMinMax.second);
+}
+
+QPair<float, float> Slice::getWindowLevelWidth(void) const
+{
+    if (this->pHUConverter) {
+        QPair<float, float> tMinMax =
+                this->pHUConverter->getNormalizedRangeFromTemplate(this->huWindow);
+        return tMinMax;
+    }
+
+    return QPair<float, float>(0.0, 1.0);
 }

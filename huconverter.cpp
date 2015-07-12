@@ -74,7 +74,7 @@ HUConverter::getNormalizedRangeFromTemplate(HUWindows::window window) const
         huCenter =-50;
         huWidth = 400;
     } else {
-        Q_ASSERT(false);
+        //Q_ASSERT(false);
     }
 
     return this->getRawRange(huCenter, huWidth);
