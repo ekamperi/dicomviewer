@@ -316,7 +316,7 @@ void MainWindow::filesLoaded(void)
     qDebug() << Q_FUNC_INFO;
 
     /* This is going to take a while */
-    this->setCursor(Qt::WaitCursor);
+    this->displayWaitCursor();
 
     /* Keep track of maximum pixel value acros all slices */
     int howMany = (int)this->vecSlices.size();
@@ -345,7 +345,7 @@ void MainWindow::filesLoaded(void)
     this->pSliceWidget->pGLWidget->loadSlices(this->vecSlices);
 
     /* We are done */
-    this->setCursor(Qt::ArrowCursor);
+    this->displayArrowCursor();
     this->statusBar()->showMessage(
                 QString::number(this->vecSlices.size()) +
                 " files were loaded succesfully.");
