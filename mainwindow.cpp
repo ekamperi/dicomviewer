@@ -183,10 +183,11 @@ void MainWindow::on_actionBone_triggered()
     this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::BONE);
 }
 
+// ΧΧΧ
 void MainWindow::on_actionLung_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->getSlice()->setWindow(HUWindows::LUNG);
+    emit this->windowChanged(HUWindows::LUNG);
 }
 
 void MainWindow::on_actionHead_triggered()
@@ -376,6 +377,8 @@ void MainWindow::connectSignals(void) const
     /* Connect signals from the grid widget to the main window */
     connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
             this, SLOT(gotoSlice(const Slice *)));
+    connect(this, SIGNAL(windowChanged(HUWindows::window)),
+            this->gridWidget, SLOT(changeWindow(HUWindows::window)));
 
     /* Connect signals from the slice widget to the main window */
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),

@@ -1,4 +1,5 @@
 #include "myimagewidget.h"
+#include "mymath.h"
 #include "slice.h"
 
 #include <QtDebug>
@@ -9,6 +10,7 @@ MyImageWidget::MyImageWidget(QWidget *parent) : QLabel(parent)
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
 
+    /* Set default size of the thumbnail */
     this->setFixedSize(256, 256);
 
     /* Generate color table */
@@ -30,29 +32,24 @@ void MyImageWidget::setSlice(Slice *pSlice)
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;
-    this->loadTexture(
-                pSlice->getRawPixelData(),
-                pSlice->getWidth(),
-                pSlice->getHeight(),
-                pSlice->getFormat());
+    this->loadTexture();
     this->update();
 }
 
-void MyImageWidget::loadTexture(float* pRawPixel,
-                             unsigned int width,
-                             unsigned int height,
-                             GLint format)
+void MyImageWidget::loadTexture()
 {
-    /*
-     * Qt does not support floating QImages
-     */
-    unsigned long nPixels = width*height;
-    this->pData = new unsigned char[nPixels];
-    Q_ASSERT(this->pData);
+    unsigned int width  = this->pSlice->getWidth();
+    unsigned int height = this->pSlice->getHeight();
+    float *pRawData = this->pSlice->getRawPixelData();
+    Q_ASSERT(pRawData);
 
-    for (unsigned long i = 0; i < nPixels; i++) {
-        this->pData[i] = (unsigned char) (pRawPixel[i] * 255);
-    }
+    /* Apply window/width and also map [0.0, 1.0] -> [0,255] because QImage
+     * cannot handle floating point data.
+    */
+    this->pData =
+            MyMath::floatToByte(
+                pRawData, width, height,
+                0.0, 0.4);
 
     this->pImage = new QImage(this->pData, width, height, QImage::Format_Indexed8);
     Q_ASSERT(pImage);
@@ -107,3 +104,4 @@ void MyImageWidget::paintEvent(QPaintEvent *event)
     this->drawOutline(&painter);
     painter.end();
 }
+

@@ -68,6 +68,18 @@ void GridWidget::selectAllSlices(void)
     }
 }
 
+void GridWidget::changeWindow(HUWindows::window newWindow)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    int nSlices = this->pVecSlices->size();
+    for (int i = 0; i < nSlices; i++) {
+        Slice *pSlice = this->pVecSlices->at(i);
+        Q_ASSERT(pSlice);
+        pSlice->setWindow(newWindow);
+    }
+}
+
 bool GridWidget::event(QEvent *pEvent)
 {
     if (pEvent->type() == QEvent::KeyPress) {

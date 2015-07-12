@@ -38,6 +38,7 @@ signals:
 private slots:
     void gotoSlice(int idx);
     void scrollBarValueChanged(int value);
+
 };
 
 #endif // SLICEWIDGET_H

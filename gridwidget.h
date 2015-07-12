@@ -28,6 +28,9 @@ private:
 
 signals:
     void sliceDoubleClicked(const Slice *pSlice);
+
+private slots:
+    void changeWindow(HUWindows::window newWindow);
 };
 
 #endif // GRIDWIDGET_H

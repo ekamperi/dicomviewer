@@ -26,6 +26,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+    void windowChanged(HUWindows::window newWindow);
+
 private slots:
     void on_actionAbout_triggered();
     void on_actionOpenDICOM_triggered();
