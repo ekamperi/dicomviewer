@@ -78,6 +78,8 @@ private slots:
 
     void on_actionOpen_patient_explorer_triggered();
 
+    void on_actionSoft_tissue_triggered();
+
 private:
     Ui::MainWindow *ui;
 

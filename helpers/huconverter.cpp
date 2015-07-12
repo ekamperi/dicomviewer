@@ -73,6 +73,9 @@ HUConverter::getNormalizedRangeFromTemplate(HUWindows::window window) const
     } else if (window == HUWindows::MEDIASTINUM) {
         huCenter =-50;
         huWidth = 400;
+    } else if (window == HUWindows::SOFT_TISSUE) {
+        huCenter = 40;
+        huWidth = 600;
     } else {
         qDebug() << "BUG:" << window;
         huCenter = -50;

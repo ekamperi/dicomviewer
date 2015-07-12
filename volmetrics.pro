@@ -68,7 +68,7 @@ FORMS += \
     ui/dicomfile.ui \
     ui/mainwindow.ui \
     ui/myglwidget.ui \
-    ui/patientexplorerwidget.ui
+    ui/patientexplorerwidget.ui \
     ui/startupmenu.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \

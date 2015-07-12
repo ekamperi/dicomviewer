@@ -9,7 +9,8 @@ namespace HUWindows {
         BONE,
         HEAD,
         LUNG,
-        MEDIASTINUM
+        MEDIASTINUM,
+        SOFT_TISSUE
     };
 }
 

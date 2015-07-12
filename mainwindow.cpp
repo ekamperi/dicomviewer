@@ -98,27 +98,6 @@ void MainWindow::on_actionAbout_triggered()
                 "(c) Stathis Kamperis, Eleni-Maria Stea, 2014-2015.");
 }
 
-void MainWindow::on_actionOpenDICOM_triggered()
-{
-    /* Select DICOM files to open */
-    QFileDialog dialog(this);
-    dialog.setDirectory(QDir::homePath());
-    dialog.setFileMode(QFileDialog::ExistingFiles);
-    dialog.setNameFilter(trUtf8("DICOM files (*.dcm)"));
-    QStringList fileNames;
-    if (dialog.exec()) {
-        fileNames = dialog.selectedFiles();
-    }
-
-    /* If user clicked cancel, just return */
-    if (fileNames.isEmpty()) {
-        qDebug() << "fileNames is empty!";
-        return;
-    }
-
-    this->loadDicomFiles(fileNames);
-}
-
 void MainWindow::getProgress(unsigned int cnt)
 {
     if (!this->progressDialog->wasCanceled()) {
@@ -171,6 +150,9 @@ void MainWindow::on_actionDensity_HUs_triggered()
     this->pSliceWidget->pGLWidget->setDensityMeasure(!flag);  // toggle
 }
 
+/*******************************************************************************
+ *              WINDOW/WIDTH LEVELS (Abdomenm, Bones, Lung, etc)
+ ******************************************************************************/
 void MainWindow::on_actionAbdomen_triggered()
 {
     qDebug() << Q_FUNC_INFO;
@@ -180,10 +162,9 @@ void MainWindow::on_actionAbdomen_triggered()
 void MainWindow::on_actionBone_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-        emit this->windowChanged(HUWindows::BONE);
+    emit this->windowChanged(HUWindows::BONE);
 }
 
-// ΧΧΧ
 void MainWindow::on_actionLung_triggered()
 {
     qDebug() << Q_FUNC_INFO;
@@ -202,6 +183,15 @@ void MainWindow::on_actionMediastinum_triggered()
     emit this->windowChanged(HUWindows::MEDIASTINUM);
 }
 
+void MainWindow::on_actionSoft_tissue_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    emit this->windowChanged(HUWindows::SOFT_TISSUE);
+}
+
+/*******************************************************************************
+ *                      GEOMETRIC TRANSFORMATIONS
+ ******************************************************************************/
 void MainWindow::on_actionFlip_Horizontally_triggered()
 {
     qDebug() << Q_FUNC_INFO;
@@ -214,11 +204,48 @@ void MainWindow::on_actionFlip_Vertically_triggered()
     this->pSliceWidget->pGLWidget->setGeomTransformation(Geometry::FLIP_VERTICALLY);
 }
 
+void MainWindow::on_actionPan_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    bool flag = this->pSliceWidget->pGLWidget->isPanMode();
+    this->pSliceWidget->pGLWidget->setPanMode(!flag);  // toggle
+}
+
+void MainWindow::on_action_Reset_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->resetView();
+}
+
 void MainWindow::on_actionTopogram_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 #define PI 3.1415926
     this->pSliceWidget->pGLWidget->genTopogram(0*PI/180.0);
+}
+
+/*******************************************************************************
+ *                      FILE OPERATIONS
+ ******************************************************************************/
+void MainWindow::on_actionOpenDICOM_triggered()
+{
+    /* Select DICOM files to open */
+    QFileDialog dialog(this);
+    dialog.setDirectory(QDir::homePath());
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setNameFilter(trUtf8("DICOM files (*.dcm)"));
+    QStringList fileNames;
+    if (dialog.exec()) {
+        fileNames = dialog.selectedFiles();
+    }
+
+    /* If user clicked cancel, just return */
+    if (fileNames.isEmpty()) {
+        qDebug() << "fileNames is empty!";
+        return;
+    }
+
+    this->loadDicomFiles(fileNames);
 }
 
 void MainWindow::on_actionOpen_DICOM_dir_triggered()
@@ -248,31 +275,6 @@ void MainWindow::on_actionOpen_DICOM_dir_triggered()
         }
 
     this->loadDicomFiles(res);
-}
-
-void MainWindow::on_actionPan_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    bool flag = this->pSliceWidget->pGLWidget->isPanMode();
-    this->pSliceWidget->pGLWidget->setPanMode(!flag);  // toggle
-}
-
-void MainWindow::on_action_Reset_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->resetView();
-}
-
-void MainWindow::on_actionDeleteAllMeasures_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->deleteAllMeasures();
-}
-
-void MainWindow::on_actionDeleteSelectedMeasures_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->deleteSelectedMeasures();
 }
 
 void MainWindow::on_actionOpen_patient_explorer_triggered()
@@ -351,6 +353,18 @@ void MainWindow::filesLoaded(void)
                 " files were loaded succesfully.");
 }
 
+void MainWindow::on_actionDeleteAllMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->deleteAllMeasures();
+}
+
+void MainWindow::on_actionDeleteSelectedMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->deleteSelectedMeasures();
+}
+
 void MainWindow::gotoSlice(const Slice *pSlice)
 {
     qDebug() << Q_FUNC_INFO;
@@ -362,6 +376,9 @@ void MainWindow::gotoSlice(const Slice *pSlice)
     ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
 }
 
+/*******************************************************************************
+ *                          SIGNALS CONNECTIONS
+ ******************************************************************************/
 void MainWindow::connectSignals(void) const
 {
     qDebug() << Q_FUNC_INFO;
