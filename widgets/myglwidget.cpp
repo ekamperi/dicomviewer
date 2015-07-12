@@ -1,8 +1,8 @@
 #include "examdetails.h"
 #include "geomtransformation.h"
 #include "slice.h"
-#include "myglwidget.h"
-#include "mymath.h"
+#include "include/widgets/myglwidget.h"
+#include "include/helpers/mymath.h"
 
 #include <iostream>
 #include <QDebug>

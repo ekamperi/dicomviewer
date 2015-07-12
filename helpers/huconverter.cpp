@@ -1,4 +1,4 @@
-#include "huconverter.h"
+#include "include/helpers/huconverter.h"
 #include "math.h"
 
 #include <QtDebug>

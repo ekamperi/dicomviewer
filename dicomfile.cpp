@@ -7,8 +7,8 @@
 //#include "Magick++.h"
 
 #include "dicomfile.h"
-#include "dicomhelper.h"
-#include "huconverter.h"
+#include "include/helpers/dicomhelper.h"
+#include "include/helpers/huconverter.h"
 
 /* XXX: This is needed for compile */
 #define HAVE_CONFIG_H

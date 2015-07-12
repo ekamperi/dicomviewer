@@ -1,4 +1,4 @@
-#include "dicomhelper.h"
+#include "include/helpers/dicomhelper.h"
 
 #include <QDebug>
 

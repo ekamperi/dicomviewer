@@ -6,11 +6,11 @@
 #include <QProgressDialog>
 
 #include "dicomfile.h"
-#include "loaddicomworker.h"
+#include "include/workers/loaddicomworker.h"
 #include "mainwindow.h"
-#include "myglwidget.h"
-#include "myimagewidget.h"
-#include "patientexplorerwidget.h"
+#include "include/widgets/myglwidget.h"
+#include "include/widgets/myimagewidget.h"
+#include "include/widgets/patientexplorerwidget.h"
 #include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */

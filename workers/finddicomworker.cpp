@@ -1,4 +1,4 @@
-#include "finddicomworker.h"
+#include "include/workers/finddicomworker.h"
 #include "patientexplorer.h"
 
 FindDicomThread::FindDicomThread(

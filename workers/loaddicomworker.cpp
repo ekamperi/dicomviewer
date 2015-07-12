@@ -1,6 +1,6 @@
 #include "dicomfile.h"
-#include "loaddicomworker.h"
-#include "myglwidget.h"
+#include "include/workers/loaddicomworker.h"
+#include "include/widgets/myglwidget.h"
 
 #include <QDebug>
 

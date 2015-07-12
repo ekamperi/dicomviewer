@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "startupmenu.h"
+#include "include/widgets/startupmenu.h"
 #include "ui_startupmenu.h"
 
 StartupMenu::StartupMenu(QWidget *parent) :

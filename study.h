@@ -1,8 +1,8 @@
 #ifndef STUDY_H
 #define STUDY_H
 
-#include "imageseries.h"
 #include <QMetaType>
+#include <QString>
 
 class Study
 {

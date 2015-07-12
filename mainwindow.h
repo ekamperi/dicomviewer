@@ -8,11 +8,11 @@
 #include <QProgressDialog>
 
 #include "flowlayout.h"
-#include "gridwidget.h"
-#include "loaddicomworker.h"
-#include "myglwidget.h"
-#include "startupmenu.h"
-#include "slicewidget.h"
+#include "include/widgets/gridwidget.h"
+#include "include/workers/loaddicomworker.h"
+#include "include/widgets/myglwidget.h"
+#include "include/widgets/startupmenu.h"
+#include "include/widgets/slicewidget.h"
 
 namespace Ui {
 class MainWindow;

@@ -1,7 +1,7 @@
-#include "patientexplorerwidget.h"
+#include "include/widgets/patientexplorerwidget.h"
 #include "ui_patientexplorerwidget.h"
 
-#include "finddicomworker.h"
+#include "include/workers/finddicomworker.h"
 #include "patientexplorer.h"
 
 #include <QDebug>

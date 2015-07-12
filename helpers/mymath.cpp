@@ -1,4 +1,4 @@
-#include "mymath.h"
+#include "include/helpers/mymath.h"
 
 #include <QtGlobal>
 #include <QDebug>

@@ -1,5 +1,5 @@
 #include "patientexplorer.h"
-#include "dicomhelper.h"
+#include "include/helpers/dicomhelper.h"
 
 #include <QDirIterator>
 #include <QDebug>

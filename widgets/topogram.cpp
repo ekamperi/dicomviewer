@@ -1,5 +1,5 @@
-#include "mymath.h"
-#include "topogram.h"
+#include "include/helpers/mymath.h"
+#include "include/widgets/topogram.h"
 
 #include <math.h>
 #include <QtGlobal>

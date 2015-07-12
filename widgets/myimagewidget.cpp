@@ -1,5 +1,5 @@
-#include "myimagewidget.h"
-#include "mymath.h"
+#include "include/widgets/myimagewidget.h"
+#include "include/helpers/mymath.h"
 #include "slice.h"
 
 #include <QtDebug>

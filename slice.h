@@ -3,7 +3,7 @@
 
 #include "dicomfile.h"
 #include "examdetails.h"
-#include "huconverter.h"
+#include "include/helpers/huconverter.h"
 #include "GL/gl.h"
 
 #include <QObject>

@@ -11,68 +11,70 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = volmetrics
 TEMPLATE = app
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    myglwidget.cpp \
-    dicomfile.cpp \
-    loaddicomworker.cpp \
-    slice.cpp \
-    examdetails.cpp \
-    flowlayout.cpp \
-    huconverter.cpp \
-    myimagewidget.cpp \
-    topogram.cpp \
-    mymath.cpp \
-    startupmenu.cpp \
-    distline.cpp \
-    selectable.cpp \
+SOURCES += \
+    helpers/dicomhelper.cpp \
+    helpers/huconverter.cpp \
+    helpers/mymath.cpp \
+    widgets/gridwidget.cpp \
+    widgets/myglwidget.cpp \
+    widgets/myimagewidget.cpp \
+    widgets/patientexplorerwidget.cpp \
+    widgets/slicewidget.cpp \
+    widgets/startupmenu.cpp \
+    widgets/topogram.cpp \
+    workers/finddicomworker.cpp \
+    workers/loaddicomworker.cpp \
     denscircle.cpp \
-    patientexplorer.cpp \
-    imageseries.cpp \
-    study.cpp \
-    dicomhelper.cpp \
-    patientexplorerwidget.cpp \
-    finddicomworker.cpp \
-    series.cpp \
+    dicomfile.cpp \
+    distline.cpp \
+    examdetails.cpp \
+    main.cpp \
+    mainwindow.cpp \
+    flowlayout.cpp \
     patient.cpp \
-    gridwidget.cpp \
-    slicewidget.cpp
+    patientexplorer.cpp \
+    selectable.cpp \
+    series.cpp \
+    slice.cpp \
+    study.cpp
 
-HEADERS  += mainwindow.h \
-    myglwidget.h \
+HEADERS  += \
+    include/helpers/dicomhelper.h \
+    include/helpers/huconverter.h \
+    include/helpers/mymath.h \
+    include/widgets/gridwidget.h \
+    include/widgets/myglwidget.h \
+    include/widgets/myimagewidget.h \
+    include/widgets/patientexplorerwidget.h \
+    include/widgets/slicewidget.h \
+    include/widgets/startupmenu.h \
+    include/widgets/topogram.h \
+    include/workers/finddicomworker.h \
+    include/workers/loaddicomworker.h \
+    denscircle.h \
     dicomfile.h \
-    loaddicomworker.h \
-    slice.h \
+    distline.h \
     examdetails.h \
     flowlayout.h \
-    huconverter.h \
-    myimagewidget.h \
-    topogram.h \
-    mymath.h \
-    startupmenu.h \
-    distline.h \
-    selectable.h \
-    denscircle.h \
-    patientexplorer.h \
-    imageseries.h \
-    study.h \
-    dicomhelper.h \
-    patientexplorerwidget.h \
-    finddicomworker.h \
-    series.h \
+    mainwindow.h \
     patient.h \
-    gridwidget.h \
-    slicewidget.h
+    patientexplorer.h \
+    selectable.h \
+    slice.h \
+    series.h \
+    study.h
 
-FORMS    += mainwindow.ui \
-    myglwidget.ui \
-    dicomfile.ui \
-    startupmenu.ui \
-    patientexplorerwidget.ui
+FORMS += \
+    ui/dicomfile.ui \
+    ui/mainwindow.ui \
+    ui/myglwidget.ui \
+    ui/patientexplorerwidget.ui
+    ui/startupmenu.ui
 
 unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
  -lGraphicsMagick++ -lGraphicsMagick -ljbig -llcms2 -ltiff -lfreetype -ljasper \
--ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm -lgomp -lpthread
+-ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm \
+-lgomp -lpthread
 
 CONFIG += debug
 #CONFIG  += qt warn_off release
