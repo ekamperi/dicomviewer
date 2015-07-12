@@ -16,7 +16,7 @@ public:
     void setSlice(Slice *pSlice);
 
 private:
-    void loadTexture();
+    void genImage();
     void drawOutline(QPainter *pPainter);
 
     /* Whether we are inside a slice or not, used in hover effect */

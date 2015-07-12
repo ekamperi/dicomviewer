@@ -17,26 +17,32 @@ MyImageWidget::MyImageWidget(QWidget *parent) : QLabel(parent)
     for (unsigned int i = 0; i < 256; i++) {
         myColorTable.append(qRgb(i,i,i));
     }
+
+    /* */
+    this->pData = NULL;
+    this->pImage = NULL;
 }
 
 MyImageWidget::~MyImageWidget()
 {
-    Q_ASSERT(this->pData);
-
-    delete this->pData;
+    if (this->pImage) {
+        delete this->pImage;
+    }
+    if (this->pData) {
+        delete this->pData;
+    }
 }
 
 void MyImageWidget::setSlice(Slice *pSlice)
 {
-//    qDebug() << Q_FUNC_INFO;
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;
-    this->loadTexture();
+    this->genImage();
     this->update();
 }
 
-void MyImageWidget::loadTexture()
+void MyImageWidget::genImage()
 {
     unsigned int width  = this->pSlice->getWidth();
     unsigned int height = this->pSlice->getHeight();
@@ -46,14 +52,22 @@ void MyImageWidget::loadTexture()
     /* Apply window/width and also map [0.0, 1.0] -> [0,255] because QImage
      * cannot handle floating point data.
     */
+    if (this->pData) {
+        delete this->pData;
+    }
     this->pData =
             MyMath::floatToByte(
                 pRawData, width, height,
                 0.0, 0.4);
 
+    /* Create the image, but first delete the old one, if any */
+    if (this->pImage) {
+        delete this->pImage;
+    }
     this->pImage = new QImage(this->pData, width, height, QImage::Format_Indexed8);
     Q_ASSERT(pImage);
 
+    /* We are done, display the image */
     pImage->setColorTable(myColorTable);
     this->setPixmap(QPixmap::fromImage((this->pImage->scaled(256,256))));
 }
