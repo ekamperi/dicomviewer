@@ -5,7 +5,7 @@
 #include <QtDebug>
 #include <QPainter>
 
-MyImageWidget::MyImageWidget(QWidget *parent) : QLabel(parent)
+ImageWidget::ImageWidget(QWidget *parent) : QLabel(parent)
 {
     /* This is used to implement a hover like effect */
     this->weAreIn = false;
@@ -23,7 +23,7 @@ MyImageWidget::MyImageWidget(QWidget *parent) : QLabel(parent)
     this->pImage = NULL;
 }
 
-MyImageWidget::~MyImageWidget()
+ImageWidget::~ImageWidget()
 {
     if (this->pImage) {
         delete this->pImage;
@@ -33,7 +33,7 @@ MyImageWidget::~MyImageWidget()
     }
 }
 
-void MyImageWidget::setSlice(Slice *pSlice)
+void ImageWidget::setSlice(Slice *pSlice)
 {
     Q_ASSERT(pSlice);
 
@@ -42,7 +42,7 @@ void MyImageWidget::setSlice(Slice *pSlice)
     this->update();
 }
 
-void MyImageWidget::genImage()
+void ImageWidget::genImage()
 {
     unsigned int width  = this->pSlice->getWidth();
     unsigned int height = this->pSlice->getHeight();
@@ -73,13 +73,13 @@ void MyImageWidget::genImage()
     this->setPixmap(QPixmap::fromImage((this->pImage->scaled(256,256))));
 }
 
-void MyImageWidget::mouseDoubleClickEvent(QMouseEvent *event)
+void ImageWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
     qDebug() << Q_FUNC_INFO;
     emit sliceDoubleClicked((const Slice *)this->pSlice);
 }
 
-void MyImageWidget::drawOutline(QPainter *pPainter)
+void ImageWidget::drawOutline(QPainter *pPainter)
 {
     Q_ASSERT(pPainter);
 
@@ -94,7 +94,7 @@ void MyImageWidget::drawOutline(QPainter *pPainter)
     }
 }
 
-void MyImageWidget::enterEvent(QEvent * event)
+void ImageWidget::enterEvent(QEvent * event)
 {
     this->weAreIn = true;
     this->update();
@@ -102,7 +102,7 @@ void MyImageWidget::enterEvent(QEvent * event)
     QWidget::enterEvent(event);
 }
 
-void MyImageWidget::leaveEvent(QEvent * event)
+void ImageWidget::leaveEvent(QEvent * event)
 {
     this->weAreIn = false;
     this->update();
@@ -110,7 +110,7 @@ void MyImageWidget::leaveEvent(QEvent * event)
     QWidget::leaveEvent(event);
 }
 
-void MyImageWidget::paintEvent(QPaintEvent *event)
+void ImageWidget::paintEvent(QPaintEvent *event)
 {
     QLabel::paintEvent(event);
 
@@ -120,7 +120,7 @@ void MyImageWidget::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void MyImageWidget::changeWindow(float tmin, float tmax)
+void ImageWidget::changeWindow(float tmin, float tmax)
 {
     this->genImage();
 }

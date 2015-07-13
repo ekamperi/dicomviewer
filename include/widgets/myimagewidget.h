@@ -6,12 +6,12 @@
 
 #include "slice.h"
 
-class MyImageWidget : public QLabel
+class ImageWidget : public QLabel
 {
     Q_OBJECT
 public:
-    explicit MyImageWidget(QWidget *parent = 0);
-    ~MyImageWidget();
+    explicit ImageWidget(QWidget *parent = 0);
+    ~ImageWidget();
 
     void setSlice(Slice *pSlice);
 

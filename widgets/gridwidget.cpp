@@ -26,7 +26,7 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
         Slice *pSlice = vecSlices.at(i);
         Q_ASSERT(pSlice);
 
-        MyImageWidget *pMyImageWidget = new MyImageWidget();
+        ImageWidget *pMyImageWidget = new ImageWidget();
         Q_ASSERT(pMyImageWidget);
 
         /* Associate slice <---> image widget */

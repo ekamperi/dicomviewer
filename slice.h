@@ -9,7 +9,7 @@
 #include <QObject>
 
 class MyGLWidget;
-class MyImageWidget;
+class ImageWidget;
 
 class Slice : public QObject
 {
@@ -51,11 +51,11 @@ public:
         this->m_isSelected = selected;
     }
 
-    void setImageWidget(MyImageWidget *pMyImageWidget) {
+    void setImageWidget(ImageWidget *pMyImageWidget) {
         this->pMyImageWidget = pMyImageWidget;
     }
 
-    MyImageWidget *getImageWidget(void) const {
+    ImageWidget *getImageWidget(void) const {
         return this->pMyImageWidget;
     }
 
@@ -101,7 +101,7 @@ private:
     bool m_isSelected;
 
     /* MyImageWidget is used in the grid layout */
-    MyImageWidget *pMyImageWidget;
+    ImageWidget *pMyImageWidget;
 };
 
 #endif // SLICE_H
