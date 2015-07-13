@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    /* Create the various widgets and populate the stacked widget (the stacked
+     * widget will only show 1 widget at a time */
     this->gridWidget = new GridWidget;
     this->pSliceWidget = new SliceWidget(&this->vecSlices);
     this->pStartupMenu = new StartupMenu;
@@ -38,30 +40,12 @@ MainWindow::MainWindow(QWidget *parent) :
     /* Guess what this does :) */
     this->connectSignals();
 
+    /* ALignemnt groups are mutually exclusive checkable menu items */
+    this->setupAlignmentGroups();
+
     /* The first time ::statusBar() is called, it creates a status bar. */
     this->statusBar();
     this->statusBar()->showMessage("Ready.");
-
-    /* XXX: This is a temporary hack or else Unity won't show any menu
-     * at all (if the indicator-appmenus is removed).
-     */
-    this->menuBar()->setNativeMenuBar(false);
-
-    /* Alignment groups (i.e., mutually exlusive checkable menu items) */
-    /* Window/Width menu items (bone, head, lung, mediastinum, etc) */
-    QActionGroup *pAlGroupWindowLevel = new QActionGroup(this);
-    Q_ASSERT(pAlGroupWindowLevel);
-    pAlGroupWindowLevel->addAction(ui->actionAbdomen);
-    pAlGroupWindowLevel->addAction(ui->actionBone);
-    pAlGroupWindowLevel->addAction(ui->actionHead);
-    pAlGroupWindowLevel->addAction(ui->actionLung);
-    pAlGroupWindowLevel->addAction(ui->actionMediastinum);
-
-    /* Flip horizontally/vertically */
-    QActionGroup *pAlGroupFlip = new QActionGroup(this);
-    Q_ASSERT(pAlGroupFlip);
-    pAlGroupFlip->addAction(ui->actionFlip_Horizontally);
-    pAlGroupFlip->addAction(ui->actionFlip_Vertically);
 
     /*
      * Initialize library or else it will abort.
@@ -136,6 +120,9 @@ void MainWindow::updateStatusBarForSlice(int idx) const
                 QString("Slice: %1 / %2").arg(current).arg(total));
 }
 
+/*******************************************************************************
+ *                  TOOLS (Measure distance, etc)
+ ******************************************************************************/
 void MainWindow::on_actionDistance_triggered()
 {
     qDebug() << Q_FUNC_INFO;
@@ -148,6 +135,18 @@ void MainWindow::on_actionDensity_HUs_triggered()
     qDebug() << Q_FUNC_INFO;
     bool flag = this->pSliceWidget->pGLWidget->isDensityMeasureEnabled();
     this->pSliceWidget->pGLWidget->setDensityMeasure(!flag);  // toggle
+}
+
+void MainWindow::on_actionDeleteAllMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->deleteAllMeasures();
+}
+
+void MainWindow::on_actionDeleteSelectedMeasures_triggered()
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pSliceWidget->pGLWidget->deleteSelectedMeasures();
 }
 
 /*******************************************************************************
@@ -353,18 +352,6 @@ void MainWindow::filesLoaded(void)
                 " files were loaded succesfully.");
 }
 
-void MainWindow::on_actionDeleteAllMeasures_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->deleteAllMeasures();
-}
-
-void MainWindow::on_actionDeleteSelectedMeasures_triggered()
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pSliceWidget->pGLWidget->deleteSelectedMeasures();
-}
-
 void MainWindow::gotoSlice(const Slice *pSlice)
 {
     qDebug() << Q_FUNC_INFO;
@@ -406,6 +393,28 @@ void MainWindow::connectSignals(void) const
             this, SLOT(updateStatusBarForSlice(int)));
     connect(this->pSliceWidget, SIGNAL(backToGridWidget()),
             this, SLOT(backToGridWidget()));
+}
+
+/*******************************************************************************
+ *                              ALIGNMENT GROUPS
+ ******************************************************************************/
+void MainWindow::setupAlignmentGroups(void)
+{
+    /* Alignment groups (i.e., mutually exlusive checkable menu items) */
+    /* Window/Width menu items (bone, head, lung, mediastinum, etc) */
+    QActionGroup *pAlGroupWindowLevel = new QActionGroup(this);
+    Q_ASSERT(pAlGroupWindowLevel);
+    pAlGroupWindowLevel->addAction(ui->actionAbdomen);
+    pAlGroupWindowLevel->addAction(ui->actionBone);
+    pAlGroupWindowLevel->addAction(ui->actionHead);
+    pAlGroupWindowLevel->addAction(ui->actionLung);
+    pAlGroupWindowLevel->addAction(ui->actionMediastinum);
+
+    /* Flip horizontally/vertically */
+    QActionGroup *pAlGroupFlip = new QActionGroup(this);
+    Q_ASSERT(pAlGroupFlip);
+    pAlGroupFlip->addAction(ui->actionFlip_Horizontally);
+    pAlGroupFlip->addAction(ui->actionFlip_Vertically);
 }
 
 void MainWindow::backToGridWidget(void) const

@@ -99,7 +99,9 @@ private:
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;
 
+    /* Setup the gui */
     void connectSignals(void) const;
+    void setupAlignmentGroups(void);
 };
 
 #endif // MAINWINDOW_H
