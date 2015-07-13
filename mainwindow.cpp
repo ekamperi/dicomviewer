@@ -9,7 +9,7 @@
 #include "include/workers/loaddicomworker.h"
 #include "mainwindow.h"
 #include "include/widgets/myglwidget.h"
-#include "include/widgets/myimagewidget.h"
+#include "include/widgets/imagewidget.h"
 #include "include/widgets/patientexplorerwidget.h"
 #include "ui_mainwindow.h"
 

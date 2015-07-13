@@ -16,8 +16,8 @@ SOURCES += \
     helpers/huconverter.cpp \
     helpers/mymath.cpp \
     widgets/gridwidget.cpp \
+    widgets/imagewidget.cpp \
     widgets/myglwidget.cpp \
-    widgets/myimagewidget.cpp \
     widgets/patientexplorerwidget.cpp \
     widgets/slicewidget.cpp \
     widgets/startupmenu.cpp \
@@ -43,8 +43,8 @@ HEADERS  += \
     include/helpers/huconverter.h \
     include/helpers/mymath.h \
     include/widgets/gridwidget.h \
+    include/widgets/imagewidget.h \
     include/widgets/myglwidget.h \
-    include/widgets/myimagewidget.h \
     include/widgets/patientexplorerwidget.h \
     include/widgets/slicewidget.h \
     include/widgets/startupmenu.h \

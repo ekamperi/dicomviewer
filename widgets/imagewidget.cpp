@@ -1,4 +1,4 @@
-#include "include/widgets/myimagewidget.h"
+#include "include/widgets/imagewidget.h"
 #include "include/helpers/mymath.h"
 #include "slice.h"
 

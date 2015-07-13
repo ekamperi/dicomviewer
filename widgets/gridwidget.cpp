@@ -1,5 +1,5 @@
 #include "include/widgets/gridwidget.h"
-#include "include/widgets/myimagewidget.h"
+#include "include/widgets/imagewidget.h"
 
 #include <QApplication>
 #include <QDebug>

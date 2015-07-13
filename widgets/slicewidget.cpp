@@ -1,5 +1,5 @@
 #include "include/widgets/slicewidget.h"
-#include "include/widgets/myimagewidget.h"
+#include "include/widgets/imagewidget.h"
 
 SliceWidget::SliceWidget(QVector<Slice *> *pVecSlices, QWidget *parent) : QWidget(parent)
 {
