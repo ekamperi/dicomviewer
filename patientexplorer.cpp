@@ -30,22 +30,26 @@ void PatientExplorer::doScan(void)
     /* Iterate RECURSIVELY over all files in a directory */
     QDirIterator it(path, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     unsigned int scannedFiles = 0;
+    unsigned int parsedFiles = 0;
     while (it.hasNext() && !this->abort) {
-        this->extract(it.next());
         ++scannedFiles;
+        bool wasParsed = this->extract(it.next());
+        if (wasParsed) {
+            ++parsedFiles;
+        }
         /* Every now and then emit a signal to update the progress bar, if any */
-        if (scannedFiles > 500) {
-            emit this->reportProgress(scannedFiles);
+        if (scannedFiles % 500 == 0) {
+            emit this->reportProgress(scannedFiles, parsedFiles);
         }
     }
 
-    emit this->reportProgress(scannedFiles);
+    emit this->reportProgress(scannedFiles, parsedFiles);
 
     /* Clear it or it will become sticky and affect subsequent scans */
     this->abort = false;
 }
 
-void PatientExplorer::extract(QString path)
+bool PatientExplorer::extract(QString path)
 {
     qDebug() << Q_FUNC_INFO << "path =" << path;
 
@@ -53,15 +57,15 @@ void PatientExplorer::extract(QString path)
     DcmFileFormat dcmFile;
     OFCondition status = dcmFile.loadFile(path.toStdString().c_str());
     if (!status.good()) {
-        qDebug() << "Unable to load DICOM file:" << status.text();
-        return;
+        /* Most likely, this is *not* a dicom file, so just skip it */
+        return false;
     }
 
     /* Get pointer to dataset */
     DcmDataset *pDcmDataset = dcmFile.getDataset();
     if (!pDcmDataset) {
         qDebug() << "pDcmDataset is null";
-        return;
+        return false;
     }
 
     /* Patient > Study > Series */
@@ -86,6 +90,9 @@ void PatientExplorer::extract(QString path)
     this->myMap[patient][study][series] = path;
 
     delete[] res;
+
+    /* True means that this was a dicom file and it was parsed succesfully */
+    return true;
 }
 
 QList<Patient> PatientExplorer::getPatients(void) const

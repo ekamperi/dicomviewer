@@ -34,11 +34,14 @@ private slots:
 
     /* This is triggered when then FindDicomWorker is finished */
     void filesScanned();
-    void readProgress(unsigned int scannedFiles);
+    void readProgress(unsigned int scannedFiles, unsigned int parsedFiles);
     void progressDialogCanceled();
 
 
+    void on_editPath_returnPressed();
+
 private:
+    void doScan(QString dir);
     QTreeWidgetItem *addTreeRoot(const void *obj, int type);
     QTreeWidgetItem *addTreeChild(QTreeWidgetItem *parent, const void *obj, int type);
     PatientExplorer *pPatientExplorer;

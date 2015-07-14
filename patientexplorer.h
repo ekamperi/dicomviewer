@@ -38,10 +38,10 @@ public:
     void abortScanning(void);
 
 signals:
-    void reportProgress(unsigned int scannedFiles);
+    void reportProgress(unsigned int scannedFiles, unsigned int parsedFiles);
 
 private:
-    void extract(QString path);
+    bool extract(QString path);
 
     QString path;
     bool abort;

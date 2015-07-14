@@ -22,8 +22,8 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     /* Create a patient explorer object that will do the actuall scanning */
     this->pPatientExplorer = new PatientExplorer();
     Q_ASSERT(this->pPatientExplorer);
-    connect(this->pPatientExplorer, SIGNAL(reportProgress(uint)),
-            this, SLOT(readProgress(uint)));
+    connect(this->pPatientExplorer, SIGNAL(reportProgress(unsigned int, unsigned int)),
+            this, SLOT(readProgress(unsigned int, unsigned int)));
 
     /* We want to be notified when item selection changes */
     connect(ui->treePatients, SIGNAL(itemSelectionChanged()),
@@ -73,11 +73,35 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
         return;
     }
 
+    /* Update the edit text with the path */
     ui->editPath->setText(dir);
+
+    /* Do the actual scan */
+    this->doScan(dir);
+}
+
+void PatientExplorerWidget::doScan(QString dir)
+{
+    /* Show a progress dialog */
+    this->progressDialog = new QProgressDialog(
+                "This may take a while...", "Abort operation", 0, 0, this);
+    Q_ASSERT(this->progressDialog);
+
+    /* Make the width of the dialog fixed, otherwise it will resize like crazy
+     * while the scanned files increase (in order to accomodate the text).
+    */
+    this->progressDialog->setFixedWidth(500);
+
+    this->progressDialog->setWindowTitle("Scanning for DICOM files");
+    this->progressDialog->setWindowModality(Qt::WindowModal);
+    connect(this->progressDialog, SIGNAL(canceled()),
+            this, SLOT(progressDialogCanceled()));
+    this->progressDialog->show();
 
     /*
      * The actual scanning shall go to its own thread, so that it doesn't
-       block the main GUI thread.
+     * block the main GUI thread. The PatientExplorer object is responsible
+     * for that.
     */
     this->pPatientExplorer->setPath(dir);
 
@@ -88,16 +112,6 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
             findDicomThread, SLOT(deleteLater()));
     connect(findDicomThread, SIGNAL(finished()),
             this, SLOT(filesScanned()));
-
-    /* Show a progress dialog */
-    this->progressDialog = new QProgressDialog(
-                "This may take a while...", "Abort operation", 0, 0, this);
-    Q_ASSERT(this->progressDialog);
-    this->progressDialog->setWindowTitle("Scanning for DICOM files");
-    this->progressDialog->setWindowModality(Qt::WindowModal);
-    connect(this->progressDialog, SIGNAL(canceled()),
-            this, SLOT(progressDialogCanceled()));
-    this->progressDialog->show();
 
     /* Fire off the worker thread! (it doesn't block) */
     findDicomThread->start();
@@ -195,12 +209,15 @@ void PatientExplorerWidget::filesScanned()
     ui->lblStatusBar->setText(newText);
 }
 
-void PatientExplorerWidget::readProgress(unsigned int scannedFiles)
+void PatientExplorerWidget::readProgress(unsigned int scannedFiles,
+                                         unsigned int parsedFiles)
 {
     qDebug() << Q_FUNC_INFO;
 
     if (!this->progressDialog->wasCanceled()) {
-        QString newString = QString("This may take a while... (%1 found)").arg(scannedFiles);
+        QString newString =
+                QString("This may take a while... (%1 found out of %2 scanned)").arg(
+                    parsedFiles).arg(scannedFiles);
         this->progressDialog->setLabelText(newString);
     }
 }
@@ -238,5 +255,13 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
         default:
            qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
         }
+    }
+}
+
+void PatientExplorerWidget::on_editPath_returnPressed()
+{
+    QString path = ui->editPath->text();
+    if (path.size() > 0) {
+        this->doScan(ui->editPath->text());
     }
 }

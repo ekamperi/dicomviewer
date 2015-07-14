@@ -280,6 +280,7 @@ void MainWindow::on_actionOpen_patient_explorer_triggered()
 {
     qDebug() << Q_FUNC_INFO;
     PatientExplorerWidget *pew = new PatientExplorerWidget();
+    Q_ASSERT(pew);
     pew->show();
 }
 
