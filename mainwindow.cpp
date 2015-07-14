@@ -281,6 +281,16 @@ void MainWindow::on_actionOpen_patient_explorer_triggered()
     qDebug() << Q_FUNC_INFO;
     PatientExplorerWidget *pew = new PatientExplorerWidget();
     Q_ASSERT(pew);
+
+    /* For some reason in Ubuntu Linux the patient explorer widget is shown
+     * outside and far away from main window, which is very annoying. Try to
+     * center it. XXX: Check how this code affects Windows/Mac OSX and other
+     * Linux distributions.
+    */
+    pew->move(
+        this->frameGeometry().topLeft() +
+        this->rect().center() - pew->rect().center());
+
     pew->show();
 }
 
