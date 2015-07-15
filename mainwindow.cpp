@@ -8,7 +8,6 @@
 #include "dicomfile.h"
 #include "include/workers/loaddicomworker.h"
 #include "mainwindow.h"
-#include "include/widgets/myglwidget.h"
 #include "include/widgets/imagewidget.h"
 #include "include/widgets/patientexplorerwidget.h"
 #include "ui_mainwindow.h"
@@ -29,10 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     /* Create the various widgets and populate the stacked widget (the stacked
      * widget will only show 1 widget at a time */
-    this->gridWidget = new GridWidget;
+    this->pWSWidget = new WorkspaceWidget;
     this->pSliceWidget = new SliceWidget(&this->vecSlices);
     this->pStartupMenu = new StartupMenu;
-    ui->stackedWidget->addWidget(this->gridWidget);
+    ui->stackedWidget->addWidget(this->pWSWidget);
     ui->stackedWidget->addWidget(this->pSliceWidget);
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
@@ -66,7 +65,7 @@ MainWindow::~MainWindow()
      * be destroyed!
      */
     delete ui;
-    delete this->gridWidget;
+    delete this->pWSWidget;
     delete this->pSliceWidget;
 
     /* Deregister decompression codecs */
@@ -103,7 +102,7 @@ void MainWindow::on_actionClose_triggered()
 {
     /* Check whether we are returning from full screen */
     if (ui->stackedWidget->currentWidget() == this->pSliceWidget) {
-        ui->stackedWidget->setCurrentWidget(this->gridWidget);
+        ui->stackedWidget->setCurrentWidget(this->pWSWidget);
     } else {
         // XXX: cleanup
         ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
@@ -350,8 +349,8 @@ void MainWindow::filesLoaded(void)
     }
 
     /* Create a grid with the slices as thumbnail images */
-    this->gridWidget->addSlices(this->vecSlices);
-    ui->stackedWidget->setCurrentWidget(gridWidget);
+    //XXXthis->gridWidget->addSlices(this->vecSlices);
+    ui->stackedWidget->setCurrentWidget(this->pWSWidget);
 
     /* Load the slices to gpu (XXX: this could be done upon double clicking the thumbnail) */
     this->pSliceWidget->pGLWidget->loadSlices(this->vecSlices);
@@ -390,14 +389,14 @@ void MainWindow::connectSignals(void) const
             this, SLOT(on_actionOpen_patient_explorer_triggered()));
 
     /* Connect signals from the grid widget to the main window */
-    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
-            this, SLOT(gotoSlice(const Slice *)));
-    connect(this, SIGNAL(windowChanged(HUWindows::window)),
-            this->gridWidget, SLOT(changeWindow(HUWindows::window)));
-    connect(this->gridWidget, SIGNAL(heavyTaskInitiated()),
-            this, SLOT(displayWaitCursor()));
-    connect(this->gridWidget, SIGNAL(heavyTaskCompleted()),
-            this, SLOT(displayArrowCursor()));
+//XXX    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
+//            this, SLOT(gotoSlice(const Slice *)));
+//    connect(this, SIGNAL(windowChanged(HUWindows::window)),
+//            this->gridWidget, SLOT(changeWindow(HUWindows::window)));
+//    connect(this->gridWidget, SIGNAL(heavyTaskInitiated()),
+//            this, SLOT(displayWaitCursor()));
+//    connect(this->gridWidget, SIGNAL(heavyTaskCompleted()),
+//            this, SLOT(displayArrowCursor()));
 
     /* Connect signals from the slice widget to the main window */
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
@@ -432,7 +431,7 @@ void MainWindow::backToGridWidget(void) const
 {
     qDebug() << Q_FUNC_INFO;
 
-    ui->stackedWidget->setCurrentWidget(this->gridWidget);
+    ui->stackedWidget->setCurrentWidget(this->pWSWidget);
 }
 
 void MainWindow::displayWaitCursor(void)

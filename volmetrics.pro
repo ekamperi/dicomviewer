@@ -22,6 +22,7 @@ SOURCES += \
     widgets/slicewidget.cpp \
     widgets/startupmenu.cpp \
     widgets/topogram.cpp \
+    widgets/workspacewidget.cpp \
     workers/finddicomworker.cpp \
     workers/loaddicomworker.cpp \
     denscircle.cpp \
@@ -49,6 +50,7 @@ HEADERS  += \
     include/widgets/slicewidget.h \
     include/widgets/startupmenu.h \
     include/widgets/topogram.h \
+    include/widgets/workspacewidget.h \
     include/workers/finddicomworker.h \
     include/workers/loaddicomworker.h \
     denscircle.h \
@@ -76,10 +78,10 @@ unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
 -ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm \
 -lgomp -lpthread
 
-CONFIG += debug
-#CONFIG  += qt warn_off release
-#DEFINES += QT_NO_DEBUG_OUTPUT
-#DEFINES += QT_NO_DEBUG
+#CONFIG += debug
+CONFIG  += qt warn_off release
+DEFINES += QT_NO_DEBUG_OUTPUT
+DEFINES += QT_NO_DEBUG
 
 INCLUDEPATH+=/usr/include/ImageMagick
 

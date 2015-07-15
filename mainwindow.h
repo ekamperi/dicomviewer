@@ -8,11 +8,11 @@
 #include <QProgressDialog>
 
 #include "flowlayout.h"
-#include "include/widgets/gridwidget.h"
 #include "include/workers/loaddicomworker.h"
 #include "include/widgets/myglwidget.h"
 #include "include/widgets/startupmenu.h"
 #include "include/widgets/slicewidget.h"
+#include "include/widgets/workspacewidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -92,7 +92,7 @@ private:
     /* This container widget contains the grid layout and is in turn put
      * into the scroll area. QScrollarea needs a QWidget.
      */
-    GridWidget *gridWidget;
+    WorkspaceWidget *pWSWidget;
     SliceWidget *pSliceWidget;
     StartupMenu *pStartupMenu;
 
