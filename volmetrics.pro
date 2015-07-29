@@ -78,10 +78,10 @@ unix|win32: LIBS += -ldcmdata -lofstd -ldcmimage -ldcmimgle -ldcmjpeg \
 -ljpeg -lpng12 -lwmflite -lXext -lSM -lICE -lX11 -llzma -lbz2 -lxml2 -lz -lm \
 -lgomp -lpthread
 
-#CONFIG += debug
-CONFIG  += qt warn_off release
-DEFINES += QT_NO_DEBUG_OUTPUT
-DEFINES += QT_NO_DEBUG
+CONFIG += debug
+#CONFIG  += qt warn_off release
+#DEFINES += QT_NO_DEBUG_OUTPUT
+#DEFINES += QT_NO_DEBUG
 
 INCLUDEPATH+=/usr/include/ImageMagick
 

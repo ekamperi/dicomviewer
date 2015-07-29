@@ -10,6 +10,7 @@
 #include "flowlayout.h"
 #include "include/workers/loaddicomworker.h"
 #include "include/widgets/myglwidget.h"
+#include "include/widgets/patientexplorerwidget.h"
 #include "include/widgets/startupmenu.h"
 #include "include/widgets/slicewidget.h"
 #include "include/widgets/workspacewidget.h"
@@ -28,6 +29,7 @@ public:
 
 signals:
     void windowChanged(HUWindows::window newWindow);
+    void patientSelected(QTreeWidget *pTreeWidget);
 
 private slots:
     void on_actionAbout_triggered();
@@ -95,6 +97,10 @@ private:
     WorkspaceWidget *pWSWidget;
     SliceWidget *pSliceWidget;
     StartupMenu *pStartupMenu;
+
+    /* The patient explorer widget is used to discover dicom files and
+     * build the patients > image studies > image series hierarchy */
+    PatientExplorerWidget *pExplorerWidget;
 
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;

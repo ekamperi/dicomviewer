@@ -9,7 +9,6 @@
 #include "include/workers/loaddicomworker.h"
 #include "mainwindow.h"
 #include "include/widgets/imagewidget.h"
-#include "include/widgets/patientexplorerwidget.h"
 #include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */
@@ -35,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(this->pSliceWidget);
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
+
+    this->pExplorerWidget = new PatientExplorerWidget();
+    Q_ASSERT(this->pExplorerWidget);
 
     /* Guess what this does :) */
     this->connectSignals();
@@ -67,6 +69,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete this->pWSWidget;
     delete this->pSliceWidget;
+    delete this->pExplorerWidget;
 
     /* Deregister decompression codecs */
     DcmRLEDecoderRegistration::cleanup();
@@ -278,19 +281,17 @@ void MainWindow::on_actionOpen_DICOM_dir_triggered()
 void MainWindow::on_actionOpen_patient_explorer_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    PatientExplorerWidget *pew = new PatientExplorerWidget();
-    Q_ASSERT(pew);
 
     /* For some reason in Ubuntu Linux the patient explorer widget is shown
      * outside and far away from main window, which is very annoying. Try to
      * center it. XXX: Check how this code affects Windows/Mac OSX and other
      * Linux distributions.
     */
-    pew->move(
+    this->pExplorerWidget->move(
         this->frameGeometry().topLeft() +
-        this->rect().center() - pew->rect().center());
+        this->rect().center() - this->pExplorerWidget->rect().center());
 
-    pew->show();
+    this->pExplorerWidget->show();
 }
 
 void MainWindow::loadDicomFiles(QStringList fileNames)
@@ -403,6 +404,13 @@ void MainWindow::connectSignals(void) const
             this, SLOT(updateStatusBarForSlice(int)));
     connect(this->pSliceWidget, SIGNAL(backToGridWidget()),
             this, SLOT(backToGridWidget()));
+
+    /* Connect signals from the patient explorer widget to the main window */
+    connect(this->pExplorerWidget, SIGNAL(loadPatient(QTreeWidget*)),
+            this->pWSWidget, SLOT(loadPatient(QTreeWidget*)));
+    connect(this->pExplorerWidget, SIGNAL(loadPatient(QTreeWidget*)),
+            this, SLOT(backToGridWidget()));
+
 }
 
 /*******************************************************************************

@@ -26,19 +26,21 @@ public:
     ~PatientExplorerWidget();
 
 protected:
-    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);    
+
+signals:
+    void loadPatient(QTreeWidget *pTreeWidget);
 
 private slots:
     void on_btnBrowse_clicked();
     void on_itemSelectionChanged(void);
+    void on_itemClicked(QTreeWidgetItem*,int);
+    void on_editPath_returnPressed();
 
-    /* This is triggered when then FindDicomWorker is finished */
+    /* This is triggered when the FindDicomWorker is finished */
     void filesScanned();
     void readProgress(unsigned int scannedFiles, unsigned int parsedFiles);
     void progressDialogCanceled();
-
-
-    void on_editPath_returnPressed();
 
 private:
     void doScan(QString dir);

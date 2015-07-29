@@ -28,6 +28,9 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     /* We want to be notified when item selection changes */
     connect(ui->treePatients, SIGNAL(itemSelectionChanged()),
             this, SLOT(on_itemSelectionChanged()));
+
+    connect(ui->treePatients, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
+            this, SLOT(on_itemClicked(QTreeWidgetItem*,int)));
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
@@ -256,6 +259,12 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
            qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
         }
     }
+}
+
+void PatientExplorerWidget::on_itemClicked(QTreeWidgetItem *pTreeItem, int col)
+{
+    qDebug() << Q_FUNC_INFO << pTreeItem->text(0);
+    emit this->loadPatient(ui->treePatients);
 }
 
 void PatientExplorerWidget::on_editPath_returnPressed()
