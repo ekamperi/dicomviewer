@@ -401,14 +401,14 @@ void MainWindow::connectSignals(void) const
             this, SLOT(on_actionOpen_patient_explorer_triggered()));
 
     /* Connect signals from the grid widget to the main window */
-//XXX    connect(this->gridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
-//            this, SLOT(gotoSlice(const Slice *)));
-//    connect(this, SIGNAL(windowChanged(HUWindows::window)),
-//            this->gridWidget, SLOT(changeWindow(HUWindows::window)));
-//    connect(this->gridWidget, SIGNAL(heavyTaskInitiated()),
-//            this, SLOT(displayWaitCursor()));
-//    connect(this->gridWidget, SIGNAL(heavyTaskCompleted()),
-//            this, SLOT(displayArrowCursor()));
+    connect(this->pGridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
+            this, SLOT(gotoSlice(const Slice *)));
+    connect(this, SIGNAL(windowChanged(HUWindows::window)),
+            this->pGridWidget, SLOT(changeWindow(HUWindows::window)));
+    connect(this->pGridWidget, SIGNAL(heavyTaskInitiated()),
+            this, SLOT(displayWaitCursor()));
+    connect(this->pGridWidget, SIGNAL(heavyTaskCompleted()),
+            this, SLOT(displayArrowCursor()));
 
     /* Connect signals from the slice widget to the main window */
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
