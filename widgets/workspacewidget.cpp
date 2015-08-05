@@ -11,7 +11,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget *parent) :
     Q_ASSERT(this->pHLayout);
 }
 
-void WorkspaceWidget::loadPatient(QTreeWidget *pTreeWidget)
+void WorkspaceWidget::loadSeries(const Series &series)
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -21,14 +21,13 @@ void WorkspaceWidget::loadPatient(QTreeWidget *pTreeWidget)
 
     /* Set the stretch factors */
     this->pHLayout->setStretchFactor(pGridWidget, 50);
-    this->pHLayout->setStretchFactor(pTreeWidget, 15);
-    pTreeWidget->setMaximumWidth(250);
+    //this->pHLayout->setStretchFactor(pTreeWidget, 15);
+    //pTreeWidget->setMaximumWidth(250);
 
     /* Populate the layout with widgets */
-    this->pHLayout->addWidget(pTreeWidget);
+    //this->pHLayout->addWidget(pTreeWidget);
     this->pHLayout->addWidget(pGridWidget);
 
     /* Ready! */
     this->setLayout(pHLayout);
-
 }

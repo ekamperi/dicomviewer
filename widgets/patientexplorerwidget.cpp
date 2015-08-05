@@ -29,8 +29,9 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     connect(ui->treePatients, SIGNAL(itemSelectionChanged()),
             this, SLOT(on_itemSelectionChanged()));
 
-    connect(ui->treePatients, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
-            this, SLOT(on_itemClicked(QTreeWidgetItem*,int)));
+    /* We want to be notified when user clicks on a patient image series */
+    connect(ui->treePatients, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            this, SLOT(on_itemDoubleClicked(QTreeWidgetItem*,int)));
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
@@ -261,10 +262,22 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
     }
 }
 
-void PatientExplorerWidget::on_itemClicked(QTreeWidgetItem *pTreeItem, int col)
+void PatientExplorerWidget::on_itemDoubleClicked(QTreeWidgetItem *pTreeItem, int col)
 {
+    Q_ASSERT(pTreeItem);
     qDebug() << Q_FUNC_INFO << pTreeItem->text(0);
-    emit this->loadPatient(ui->treePatients);
+
+    /* We only switch to work space when user clicks on an image series */
+    Patient patient;
+    Study study;
+    Series series;
+    if (pTreeItem && pTreeItem->type() == TypeSeries) {
+        series = pTreeItem->data(0, Qt::UserRole).value<Series>();
+        study = pTreeItem->parent()->data(0, Qt::UserRole).value<Study>();
+        patient = pTreeItem->parent()->parent()->data(0, Qt::UserRole).value<Patient>();
+
+        emit this->loadSeries(this->pPatientExplorer->getMap()[patient][study]);
+    }
 }
 
 void PatientExplorerWidget::on_editPath_returnPressed()

@@ -75,7 +75,7 @@ void DicomFile::loadDicomFile(QString filename)
      */
     OFString ofsPixelSpacing;
     status = this->pDcmDataset->findAndGetOFStringArray(DCM_PixelSpacing, ofsPixelSpacing);
-    Q_ASSERT(status.good());
+    // XXX Q_ASSERT(status.good());
 
     /* The values are delimited with an '\' */
     char delim;

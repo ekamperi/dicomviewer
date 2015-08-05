@@ -27,10 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     /* Create the various widgets and populate the stacked widget (the stacked
      * widget will only show 1 widget at a time */
-    this->pWSWidget = new WorkspaceWidget;
+    this->pGridWidget = new GridWidget;
     this->pSliceWidget = new SliceWidget(&this->vecSlices);
     this->pStartupMenu = new StartupMenu;
-    ui->stackedWidget->addWidget(this->pWSWidget);
+    ui->stackedWidget->addWidget(this->pGridWidget);
     ui->stackedWidget->addWidget(this->pSliceWidget);
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
@@ -67,7 +67,7 @@ MainWindow::~MainWindow()
      * be destroyed!
      */
     delete ui;
-    delete this->pWSWidget;
+    delete this->pGridWidget;
     delete this->pSliceWidget;
     delete this->pExplorerWidget;
 
@@ -105,7 +105,7 @@ void MainWindow::on_actionClose_triggered()
 {
     /* Check whether we are returning from full screen */
     if (ui->stackedWidget->currentWidget() == this->pSliceWidget) {
-        ui->stackedWidget->setCurrentWidget(this->pWSWidget);
+        ui->stackedWidget->setCurrentWidget(this->pGridWidget);
     } else {
         // XXX: cleanup
         ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
@@ -361,8 +361,8 @@ void MainWindow::filesLoaded(void)
     }
 
     /* Create a grid with the slices as thumbnail images */
-    //XXXthis->gridWidget->addSlices(this->vecSlices);
-    ui->stackedWidget->setCurrentWidget(this->pWSWidget);
+    this->pGridWidget->addSlices(this->vecSlices);
+    ui->stackedWidget->setCurrentWidget(this->pGridWidget);
 
     /* Load the slices to gpu (XXX: this could be done upon double clicking the thumbnail) */
     this->pSliceWidget->pGLWidget->loadSlices(this->vecSlices);
@@ -417,11 +417,10 @@ void MainWindow::connectSignals(void) const
             this, SLOT(backToGridWidget()));
 
     /* Connect signals from the patient explorer widget to the main window */
-    connect(this->pExplorerWidget, SIGNAL(loadPatient(QTreeWidget*)),
-            this->pWSWidget, SLOT(loadPatient(QTreeWidget*)));
-    connect(this->pExplorerWidget, SIGNAL(loadPatient(QTreeWidget*)),
+    connect(this->pExplorerWidget, SIGNAL(loadSeries(const SeriesMap &)),
+            this, SLOT(loadSeries(const SeriesMap &)));
+    connect(this->pExplorerWidget, SIGNAL(loadSeries(const SeriesMap &)),
             this, SLOT(backToGridWidget()));
-
 }
 
 /*******************************************************************************
@@ -450,7 +449,7 @@ void MainWindow::backToGridWidget(void) const
 {
     qDebug() << Q_FUNC_INFO;
 
-    ui->stackedWidget->setCurrentWidget(this->pWSWidget);
+    ui->stackedWidget->setCurrentWidget(this->pGridWidget);
 }
 
 void MainWindow::displayWaitCursor(void)
@@ -461,4 +460,12 @@ void MainWindow::displayWaitCursor(void)
 void MainWindow::displayArrowCursor(void)
 {
     this->setCursor(Qt::ArrowCursor);
+}
+
+void MainWindow::loadSeries(const SeriesMap &seriesMap)
+{
+    qDebug() << Q_FUNC_INFO;
+    QStringList sl = QStringList(seriesMap.values());
+    sl.sort(Qt::CaseSensitive);
+    this->loadDicomFiles(sl);
 }

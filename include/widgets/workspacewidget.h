@@ -5,6 +5,8 @@
 #include <QHBoxLayout>
 #include <QTreeWidget>
 
+#include "series.h"
+
 class WorkspaceWidget : public QWidget
 {
     Q_OBJECT
@@ -17,7 +19,7 @@ private:
 signals:
 
 public slots:
-    void loadPatient(QTreeWidget *pTreeWidget);
+    void loadSeries(const Series &series);
 };
 
 #endif // WORKSPACEWIDGET_H

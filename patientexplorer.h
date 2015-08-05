@@ -2,6 +2,8 @@
 #define PATIENTEXPLORER_H
 
 #include <QMap>
+#include <QMultiMap>
+#include <QTreeWidgetItem>
 #include <QString>
 #include <QVector>
 #include <QObject>
@@ -17,8 +19,9 @@
 #include "dcmtk/dcmdata/dctk.h"
 
 /* <Patient Name, <Study, <Series, File>>> */
-typedef QMap<Study, QMap<Series, QString> >  StudyMap;
-typedef QMap<Series, QString> SeriesMap;
+typedef QMap<Patient, QMap<Study, QMultiMap<Series, QString> > > PatientMap;
+typedef QMap<Study, QMultiMap<Series, QString> >  StudyMap;
+typedef QMultiMap<Series, QString> SeriesMap;
 
 class PatientExplorer : public QObject
 {
@@ -35,6 +38,9 @@ public:
     QList<Series> getSeries(const Patient &patient, const Study &study) const;
     int getNumberOfImages(const Patient &patient, const Study &study, const Series &series) const;
 
+    // XXX: Temp hack
+    PatientMap getMap(void) const { return this->myMap; }
+
     void abortScanning(void);
 
 signals:
@@ -47,7 +53,7 @@ private:
     bool abort;
 
     /* <Patient, <Study, <Series, Path>>> */
-    QMap<Patient, QMap<Study, QMap<Series, QString> > > myMap;
+    QMap<Patient, QMap<Study, QMultiMap<Series, QString> > > myMap;
 };
 
 #endif // PATIENTEXPLORER_H

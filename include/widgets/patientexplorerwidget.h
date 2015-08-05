@@ -29,12 +29,12 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);    
 
 signals:
-    void loadPatient(QTreeWidget *pTreeWidget);
+    void loadSeries(const SeriesMap &series);
 
 private slots:
     void on_btnBrowse_clicked();
     void on_itemSelectionChanged(void);
-    void on_itemClicked(QTreeWidgetItem*,int);
+    void on_itemDoubleClicked(QTreeWidgetItem *, int);
     void on_editPath_returnPressed();
 
     /* This is triggered when the FindDicomWorker is finished */
