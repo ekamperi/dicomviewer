@@ -41,7 +41,7 @@ private slots:
     void filesLoaded();
     void gotoSlice(const Slice *pSlice);
     void updateStatusBarForSlice(int idx) const;
-    void loadSeries(const SeriesMap &);
+    void loadSeries(const QList<QString> &);
     void backToGridWidget(void) const;
     void displayWaitCursor(void);
     void displayArrowCursor(void);

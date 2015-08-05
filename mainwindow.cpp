@@ -417,9 +417,9 @@ void MainWindow::connectSignals(void) const
             this, SLOT(backToGridWidget()));
 
     /* Connect signals from the patient explorer widget to the main window */
-    connect(this->pExplorerWidget, SIGNAL(loadSeries(const SeriesMap &)),
-            this, SLOT(loadSeries(const SeriesMap &)));
-    connect(this->pExplorerWidget, SIGNAL(loadSeries(const SeriesMap &)),
+    connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
+            this, SLOT(loadSeries(const QList<QString> &)));
+    connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
             this, SLOT(backToGridWidget()));
 }
 
@@ -462,10 +462,9 @@ void MainWindow::displayArrowCursor(void)
     this->setCursor(Qt::ArrowCursor);
 }
 
-void MainWindow::loadSeries(const SeriesMap &seriesMap)
+void MainWindow::loadSeries(const QList<QString> &files)
 {
     qDebug() << Q_FUNC_INFO;
-    QStringList sl = QStringList(seriesMap.values());
-    sl.sort(Qt::CaseSensitive);
-    this->loadDicomFiles(sl);
+
+    this->loadDicomFiles(files);
 }

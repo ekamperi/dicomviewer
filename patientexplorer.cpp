@@ -87,7 +87,7 @@ bool PatientExplorer::extract(QString path)
     Patient patient(res[0]);
     Study   study(res[1], res[2], res[3], res[4]);
     Series series(res[5], res[6], res[7], res[8]);
-    this->myMap[patient][study].insertMulti(series, path);
+    this->myMap[patient][study][series].push_back(path);
 
     delete[] res;
 
@@ -124,13 +124,14 @@ QList<Series> PatientExplorer::getSeries(const Patient &patient, const Study &st
     qDebug() << Q_FUNC_INFO;
 
     SeriesMap mySeriesMap = this->myMap[patient][study];
-    return mySeriesMap.uniqueKeys();
+    return mySeriesMap.keys();  // if series is a multi map, use uniqueKeys()
 }
 
 int PatientExplorer::getNumberOfImages(const Patient &patient, const Study &study, const Series &series) const
 {
     qDebug() << Q_FUNC_INFO;
-    return 0; // XXX
+
+    return this->myMap[patient][study][series].size();
 }
 
 void PatientExplorer::abortScanning(void)

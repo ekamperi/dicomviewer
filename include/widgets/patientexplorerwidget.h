@@ -29,7 +29,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);    
 
 signals:
-    void loadSeries(const SeriesMap &series);
+    void loadSeries(const QList<QString> &);
 
 private slots:
     void on_btnBrowse_clicked();

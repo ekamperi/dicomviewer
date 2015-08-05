@@ -276,7 +276,10 @@ void PatientExplorerWidget::on_itemDoubleClicked(QTreeWidgetItem *pTreeItem, int
         study = pTreeItem->parent()->data(0, Qt::UserRole).value<Study>();
         patient = pTreeItem->parent()->parent()->data(0, Qt::UserRole).value<Patient>();
 
-        emit this->loadSeries(this->pPatientExplorer->getMap()[patient][study]);
+        QList<QString> fileList = this->pPatientExplorer->getMap()[patient][study][series];
+        QStringList sortedFileList = QStringList(fileList);
+        sortedFileList.sort(Qt::CaseInsensitive);    // XXX
+        emit this->loadSeries(sortedFileList);
     }
 }
 
