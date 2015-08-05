@@ -282,16 +282,27 @@ void MainWindow::on_actionOpen_patient_explorer_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* QDockWidget is just a wrapper widget that allows the contained widget
+     * to be docked inside a QMainWindow or floated as a top-level window on
+     * the desktop.
+    */
+    QDockWidget *pDockWidget = new QDockWidget("Patient explorer", this);
+    Q_ASSERT(pDockWidget);
+
+    pDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    pDockWidget->setFloating(true);     // By default, float!
+    pDockWidget->setWidget(this->pExplorerWidget);
+    pDockWidget->resize(800, 480);
+    addDockWidget(Qt::LeftDockWidgetArea, pDockWidget);
+
     /* For some reason in Ubuntu Linux the patient explorer widget is shown
      * outside and far away from main window, which is very annoying. Try to
      * center it. XXX: Check how this code affects Windows/Mac OSX and other
      * Linux distributions.
     */
-    this->pExplorerWidget->move(
+    pDockWidget->move(
         this->frameGeometry().topLeft() +
-        this->rect().center() - this->pExplorerWidget->rect().center());
-
-    this->pExplorerWidget->show();
+        this->rect().center() - pDockWidget->rect().center());
 }
 
 void MainWindow::loadDicomFiles(QStringList fileNames)
