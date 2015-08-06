@@ -15,9 +15,11 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     ui->setupUi(this);
 
     /* Setup column width in the tree widget */
-    ui->treePatients->setColumnWidth(0, 400);
-    ui->treePatients->setColumnWidth(1, 150);
-    ui->treePatients->setColumnWidth(2, 150);
+    ui->treePatients->setColumnWidth(0, 350);
+    ui->treePatients->setColumnWidth(1,  70);
+    ui->treePatients->setColumnWidth(2,  30);
+    ui->treePatients->setColumnWidth(3, 150);
+    ui->treePatients->setColumnWidth(4, 150);
 
     /* Create a patient explorer object that will do the actuall scanning */
     this->pPatientExplorer = new PatientExplorer();
@@ -150,14 +152,18 @@ QTreeWidgetItem *PatientExplorerWidget::addTreeChild(QTreeWidgetItem *parent, co
     if (type == TypeStudy) {
         Study study = *(const Study *)obj;
         treeItem->setText(0, study.getDesc());
-        treeItem->setText(1, study.getDate() + " " + study.getTime());
-        treeItem->setText(2, study.getUID());
+        treeItem->setText(1, "");
+        treeItem->setText(2, "");
+        treeItem->setText(3, study.getDate() + " " + study.getTime());
+        treeItem->setText(4, study.getUID());
         treeItem->setData(0, Qt::UserRole, QVariant::fromValue(study));
     } else if (type == TypeSeries) {
         Series series = *(const Series *)obj;
         treeItem->setText(0, series.getDesc());
-        treeItem->setText(1, series.getDate() + " " + series.getTime());
-        treeItem->setText(2, series.getUID());
+        treeItem->setText(1, series.getModality());
+        treeItem->setText(2, QString::number(series.getNumOfImages()));
+        treeItem->setText(3, series.getDate() + " " + series.getTime());
+        treeItem->setText(4, series.getUID());
         treeItem->setData(0, Qt::UserRole, QVariant::fromValue(series));
     } else {
         qDebug() << "Unsupported item type (shouldn't happen)!";

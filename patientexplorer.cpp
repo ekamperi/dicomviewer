@@ -72,7 +72,8 @@ bool PatientExplorer::extract(QString path)
     DcmTagKey keys[] = {
         DCM_PatientName,
         DCM_StudyInstanceUID, DCM_StudyDescription, DCM_StudyDate, DCM_StudyTime,
-        DCM_SeriesInstanceUID, DCM_SeriesDescription, DCM_SeriesDate, DCM_SeriesTime };
+        DCM_SeriesInstanceUID, DCM_SeriesDescription, DCM_SeriesDate, DCM_SeriesTime,
+        DCM_Modality };
 
     /* Calculate size of array */
     size_t len = sizeof(keys) / sizeof(keys[0]);
@@ -81,12 +82,12 @@ bool PatientExplorer::extract(QString path)
     QString *res = new QString[len];
     for (unsigned int i = 0; i < len; i++) {
         res[i] = DicomHelper::getDcmTagKeyAsQString(pDcmDataset, keys[i]);
-   }
+    }
 
     /* Add item to map */
     Patient patient(res[0]);
     Study   study(res[1], res[2], res[3], res[4]);
-    Series series(res[5], res[6], res[7], res[8]);
+    Series series(res[5], res[6], res[7], res[8], res[9], 0);
     this->myMap[patient][study][series].push_back(path);
 
     delete[] res;
