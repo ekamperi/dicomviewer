@@ -187,7 +187,7 @@ void PatientExplorerWidget::filesScanned()
 
     /* Populate the tree widget */
     Q_ASSERT(this->pPatientExplorer);
-    const PatientExplorer &pe = *this->pPatientExplorer;   
+    const PatientExplorer &pe = *this->pPatientExplorer;
 
     QList<Patient> patients = this->pPatientExplorer->getPatients();
     for (int i = 0; i < patients.size(); i++) {
@@ -208,8 +208,13 @@ void PatientExplorerWidget::filesScanned()
         }
     }
 
-    /* Update the status bar */
+    /* If there's only one patient, expand all items */
     int nPatients = pe.getPatients().size();
+    if (nPatients == 1) {
+        ui->treePatients->expandAll();
+    }
+
+    /* Update the status bar */
     QString newText;
     if (nPatients == 1) {
         newText = "1 patient was found.";
