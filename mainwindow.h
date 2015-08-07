@@ -30,7 +30,6 @@ public:
 
 signals:
     void windowChanged(HUWindows::window newWindow);
-    void patientSelected(QTreeWidget *pTreeWidget);
 
 private slots:
     void on_actionAbout_triggered();
@@ -90,15 +89,12 @@ private:
     QVector<Slice *> vecSlices;
     void loadDicomFiles(QStringList fileNames);
 
-    /* Slices are arranged into a grid layout */
-    QVBoxLayout *pLayout;
-
     /* This container widget contains the grid layout and is in turn put
      * into the scroll area. QScrollarea needs a QWidget.
      */
+    StartupMenu *pStartupMenu;
     GridWidget *pGridWidget;
     SliceWidget *pSliceWidget;
-    StartupMenu *pStartupMenu;
 
     /* The patient explorer widget is used to discover dicom files and
      * build the patients > image studies > image series hierarchy */

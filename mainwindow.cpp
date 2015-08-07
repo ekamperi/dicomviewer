@@ -392,35 +392,51 @@ void MainWindow::connectSignals(void) const
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* Use a unique connection by default, as we may be calling this function
+     * more than once
+     */
+    const Qt::ConnectionType connType = Qt::UniqueConnection;
+
     /* Connect signals from the startup menu widget to the main window */
     connect(this->pStartupMenu, SIGNAL(openDICOM_files()),
-            this, SLOT(on_actionOpenDICOM_triggered()));
+            this, SLOT(on_actionOpenDICOM_triggered()),
+            connType);
     connect(this->pStartupMenu, SIGNAL(openDICOM_dir()),
-            this, SLOT(on_actionOpen_DICOM_dir_triggered()));
+            this, SLOT(on_actionOpen_DICOM_dir_triggered()),
+            connType);
     connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
-            this, SLOT(on_actionOpen_patient_explorer_triggered()));
+            this, SLOT(on_actionOpen_patient_explorer_triggered()),
+            connType);
 
     /* Connect signals from the grid widget to the main window */
     connect(this->pGridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
-            this, SLOT(gotoSlice(const Slice *)));
+            this, SLOT(gotoSlice(const Slice *)),
+            connType);
     connect(this, SIGNAL(windowChanged(HUWindows::window)),
-            this->pGridWidget, SLOT(changeWindow(HUWindows::window)));
+            this->pGridWidget, SLOT(changeWindow(HUWindows::window)),
+            connType);
     connect(this->pGridWidget, SIGNAL(heavyTaskInitiated()),
-            this, SLOT(displayWaitCursor()));
+            this, SLOT(displayWaitCursor()),
+            connType);
     connect(this->pGridWidget, SIGNAL(heavyTaskCompleted()),
-            this, SLOT(displayArrowCursor()));
+            this, SLOT(displayArrowCursor()),
+            connType);
 
     /* Connect signals from the slice widget to the main window */
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
-            this, SLOT(updateStatusBarForSlice(int)));
+            this, SLOT(updateStatusBarForSlice(int)),
+            connType);
     connect(this->pSliceWidget, SIGNAL(backToGridWidget()),
-            this, SLOT(backToGridWidget()));
+            this, SLOT(backToGridWidget()),
+            connType);
 
     /* Connect signals from the patient explorer widget to the main window */
     connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
-            this, SLOT(loadSeries(const QList<QString> &)));
+            this, SLOT(loadSeries(const QList<QString> &)),
+            connType);
     connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
-            this, SLOT(backToGridWidget()));
+            this, SLOT(backToGridWidget()),
+            connType);
 }
 
 /*******************************************************************************
@@ -466,5 +482,16 @@ void MainWindow::loadSeries(const QList<QString> &files)
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* Remove the old widget-case */
+    ui->stackedWidget->removeWidget(this->pGridWidget);
+    this->pGridWidget->deleteLater();
+    this->vecSlices.clear();
+
+    /* And create a new one */
+    this->pGridWidget = new GridWidget;
+    this->connectSignals();
+    ui->stackedWidget->addWidget(this->pGridWidget);
+
+    /* Load the new files */
     this->loadDicomFiles(files);
 }
