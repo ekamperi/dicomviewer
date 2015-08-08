@@ -12,6 +12,7 @@ class GridWidget : public QWidget
     Q_OBJECT
 public:
     explicit GridWidget(QWidget *parent = 0);
+    ~GridWidget(void);
     void addSlices(const QVector<Slice *> &vecSlices);
     void selectAllSlices(void);
 

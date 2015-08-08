@@ -489,6 +489,7 @@ void MainWindow::loadSeries(const QList<QString> &files)
 
     /* And create a new one */
     this->pGridWidget = new GridWidget;
+    Q_ASSERT(this->pGridWidget);
     this->connectSignals();
     ui->stackedWidget->addWidget(this->pGridWidget);
 
