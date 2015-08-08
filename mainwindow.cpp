@@ -38,12 +38,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->pExplorerWidget = new PatientExplorerWidget();
     Q_ASSERT(this->pExplorerWidget);
 
-    /* The dock widget is used to allowed patient explorer widget to be
-     * embedded in the main window or float.
-     */
-    this->pDockWidget = new QDockWidget("Patient explorer", this);
-    Q_ASSERT(this->pDockWidget);
-
     /* Guess what this does :) */
     this->connectSignals();
 
@@ -288,10 +282,19 @@ void MainWindow::on_actionOpen_patient_explorer_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 
+    /* The dock widget is used to allowed patient explorer widget to be
+     * embedded in the main window or float. Don't create it until the user
+     * hits to open patient explorer widget, eitherwise an empty dock will be
+     * created and shown to main window.
+     */
+    QDockWidget *pDockWidget = new QDockWidget("Patients", this);
+    Q_ASSERT(pDockWidget);
     pDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     pDockWidget->setFloating(true);     // By default, float!
     pDockWidget->setWidget(this->pExplorerWidget);
     pDockWidget->resize(800, 480);
+    connect(pDockWidget, SIGNAL(topLevelChanged(bool)),
+            this->pExplorerWidget, SLOT(updateUI(bool)));
     addDockWidget(Qt::LeftDockWidgetArea, pDockWidget);
 
     /* For some reason in Ubuntu Linux the patient explorer widget is shown
@@ -436,10 +439,6 @@ void MainWindow::connectSignals(void) const
     connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
             this, SLOT(backToGridWidget()),
             connType);
-
-    /* Connect signals from the dock widget to the main window */
-    connect(this->pDockWidget, SIGNAL(topLevelChanged(bool)),
-            this->pExplorerWidget, SLOT(updateUI(bool)));
 }
 
 /*******************************************************************************
