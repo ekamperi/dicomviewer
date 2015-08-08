@@ -58,7 +58,6 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
         pSlice->setImageWidget(pMyImageWidget);
         pMyImageWidget->setSlice(pSlice);
 
-        /* */
         connect(pSlice, SIGNAL(iNeedRepaint(float,float)),
                 pMyImageWidget, SLOT(changeWindow(float, float)));
 
