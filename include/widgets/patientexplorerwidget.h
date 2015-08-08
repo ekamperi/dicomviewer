@@ -26,10 +26,13 @@ public:
     ~PatientExplorerWidget();
 
 protected:
-    virtual void keyPressEvent(QKeyEvent *event);    
+    virtual void keyPressEvent(QKeyEvent *event);
 
 signals:
     void loadSeries(const QList<QString> &);
+
+public slots:
+    void updateUI(bool isFloating);
 
 private slots:
     void on_btnBrowse_clicked();

@@ -101,8 +101,8 @@ void GridWidget::changeWindow(HUWindows::window newWindow)
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* This usually takes some time, so let others known that, e.g.
-     * the MainWindow so that it changes the cursor to wait cursor.
+    /* This usually takes some time, so let others know, e.g. the MainWindow,
+     * so that they change the cursor from default icon to wait cursor.
      */
     emit this->heavyTaskInitiated();
 

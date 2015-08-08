@@ -89,16 +89,24 @@ private:
     QVector<Slice *> vecSlices;
     void loadDicomFiles(QStringList fileNames);
 
+    StartupMenu *pStartupMenu;
+
     /* This container widget contains the grid layout and is in turn put
      * into the scroll area. QScrollarea needs a QWidget.
      */
-    StartupMenu *pStartupMenu;
     GridWidget *pGridWidget;
     SliceWidget *pSliceWidget;
 
     /* The patient explorer widget is used to discover dicom files and
      * build the patients > image studies > image series hierarchy */
     PatientExplorerWidget *pExplorerWidget;
+
+    /* QDockWidget is just a wrapper widget that allows the contained widget
+     * to be docked inside a QMainWindow or floated as a top-level window on
+     * the desktop. In this case the contained widget is the patient explorer
+     * widget.
+    */
+    QDockWidget *pDockWidget;
 
     QProgressDialog *progressDialog;
     LoadDicomThread *loadDicomThread;

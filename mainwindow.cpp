@@ -38,6 +38,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->pExplorerWidget = new PatientExplorerWidget();
     Q_ASSERT(this->pExplorerWidget);
 
+    /* The dock widget is used to allowed patient explorer widget to be
+     * embedded in the main window or float.
+     */
+    this->pDockWidget = new QDockWidget("Patient explorer", this);
+    Q_ASSERT(this->pDockWidget);
+
     /* Guess what this does :) */
     this->connectSignals();
 
@@ -282,13 +288,6 @@ void MainWindow::on_actionOpen_patient_explorer_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* QDockWidget is just a wrapper widget that allows the contained widget
-     * to be docked inside a QMainWindow or floated as a top-level window on
-     * the desktop.
-    */
-    QDockWidget *pDockWidget = new QDockWidget("Patient explorer", this);
-    Q_ASSERT(pDockWidget);
-
     pDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     pDockWidget->setFloating(true);     // By default, float!
     pDockWidget->setWidget(this->pExplorerWidget);
@@ -437,6 +436,10 @@ void MainWindow::connectSignals(void) const
     connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
             this, SLOT(backToGridWidget()),
             connType);
+
+    /* Connect signals from the dock widget to the main window */
+    connect(this->pDockWidget, SIGNAL(topLevelChanged(bool)),
+            this->pExplorerWidget, SLOT(updateUI(bool)));
 }
 
 /*******************************************************************************
@@ -461,6 +464,9 @@ void MainWindow::setupAlignmentGroups(void)
     pAlGroupFlip->addAction(ui->actionFlip_Vertically);
 }
 
+/*******************************************************************************
+ *                              VARIOUS STUFF
+ ******************************************************************************/
 void MainWindow::backToGridWidget(void) const
 {
     qDebug() << Q_FUNC_INFO;
@@ -496,3 +502,4 @@ void MainWindow::loadSeries(const QList<QString> &files)
     /* Load the new files */
     this->loadDicomFiles(files);
 }
+

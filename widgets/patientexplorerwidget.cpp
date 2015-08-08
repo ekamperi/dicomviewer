@@ -301,3 +301,26 @@ void PatientExplorerWidget::on_editPath_returnPressed()
         this->doScan(ui->editPath->text());
     }
 }
+
+/* We modify the UI of the patient explorer widget based on whether it is
+ * floating or not. If it ain't floating, we turn it into a sort of case
+ * explorer widget of currently available patients.
+ */
+void PatientExplorerWidget::updateUI(bool isFloating)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    if (isFloating) {
+        ui->btnBrowse->show();
+        ui->btnScan->show();
+        ui->ckbSearchRecursively->show();
+        ui->editPath->show();
+        ui->lblStatusBar->show();
+    } else {
+        ui->btnBrowse->hide();
+        ui->btnScan->hide();
+        ui->ckbSearchRecursively->hide();
+        ui->editPath->hide();
+        ui->lblStatusBar->hide();
+    }
+}
