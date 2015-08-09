@@ -53,5 +53,5 @@ void Slice::normalizePixels(float globalMaxPixel)
 QPair<float, float> Slice::getDefaultWindowLevelWidth(void) const
 {
     // XXX
-    return QPair<float, float>(0.0, 1.0);
+    return QPair<float, float>(0.0, 0.5);
 }
