@@ -25,16 +25,7 @@ GridWidget::~GridWidget(void)
 {
     qDebug() << Q_FUNC_INFO;
 
-    /* Free the thumbnails */
-    int nSlices = this->pVecSlices->size();
-    for (int i = 0; i < nSlices; i++) {
-        Slice *pSlice = this->pVecSlices->at(i);
-        Q_ASSERT(pSlice);
-
-        delete pSlice->getImageWidget();
-    }
-
-    /* And then the widget itself */
+    /* This should cause all the image widgets to be deleted as well */
     delete this->pVLayout;
 }
 
