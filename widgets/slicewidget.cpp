@@ -120,7 +120,7 @@ void SliceWidget::gotoSlice(int idx)
 
     /*
      * Notify others that the current slice has changed (e.g. main window
-     * and the global status bar.
+     * and the global status bar).
     */
     emit this->sliceChanged(idx);
 }

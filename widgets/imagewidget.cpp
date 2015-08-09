@@ -18,65 +18,84 @@ ImageWidget::ImageWidget(QWidget *parent) : QLabel(parent)
         myColorTable.append(qRgb(i,i,i));
     }
 
-    /* */
+    // XXX
     this->pData = NULL;
     this->pImage = NULL;
+    this->tmin = 0;
+    this->tmax = 0;
 }
 
 ImageWidget::~ImageWidget()
 {
     if (this->pImage) {
         delete this->pImage;
+        this->pImage = NULL;
     }
     if (this->pData) {
         delete this->pData;
+        this->pData = NULL;
     }
 }
 
-void ImageWidget::setSlice(Slice *pSlice)
+void ImageWidget::setSlice(const Slice *pSlice)
 {
     Q_ASSERT(pSlice);
 
     this->pSlice = pSlice;
+
+    /* Get the default window/width level of the slice */
+    QPair<float, float> tMinMax = this->pSlice->getWindowLevelWidth();
+    this->tmin = tMinMax.first;
+    this->tmax = tMinMax.second;
+
     this->genImage();
     this->update();
 }
 
-void ImageWidget::genImage()
+void ImageWidget::genImage(void)
 {
+    Q_ASSERT(this->pSlice);
+
+    /* Get graphics dimensions */
     unsigned int width  = this->pSlice->getWidth();
     unsigned int height = this->pSlice->getHeight();
+
+    /* Get the raw pixel data. Allow null values for formats that we
+     * can't understand (e.g. RT doses, etc).
+     */
     float *pRawData = this->pSlice->getRawPixelData();
-    Q_ASSERT(pRawData);
+    if (!pRawData) {
+        return;
+    }
 
     /* Apply window/width and also map [0.0, 1.0] -> [0,255] because QImage
      * cannot handle floating point data.
     */
     if (this->pData) {
         delete this->pData;
+        this->pData = NULL;
     }
-    QPair<float, float> tMinMax = this->pSlice->getWindowLevelWidth();
-    this->pData =
-            MyMath::floatToByte(
-                pRawData, width, height,
-                tMinMax.first, tMinMax.second);
+    this->pData = MyMath::floatToByte(
+                pRawData, width, height, this->tmin, this->tmax);
 
     /* Create the image, but first delete the old one, if any */
     if (this->pImage) {
         delete this->pImage;
+        this->pImage = NULL;
     }
     this->pImage = new QImage(this->pData, width, height, QImage::Format_Indexed8);
     Q_ASSERT(pImage);
 
-    /* We are done, display the image */
+    /* We are done, display the actual image */
     pImage->setColorTable(myColorTable);
-    this->setPixmap(QPixmap::fromImage((this->pImage->scaled(256,256))));
+    this->setPixmap(QPixmap::fromImage((this->pImage->scaled(256, 256))));
 }
 
 void ImageWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
     qDebug() << Q_FUNC_INFO;
-    emit sliceDoubleClicked((const Slice *)this->pSlice);
+    emit sliceDoubleClicked(this->pSlice);
 }
 
 void ImageWidget::drawOutline(QPainter *pPainter)
@@ -94,7 +113,7 @@ void ImageWidget::drawOutline(QPainter *pPainter)
     }
 }
 
-void ImageWidget::enterEvent(QEvent * event)
+void ImageWidget::enterEvent(QEvent *event)
 {
     this->weAreIn = true;
     this->update();
@@ -102,7 +121,7 @@ void ImageWidget::enterEvent(QEvent * event)
     QWidget::enterEvent(event);
 }
 
-void ImageWidget::leaveEvent(QEvent * event)
+void ImageWidget::leaveEvent(QEvent *event)
 {
     this->weAreIn = false;
     this->update();
@@ -120,7 +139,20 @@ void ImageWidget::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void ImageWidget::changeWindow(float tmin, float tmax)
+void ImageWidget::changeWindow(HUWindows::window newWindow)
 {
+    qDebug() << Q_FUNC_INFO;
+    Q_ASSERT(this->pSlice);
+
+    /* Get the new window/width level of the slice */
+    const HUConverter *pHUConverter = this->pSlice->getHUConverter();
+    Q_ASSERT(pHUConverter);
+    QPair<float, float> tMinMax =
+            pHUConverter->getNormalizedRangeFromTemplate(newWindow);
+
+    this->tmin = tMinMax.first;
+    this->tmax = tMinMax.second;
+
+    /* Regenerate the image */
     this->genImage();
 }

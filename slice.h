@@ -67,6 +67,10 @@ public:
         return this->globalMaxPixel;
     }
 
+    const HUConverter *getHUConverter(void) const {
+        return this->pHUConverter;
+    }
+
     void normalizePixels(float globalMaxPixel);
 
     void setWindow(HUWindows::window huWindow);
