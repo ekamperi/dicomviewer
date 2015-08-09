@@ -70,17 +70,18 @@ void GridWidget::addSlices(const QVector<Slice *> &vecSlices)
     this->pContainerWidget->setPalette(pal);
 }
 
-void GridWidget::selectAllSlices(void)
+void GridWidget::selectAll(void)
 {
     qDebug() << Q_FUNC_INFO;
 
-    int nSlices = this->pVecSlices->size();
-    for (int i = 0; i < nSlices; i++) {
-        Slice *pSlice = this->pVecSlices->at(i);
-        Q_ASSERT(pSlice);
-        bool isSelected = pSlice->isSelected();
-        pSlice->setSelected(!isSelected);   // toggle
-        pSlice->getImageWidget()->update();
+    Q_ASSERT(this->pFlowLayout);
+    int nImageWidgets = this->pFlowLayout->count();
+    for (int i = 0; i < nImageWidgets; i++) {
+        ImageWidget *pImageWidget = (ImageWidget *)this->pFlowLayout->itemAt(i)->widget();
+        Q_ASSERT(pImageWidget);
+        bool isSelected = pImageWidget->isSelected();
+        pImageWidget->Selectable::setSelection(!isSelected);    // toggle
+        pImageWidget->update();
     }
 }
 
@@ -114,7 +115,7 @@ bool GridWidget::event(QEvent *pEvent)
             //this->on_actionClose_triggered();
         } else if (key == Qt::Key_A
                    && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
-            selectAllSlices();
+            selectAll();
         }
     }
     return true;

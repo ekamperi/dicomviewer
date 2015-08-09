@@ -43,14 +43,6 @@ public:
         return this->examDetails;
     }
 
-    bool isSelected(void) const {
-        return this->m_isSelected;
-    }
-
-    void setSelected(bool selected) {
-        this->m_isSelected = selected;
-    }
-
     void setImageWidget(ImageWidget *pMyImageWidget) {
         this->pMyImageWidget = pMyImageWidget;
     }
@@ -94,9 +86,6 @@ private:
 
     /* Default window/width in Hounsfield Units, e.g. 40/400 */
     HUConverter *pHUConverter;
-
-    /* Whether this slice was selected by user. If yes, we draw a red outline  */
-    bool m_isSelected;
 
     /* MyImageWidget is used in the grid layout */
     ImageWidget *pMyImageWidget;

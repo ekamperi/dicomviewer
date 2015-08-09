@@ -4,9 +4,10 @@
 #include <QLabel>
 #include <QWidget>
 
+#include "selectable.h"
 #include "slice.h"
 
-class ImageWidget : public QLabel
+class ImageWidget : public QLabel, public Selectable
 {
     Q_OBJECT
 public:

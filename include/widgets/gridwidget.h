@@ -14,7 +14,7 @@ public:
     explicit GridWidget(QWidget *parent = 0);
     ~GridWidget(void);
     void addSlices(const QVector<Slice *> &vecSlices);
-    void selectAllSlices(void);
+    void selectAll(void);
 
 protected:
     bool event(QEvent *pEvent);

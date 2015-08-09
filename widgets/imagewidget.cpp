@@ -102,7 +102,7 @@ void ImageWidget::drawOutline(QPainter *pPainter)
 {
     Q_ASSERT(pPainter);
 
-    if (this->weAreIn || this->pSlice->isSelected()) {
+    if (this->weAreIn || this->isSelected()) {
         QPen oldPen, myPen;
         oldPen = pPainter->pen();
         myPen.setWidth(4);

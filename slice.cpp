@@ -27,9 +27,6 @@ Slice::Slice(QString filename, unsigned int index)
 
     /* Also extract the examination details (patients name, age, etc) */
     this->examDetails = pDicomFile->getExamDetails();
-
-    /* Whether this slice is selected */
-    this->m_isSelected = false;
 }
 
 Slice::~Slice()
