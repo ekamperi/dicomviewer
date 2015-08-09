@@ -73,13 +73,8 @@ public:
 
     void normalizePixels(float globalMaxPixel);
 
-    void setWindow(HUWindows::window huWindow);
-
-    QPair<float, float> getWindowLevelWidth(void) const;
+    QPair<float, float> getDefaultWindowLevelWidth(void) const;
     DicomFile *pDicomFile;
-
-signals:
-    void iNeedRepaint(float tmin, float tmax);
 
 private:
     unsigned int index;
@@ -99,7 +94,6 @@ private:
 
     /* Default window/width in Hounsfield Units, e.g. 40/400 */
     HUConverter *pHUConverter;
-    HUWindows::window huWindow;
 
     /* Whether this slice was selected by user. If yes, we draw a red outline  */
     bool m_isSelected;

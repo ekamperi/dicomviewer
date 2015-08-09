@@ -44,7 +44,7 @@ void ImageWidget::setSlice(const Slice *pSlice)
     this->pSlice = pSlice;
 
     /* Get the default window/width level of the slice */
-    QPair<float, float> tMinMax = this->pSlice->getWindowLevelWidth();
+    QPair<float, float> tMinMax = this->pSlice->getDefaultWindowLevelWidth();
     this->tmin = tMinMax.first;
     this->tmax = tMinMax.second;
 

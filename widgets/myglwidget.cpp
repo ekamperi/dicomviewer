@@ -70,12 +70,6 @@ void MyGLWidget::setSlice(Slice *pSlice)
     Q_ASSERT(pSlice);
     this->pSlice = pSlice;
 
-    /* When a slice, that we are connected with, needs a repaint
-     * e.g. when its window/width have changed, repaint!
-     */
-    connect(this->pSlice, SIGNAL(iNeedRepaint(float, float)),
-            this, SLOT(repaintSlice(float, float)));
-
     /* Also notify our associated topogram, if any */
     if (pTopogram) {
         this->pTopogram->setNewSliceIndex(pSlice->getIndex());
@@ -607,6 +601,26 @@ unsigned int MyGLWidget::calcPhysicalDistance(const QLine &line)
     /* Physical distance unit is millimeter.
      * No need to have a resolution less than 1mm */
     return (unsigned int)len;
+}
+
+void MyGLWidget::changeWindow(HUWindows::window newWindow)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Get the Hounsfield unit converter */
+    Q_ASSERT(this->pSlice);
+    const HUConverter *pHUConverter = this->pSlice->getHUConverter();
+    Q_ASSERT(pHUConverter);
+
+    /* Calculate the tmin and tmax values for the new widnow */
+    QPair<float, float> tMinMax =
+            pHUConverter->getNormalizedRangeFromTemplate(newWindow);
+
+    this->tmin = tMinMax.first;
+    this->tmax = tMinMax.second;
+
+    /* Force a redraw */
+    this->update();
 }
 
 void MyGLWidget::repaintSlice(float tmin, float tmax)

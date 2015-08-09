@@ -425,6 +425,9 @@ void MainWindow::connectSignals(void) const
             connType);
 
     /* Connect signals from the slice widget to the main window */
+    connect(this, SIGNAL(windowChanged(HUWindows::window)),
+            this->pSliceWidget, SLOT(changeWindow(HUWindows::window)),
+            connType);
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
             this, SLOT(updateStatusBarForSlice(int)),
             connType);

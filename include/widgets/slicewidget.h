@@ -25,6 +25,8 @@ private:
     QHBoxLayout *pHLayout;
     QScrollBar *pScrollBar;
 
+    HUWindows::window huWindow;
+
     struct SliceDirection { enum is { Prev, Next }; };
     void gotoSlice(SliceDirection::is dir);
     void gotoSlice(const Slice *pSlice);
@@ -38,7 +40,7 @@ signals:
 private slots:
     void gotoSlice(int idx);
     void scrollBarValueChanged(int value);
-
+    void changeWindow(HUWindows::window newWindow);
 };
 
 #endif // SLICEWIDGET_H

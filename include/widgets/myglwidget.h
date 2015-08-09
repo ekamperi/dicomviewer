@@ -32,7 +32,7 @@ public:
     void genTopogram(float angle);
 
     /* Geometric transformations (e.g., flip, etc) */
-    void setGeomTransformation(Geometry::Transformation geomTransformation); 
+    void setGeomTransformation(Geometry::Transformation geomTransformation);
     Geometry::Transformation getGeomTransformation(void) const;
 
     /* Pan mode */
@@ -55,10 +55,13 @@ signals:
     void windowChanged(int x);
     void sliceChanged(int newSliceIndex);
 
+public slots:
+    void changeWindow(HUWindows::window newWindow);
+
 private slots:
-    void repaintSlice(float tmin, float tmax);
     void undockTopogram(void);
     void dockTopogram(void);
+    void repaintSlice(float tmin, float tmax);
 
 protected:
     virtual void initializeGL();

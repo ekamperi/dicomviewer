@@ -137,3 +137,12 @@ void SliceWidget::scrollBarValueChanged(int value)
     this->gotoSlice(value);
 }
 
+void SliceWidget::changeWindow(HUWindows::window newWindow)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    this->huWindow = newWindow;
+
+    /* Tell the GL widget to repaint itself */
+    this->pGLWidget->changeWindow(newWindow);
+}
