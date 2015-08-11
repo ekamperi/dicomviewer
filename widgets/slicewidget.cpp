@@ -28,6 +28,11 @@ SliceWidget::SliceWidget(QVector<Slice *> *pVecSlices, QWidget *parent) : QWidge
     connect(this->pScrollBar, SIGNAL(valueChanged(int)),
             this, SLOT(scrollBarValueChanged(int)));
     this->pHLayout->addWidget(this->pScrollBar);
+
+    /* Enable support for context menu (right click shows the tools) */
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(showContextMenu(const QPoint &)));
 }
 
 SliceWidget::~SliceWidget()
@@ -77,8 +82,17 @@ bool SliceWidget::event(QEvent *pEvent)
             return true;
         } else if (key == Qt::Key_Home) {
             gotoSlice(0);
+            return true;
         } else if (key == Qt::Key_End) {
             gotoSlice(vecSlices->size() - 1);
+            return true;
+        } else if (key == Qt::Key_Backspace || key == Qt::Key_Delete) {
+            this->pGLWidget->deleteSelectedMeasures();
+            return true;
+        } else if (key == Qt::Key_A
+                   && (QApplication::keyboardModifiers() & Qt::Key_Control)) {
+            qDebug() << "YUES!!!";
+            return true;
         }
     }
 
@@ -146,3 +160,15 @@ void SliceWidget::changeWindow(HUWindows::window newWindow)
     /* Tell the GL widget to repaint itself */
     this->pGLWidget->changeWindow(newWindow);
 }
+
+void SliceWidget::showContextMenu(const QPoint &pos)
+{
+    qDebug() << Q_FUNC_INFO;
+    QPoint globalPos = this->mapToGlobal(pos);
+    QMenu ctxMenu;
+
+    ctxMenu.addAction("Reset");
+
+    QAction *pSelectedItem = ctxMenu.exec(globalPos);
+}
+

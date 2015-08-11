@@ -41,6 +41,7 @@ private slots:
     void gotoSlice(int idx);
     void scrollBarValueChanged(int value);
     void changeWindow(HUWindows::window newWindow);
+    void showContextMenu(const QPoint &pos);
 };
 
 #endif // SLICEWIDGET_H
