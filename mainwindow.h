@@ -107,6 +107,7 @@ private:
     /* Setup the gui */
     void connectSignals(void) const;
     void setupAlignmentGroups(void);
+    void setupToolbar(void);
 };
 
 #endif // MAINWINDOW_H

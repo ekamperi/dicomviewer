@@ -35,13 +35,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->addWidget(this->pStartupMenu);
     ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
 
+    /* The patient explorer widget is about searching patient studies in the media.
+     * It is also used as a case explorer when docked in the main window.
+     */
     this->pExplorerWidget = new PatientExplorerWidget();
     Q_ASSERT(this->pExplorerWidget);
+
+    /* */
+    this->setupToolbar();
 
     /* Guess what this does :) */
     this->connectSignals();
 
-    /* ALignemnt groups are mutually exclusive checkable menu items */
+    /* Alignemnt groups are mutually exclusive checkable menu items */
     this->setupAlignmentGroups();
 
     /* The first time ::statusBar() is called, it creates a status bar. */
@@ -505,3 +511,24 @@ void MainWindow::loadSeries(const QList<QString> &files)
     this->loadDicomFiles(files);
 }
 
+
+/*******************************************************************************
+*                       USER INTERFACE OPERATIONS
+*******************************************************************************/
+
+void MainWindow::setupToolbar(void)
+{
+    /* Create a combo box in the toolbar with the window/width levels */
+    QComboBox *pComboBoxWindows = new QComboBox;
+    Q_ASSERT(pComboBoxWindows);
+
+    /* Add the same items as those found in View->Window */
+    QStringList cboxItems;
+    cboxItems << "Abdomen" << "Bone" << "Head" << "Lung" << "Mediastinum" << "Soft tissue";
+
+    pComboBoxWindows->addItems(cboxItems);
+
+    /* By default, don't show it until we actually load an image series */
+    pComboBoxWindows->setVisible(false);
+    ui->tlbMain->addWidget(pComboBoxWindows);
+}
