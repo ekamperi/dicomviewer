@@ -82,11 +82,14 @@ void PatientExplorerWidget::on_btnBrowse_clicked()
     /* Update the edit text with the path */
     ui->editPath->setText(dir);
 
+    /* Should we do a recursive scan ? */
+    bool isRecursive = ui->ckbSearchRecursively->isChecked();
+
     /* Do the actual scan */
-    this->doScan(dir);
+    this->doScan(dir, isRecursive);
 }
 
-void PatientExplorerWidget::doScan(QString dir)
+void PatientExplorerWidget::doScan(QString dir, bool isRecursive)
 {
     /* Show a progress dialog */
     this->progressDialog = new QProgressDialog(
@@ -110,6 +113,7 @@ void PatientExplorerWidget::doScan(QString dir)
      * for that.
     */
     this->pPatientExplorer->setPath(dir);
+    this->pPatientExplorer->setRecursiveSearch(isRecursive);
 
     FindDicomThread *findDicomThread = new FindDicomThread(this->pPatientExplorer, this);
     Q_ASSERT(findDicomThread);
@@ -298,7 +302,7 @@ void PatientExplorerWidget::on_editPath_returnPressed()
 {
     QString path = ui->editPath->text();
     if (path.size() > 0) {
-        this->doScan(ui->editPath->text());
+        this->doScan(ui->editPath->text(), ui->ckbSearchRecursively->isChecked());
     }
 }
 

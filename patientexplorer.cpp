@@ -27,8 +27,11 @@ void PatientExplorer::doScan(void)
     /* Remove any old items in the resultant map */
     this->myMap.clear();
 
-    /* Iterate RECURSIVELY over all files in a directory */
-    QDirIterator it(path, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    /* Iterate over all files in a directory. To recurse or not ? */
+    QDirIterator::IteratorFlags iterFlags;
+    iterFlags = this->recursiveSearch ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
+    QDirIterator it(this->path, QDir::Files | QDir::NoDotAndDotDot, iterFlags);
+
     unsigned int scannedFiles = 0;
     unsigned int parsedFiles = 0;
     while (it.hasNext() && !this->abort) {

@@ -46,7 +46,7 @@ private slots:
     void progressDialogCanceled();
 
 private:
-    void doScan(QString dir);
+    void doScan(QString dir, bool isRecursive);
     QTreeWidgetItem *addTreeRoot(const void *obj, int type);
     QTreeWidgetItem *addTreeChild(QTreeWidgetItem *parent, const void *obj, int type);
     PatientExplorer *pPatientExplorer;

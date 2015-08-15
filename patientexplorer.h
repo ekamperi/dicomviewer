@@ -30,6 +30,10 @@ public:
     PatientExplorer(QObject *parent = NULL);
     PatientExplorer(QString path, QObject *parent = NULL);
     void setPath(const QString &path) { this->path = path; }
+    void setRecursiveSearch(bool isRecursive) {
+        this->recursiveSearch = isRecursive;
+    }
+
     void doScan(void);
 
     QList<Patient> getPatients(void) const;
@@ -49,6 +53,7 @@ private:
     bool extract(QString path);
 
     QString path;
+    bool recursiveSearch;
     bool abort;
 
     /* <Patient, <Study, <Series, QList<Path>>>> */
