@@ -29,7 +29,9 @@ void PatientExplorer::doScan(void)
 
     /* Iterate over all files in a directory. To recurse or not ? */
     QDirIterator::IteratorFlags iterFlags;
-    iterFlags = this->recursiveSearch ? QDirIterator::Subdirectories : QDirIterator::NoIteratorFlags;
+    iterFlags = this->recursiveSearch ?
+                QDirIterator::Subdirectories :
+                QDirIterator::NoIteratorFlags;
     QDirIterator it(this->path, QDir::Files | QDir::NoDotAndDotDot, iterFlags);
 
     unsigned int scannedFiles = 0;
