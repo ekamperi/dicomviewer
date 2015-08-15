@@ -45,6 +45,8 @@ private slots:
     void readProgress(unsigned int scannedFiles, unsigned int parsedFiles);
     void progressDialogCanceled();
 
+    void on_btnScan_clicked();
+
 private:
     void doScan(QString dir, bool isRecursive);
     QTreeWidgetItem *addTreeRoot(const void *obj, int type);

@@ -300,10 +300,8 @@ void PatientExplorerWidget::on_itemDoubleClicked(QTreeWidgetItem *pTreeItem, int
 
 void PatientExplorerWidget::on_editPath_returnPressed()
 {
-    QString path = ui->editPath->text();
-    if (path.size() > 0) {
-        this->doScan(ui->editPath->text(), ui->ckbSearchRecursively->isChecked());
-    }
+    qDebug() << Q_FUNC_INFO;
+    this->on_btnScan_clicked();
 }
 
 /* We modify the UI of the patient explorer widget based on whether it is
@@ -326,5 +324,16 @@ void PatientExplorerWidget::updateUI(bool isFloating)
         ui->ckbSearchRecursively->hide();
         ui->editPath->hide();
         ui->lblStatusBar->hide();
+    }
+}
+
+void PatientExplorerWidget::on_btnScan_clicked()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    QString path = ui->editPath->text();
+    if (path.size() > 0) {
+        bool isRecursive = ui->ckbSearchRecursively->isChecked();
+        this->doScan(path, isRecursive);
     }
 }
