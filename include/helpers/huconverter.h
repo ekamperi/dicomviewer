@@ -1,7 +1,9 @@
 #ifndef HOUNSFIELDUNIT_H
 #define HOUNSFIELDUNIT_H
 
+#include <QDebug>
 #include <QPair>
+#include <QString>
 
 namespace HUWindows {
     enum window {
@@ -10,9 +12,36 @@ namespace HUWindows {
         HEAD,
         LUNG,
         MEDIASTINUM,
-        SOFT_TISSUE
+        SOFT_TISSUE,
+        UNKNOWN
     };
 }
+
+class HUWindow
+{
+public:
+    static HUWindows::window fromText(QString window) {
+        qDebug() << Q_FUNC_INFO;
+
+        QString str = window.toLower();
+        if (str == "abdomen") {
+            return HUWindows::ABDOMEN;
+        } else if (str == "bone") {
+            return HUWindows::BONE;
+        } else if (str == "head") {
+            return HUWindows::HEAD;
+        } else if (str == "lung") {
+            return HUWindows::LUNG;
+        } else if (str == "mediastinum") {
+            return HUWindows::MEDIASTINUM;
+        } else if (str == "soft_tissue") {
+            return HUWindows::SOFT_TISSUE;
+        } else {
+            qDebug() << "Unknown CT window";
+            return HUWindows::UNKNOWN;
+        }
+    }
+};
 
 class HUConverter
 {

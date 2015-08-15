@@ -9,6 +9,7 @@
 #include "include/workers/loaddicomworker.h"
 #include "mainwindow.h"
 #include "include/widgets/imagewidget.h"
+#include "include/helpers/huconverter.h"
 #include "ui_mainwindow.h"
 
 /* XXX: This is needed for compile */
@@ -390,7 +391,8 @@ void MainWindow::gotoSlice(const Slice *pSlice)
     this->pSliceWidget->pGLWidget->setSlice((Slice *)pSlice);
 
     /* Change view from the grid widget to the (single) slice widget */
-    ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
+    switchToSliceWidget();
+   // ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
 }
 
 /*******************************************************************************
@@ -511,7 +513,6 @@ void MainWindow::loadSeries(const QList<QString> &files)
     this->loadDicomFiles(files);
 }
 
-
 /*******************************************************************************
 *                       USER INTERFACE OPERATIONS
 *******************************************************************************/
@@ -519,16 +520,44 @@ void MainWindow::loadSeries(const QList<QString> &files)
 void MainWindow::setupToolbar(void)
 {
     /* Create a combo box in the toolbar with the window/width levels */
-    QComboBox *pComboBoxWindows = new QComboBox;
-    Q_ASSERT(pComboBoxWindows);
+    QComboBox *pCBWindows = new QComboBox(ui->tlbMain);
+    Q_ASSERT(pCBWindows);
 
-    /* Add the same items as those found in View->Window */
-    QStringList cboxItems;
-    cboxItems << "Abdomen" << "Bone" << "Head" << "Lung" << "Mediastinum" << "Soft tissue";
+    /* Add the same items as those found in View->Window menu*/
+    QStringList cbItems;
+    cbItems << "Abdomen" << "Bone" << "Head" << "Lung" << "Mediastinum" << "Soft tissue";
+    pCBWindows->addItems(cbItems);
 
-    pComboBoxWindows->addItems(cboxItems);
+    connect(pCBWindows, SIGNAL(currentTextChanged(QString)),
+            this, SLOT(changeWindow(QString)));
+
+    this->actChangeWindow = new QWidgetAction(NULL);
+    Q_ASSERT(this->actChangeWindow);
+    this->actChangeWindow->setDefaultWidget(pCBWindows);
 
     /* By default, don't show it until we actually load an image series */
-    pComboBoxWindows->setVisible(false);
-    ui->tlbMain->addWidget(pComboBoxWindows);
+    this->actChangeWindow->setVisible(false);  // this must come *AFTER* setDefaultWidget()
+    ui->tlbMain->addAction(actChangeWindow);
+}
+
+void MainWindow::switchToSliceWidget(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    Q_ASSERT(this->pSliceWidget);
+    ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
+    this->actChangeWindow->setVisible(true);
+}
+
+void MainWindow::changeWindow(QString newWindow)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Convert the text from Combo Box to appropriate HU window structure, e.g.
+     * "ABDOMEN" -> HUWindows::ABDOMEN */
+    HUWindows::window newHUWindow = HUWindow::fromText(newWindow);
+
+    /* Emit a signal so that anyone interested (e.g. SliceWidget)
+     * redraws itself. */
+    emit this->windowChanged(newHUWindow);
 }

@@ -44,6 +44,7 @@ private slots:
     void backToGridWidget(void) const;
     void displayWaitCursor(void);
     void displayArrowCursor(void);
+    void changeWindow(QString newWindow);
 
     void on_actionExit_triggered();
 
@@ -108,6 +109,10 @@ private:
     void connectSignals(void) const;
     void setupAlignmentGroups(void);
     void setupToolbar(void);
+    void switchToSliceWidget(void);
+
+    /* Actions */
+    QWidgetAction *actChangeWindow;
 };
 
 #endif // MAINWINDOW_H
