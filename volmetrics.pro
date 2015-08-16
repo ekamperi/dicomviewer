@@ -85,3 +85,4 @@ CONFIG += debug
 
 INCLUDEPATH+=/usr/include/ImageMagick
 
+RESOURCES += ui/application.qrc
