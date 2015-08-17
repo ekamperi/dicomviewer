@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->pExplorerWidget = new PatientExplorerWidget();
     Q_ASSERT(this->pExplorerWidget);
 
-    /* */
+    /* Setup the main toolbar, but don't display it yet */
     this->setupToolbar();
 
     /* Guess what this does :) */
@@ -112,10 +112,11 @@ void MainWindow::on_actionClose_triggered()
 {
     /* Check whether we are returning from full screen */
     if (ui->stackedWidget->currentWidget() == this->pSliceWidget) {
-        ui->stackedWidget->setCurrentWidget(this->pGridWidget);
+        this->switchToGridWidget();
     } else {
         // XXX: cleanup
         ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
+        this->hideMainToolbar();
     }
     ui->stackedWidget->update();
     this->statusBar()->showMessage("Ready.");
@@ -371,7 +372,7 @@ void MainWindow::filesLoaded(void)
 
     /* Create a grid with the slices as thumbnail images */
     this->pGridWidget->addSlices(this->vecSlices);
-    ui->stackedWidget->setCurrentWidget(this->pGridWidget);
+    this->switchToGridWidget();
 
     /* Load the slices to gpu (XXX: this could be done upon double clicking the thumbnail) */
     this->pSliceWidget->pGLWidget->loadSlices(this->vecSlices);
@@ -439,8 +440,8 @@ void MainWindow::connectSignals(void) const
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
             this, SLOT(updateStatusBarForSlice(int)),
             connType);
-    connect(this->pSliceWidget, SIGNAL(backToGridWidget()),
-            this, SLOT(backToGridWidget()),
+    connect(this->pSliceWidget, SIGNAL(switchToGridWidget()),
+            this, SLOT(switchToGridWidget()),
             connType);
 
     /* Connect signals from the patient explorer widget to the main window */
@@ -448,7 +449,7 @@ void MainWindow::connectSignals(void) const
             this, SLOT(loadSeries(const QList<QString> &)),
             connType);
     connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
-            this, SLOT(backToGridWidget()),
+            this, SLOT(switchToGridWidget()),
             connType);
 }
 
@@ -477,23 +478,6 @@ void MainWindow::setupAlignmentGroups(void)
 /*******************************************************************************
  *                              VARIOUS STUFF
  ******************************************************************************/
-void MainWindow::backToGridWidget(void) const
-{
-    qDebug() << Q_FUNC_INFO;
-
-    ui->stackedWidget->setCurrentWidget(this->pGridWidget);
-}
-
-void MainWindow::displayWaitCursor(void)
-{
-    this->setCursor(Qt::WaitCursor);
-}
-
-void MainWindow::displayArrowCursor(void)
-{
-    this->setCursor(Qt::ArrowCursor);
-}
-
 void MainWindow::loadSeries(const QList<QString> &files)
 {
     qDebug() << Q_FUNC_INFO;
@@ -513,9 +497,65 @@ void MainWindow::loadSeries(const QList<QString> &files)
     this->loadDicomFiles(files);
 }
 
+void MainWindow::changeWindow(QString newWindow)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    /* Convert the text from Combo Box to appropriate HU window structure, e.g.
+     * "ABDOMEN" -> HUWindows::ABDOMEN */
+    HUWindows::window newHUWindow = HUWindow::fromText(newWindow);
+
+    /* Emit a signal so that anyone interested (e.g. SliceWidget)
+     * redraws itself. */
+    emit this->windowChanged(newHUWindow);
+}
+
 /*******************************************************************************
 *                       USER INTERFACE OPERATIONS
 *******************************************************************************/
+void MainWindow::switchToGridWidget(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    Q_ASSERT(this->pSliceWidget);
+    ui->stackedWidget->setCurrentWidget(this->pGridWidget);
+    this->showMainToolbar();
+}
+
+void MainWindow::switchToSliceWidget(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    Q_ASSERT(this->pSliceWidget);
+    ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
+    this->showMainToolbar();
+}
+
+void MainWindow::showMainToolbar(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    ui->tlbMain->setVisible(true);
+    this->actChangeWindow->setVisible(true);
+}
+
+void MainWindow::hideMainToolbar(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    ui->tlbMain->setVisible(false);
+    this->actChangeWindow->setVisible(false);
+}
+
+void MainWindow::displayWaitCursor(void)
+{
+    this->setCursor(Qt::WaitCursor);
+}
+
+void MainWindow::displayArrowCursor(void)
+{
+    this->setCursor(Qt::ArrowCursor);
+}
 
 void MainWindow::setupToolbar(void)
 {
@@ -538,26 +578,8 @@ void MainWindow::setupToolbar(void)
     /* By default, don't show it until we actually load an image series */
     this->actChangeWindow->setVisible(false);  // this must come *AFTER* setDefaultWidget()
     ui->tlbMain->addAction(actChangeWindow);
+
+    /* By default, the whole main toolbar isn't visible upon program start */
+    ui->tlbMain->setVisible(false);
 }
 
-void MainWindow::switchToSliceWidget(void)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    Q_ASSERT(this->pSliceWidget);
-    ui->stackedWidget->setCurrentWidget(this->pSliceWidget);
-    this->actChangeWindow->setVisible(true);
-}
-
-void MainWindow::changeWindow(QString newWindow)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    /* Convert the text from Combo Box to appropriate HU window structure, e.g.
-     * "ABDOMEN" -> HUWindows::ABDOMEN */
-    HUWindows::window newHUWindow = HUWindow::fromText(newWindow);
-
-    /* Emit a signal so that anyone interested (e.g. SliceWidget)
-     * redraws itself. */
-    emit this->windowChanged(newHUWindow);
-}

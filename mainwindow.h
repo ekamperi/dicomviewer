@@ -41,7 +41,6 @@ private slots:
     void gotoSlice(const Slice *pSlice);
     void updateStatusBarForSlice(int idx) const;
     void loadSeries(const QList<QString> &);
-    void backToGridWidget(void) const;
     void displayWaitCursor(void);
     void displayArrowCursor(void);
     void changeWindow(QString newWindow);
@@ -109,6 +108,9 @@ private:
     void connectSignals(void) const;
     void setupAlignmentGroups(void);
     void setupToolbar(void);
+    void showMainToolbar(void);
+    void hideMainToolbar(void);
+    void switchToGridWidget(void);
     void switchToSliceWidget(void);
 
     /* Actions */
