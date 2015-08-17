@@ -15,6 +15,7 @@ SOURCES += \
     helpers/dicomhelper.cpp \
     helpers/huconverter.cpp \
     helpers/mymath.cpp \
+    widgets/ddtreewidget.cpp \
     widgets/gridwidget.cpp \
     widgets/imagewidget.cpp \
     widgets/myglwidget.cpp \
@@ -43,6 +44,7 @@ HEADERS  += \
     include/helpers/dicomhelper.h \
     include/helpers/huconverter.h \
     include/helpers/mymath.h \
+    include/widgets/ddtreewidget.h \
     include/widgets/gridwidget.h \
     include/widgets/imagewidget.h \
     include/widgets/myglwidget.h \

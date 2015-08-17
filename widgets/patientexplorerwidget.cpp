@@ -59,6 +59,8 @@ void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
             selectedItems.at(i)->setExpanded(!expand);
             QWidget::keyPressEvent(pEvent);
         }
+    } else if (pEvent->key() == Qt::Key_Return) {
+        this->on_itemDoubleClicked(ui->treePatients->selectedItems().at(0), 0);
     } else {
         QWidget::keyPressEvent(pEvent);
     }
@@ -275,6 +277,16 @@ void PatientExplorerWidget::on_itemSelectionChanged(void)
            qDebug() << "User clicked on an unsupported item type (shouldn't happen)!";
         }
     }
+}
+
+void PatientExplorerWidget::loadDroppedPatient(void)
+{
+    qDebug() << Q_FUNC_INFO;
+    QTreeWidgetItem *pDraggedItem = ui->treePatients->getDraggedItem();
+    //Q_ASSERT(pDraggedItem);
+    if (!pDraggedItem)
+        return;
+    this->on_itemDoubleClicked(pDraggedItem, 0);    // XXX
 }
 
 void PatientExplorerWidget::on_itemDoubleClicked(QTreeWidgetItem *pTreeItem, int col)

@@ -417,6 +417,8 @@ void MainWindow::connectSignals(void) const
     connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
             this, SLOT(on_actionOpen_patient_explorer_triggered()),
             connType);
+    connect(this->pStartupMenu, SIGNAL(patientDropped()),
+            this->pExplorerWidget, SLOT(loadDroppedPatient()));
 
     /* Connect signals from the grid widget to the main window */
     connect(this->pGridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
@@ -594,4 +596,3 @@ void MainWindow::setupToolbar(void)
     /* By default, the whole main toolbar isn't visible upon program start */
     ui->tlbMain->setVisible(false);
 }
-

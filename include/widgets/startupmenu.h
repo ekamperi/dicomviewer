@@ -15,10 +15,15 @@ public:
     explicit StartupMenu(QWidget *parent = 0);
     ~StartupMenu();
 
+protected:
+    void dropEvent(QDropEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+
 signals:
     void openDICOM_files(void);
     void openDICOM_dir(void);
     void openPatientExplorer(void);
+    void patientDropped(void);
 
 private slots:
     void on_btnOpenDICOMFiles_clicked();

@@ -100,7 +100,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QTreeWidget" name="treePatients">
+    <widget class="DDTreeWidget" name="treePatients">
      <property name="statusTip">
       <string/>
      </property>
@@ -181,6 +181,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DDTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>include/widgets/ddtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>editPath</tabstop>
   <tabstop>btnScan</tabstop>

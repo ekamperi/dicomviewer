@@ -7,6 +7,7 @@ StartupMenu::StartupMenu(QWidget *parent) :
     ui(new Ui::StartupMenu)
 {
     ui->setupUi(this);
+    this->setAcceptDrops(true);
 }
 
 StartupMenu::~StartupMenu()
@@ -32,4 +33,18 @@ void StartupMenu::on_btnOpenPatientExplorer_clicked()
 void StartupMenu::on_btnExit_clicked()
 {
     QCoreApplication::exit(0);
+}
+
+void StartupMenu::dropEvent(QDropEvent *event)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    event->acceptProposedAction();
+    emit this->patientDropped();
+}
+
+void StartupMenu::dragEnterEvent(QDragEnterEvent *event)
+{
+    qDebug() << Q_FUNC_INFO;
+    event->acceptProposedAction();
 }

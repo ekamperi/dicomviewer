@@ -39,6 +39,7 @@ private slots:
     void on_itemSelectionChanged(void);
     void on_itemDoubleClicked(QTreeWidgetItem *, int);
     void on_editPath_returnPressed();
+    void loadDroppedPatient(void);
 
     /* This is triggered when the FindDicomWorker is finished */
     void filesScanned();
