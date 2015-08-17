@@ -115,8 +115,7 @@ void MainWindow::on_actionClose_triggered()
         this->switchToGridWidget();
     } else {
         // XXX: cleanup
-        ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
-        this->hideMainToolbar();
+        this->switchToStartupMenu();
     }
     ui->stackedWidget->update();
     this->statusBar()->showMessage("Ready.");
@@ -440,7 +439,7 @@ void MainWindow::connectSignals(void) const
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
             this, SLOT(updateStatusBarForSlice(int)),
             connType);
-    connect(this->pSliceWidget, SIGNAL(switchToGridWidget()),
+    connect(this->pSliceWidget, SIGNAL(backToGridWidget()),
             this, SLOT(switchToGridWidget()),
             connType);
 
@@ -513,6 +512,19 @@ void MainWindow::changeWindow(QString newWindow)
 /*******************************************************************************
 *                       USER INTERFACE OPERATIONS
 *******************************************************************************/
+
+void MainWindow::switchToStartupMenu(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    Q_ASSERT(this->pStartupMenu);
+    ui->stackedWidget->setCurrentWidget(this->pStartupMenu);
+    this->hideMainToolbar();
+
+    /* Also, if there were a docked patient explorer widget, un-dock it */
+    // XXX
+}
+
 void MainWindow::switchToGridWidget(void)
 {
     qDebug() << Q_FUNC_INFO;

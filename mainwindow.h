@@ -43,6 +43,9 @@ private slots:
     void loadSeries(const QList<QString> &);
     void displayWaitCursor(void);
     void displayArrowCursor(void);
+    void switchToGridWidget(void);
+    void switchToSliceWidget(void);
+    void switchToStartupMenu(void);
     void changeWindow(QString newWindow);
 
     void on_actionExit_triggered();
@@ -110,8 +113,6 @@ private:
     void setupToolbar(void);
     void showMainToolbar(void);
     void hideMainToolbar(void);
-    void switchToGridWidget(void);
-    void switchToSliceWidget(void);
 
     /* Actions */
     QWidgetAction *actChangeWindow;
