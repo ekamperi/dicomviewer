@@ -96,7 +96,7 @@ QPixmap DDTreeWidget::generatePixmap(const QTreeWidgetItem *pItem)
     patient = pItem->parent()->parent()->data(0, Qt::UserRole).value<Patient>();
 
     /* Calculate the bounding rectangle needed to display the text */
-    QFont font("Arial", 12);
+    QFont font("Arial", 11);
     QFontMetrics fontMetrics =
             QFontMetrics(font);
     QString text =
@@ -111,10 +111,18 @@ QPixmap DDTreeWidget::generatePixmap(const QTreeWidgetItem *pItem)
 
     /* Generate the actual pixmap */
     QPixmap pixmap(boundingRect.size());
-    pixmap.fill(Qt::gray);
+    pixmap.fill(Qt::white);
     QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
     painter.setFont(font);
-    painter.drawText(boundingRect, Qt::TextWordWrap, text, &boundingRect);
+    painter.drawText(boundingRect, Qt::AlignLeft | Qt::TextWordWrap, text, &boundingRect);
+
+    /* Draw a red border around the pixmap */
+    QPen p;
+    p.setWidth(2);
+    p.setColor(Qt::red);
+    painter.setPen(p);
+    painter.drawRect(boundingRect);
 
     return pixmap;
 }
