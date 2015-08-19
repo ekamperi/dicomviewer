@@ -100,11 +100,13 @@ QPixmap DDTreeWidget::generatePixmap(const QTreeWidgetItem *pItem)
     QFontMetrics fontMetrics =
             QFontMetrics(font);
     QString text =
-            QString("Test1") + "\n" +
-            "Test2" + "\n" +
-            "Test3";
+            patient.getName() + "\n" +
+            series.getDesc() + "\n" +
+            study.getDesc();
+
     QRect boundingRect =
             fontMetrics.boundingRect(
+                0,0,300,100,Qt::AlignLeft | Qt::TextWordWrap,
                 text);
 
     /* Generate the actual pixmap */
@@ -112,7 +114,7 @@ QPixmap DDTreeWidget::generatePixmap(const QTreeWidgetItem *pItem)
     pixmap.fill(Qt::gray);
     QPainter painter(&pixmap);
     painter.setFont(font);
-    painter.drawText(0, boundingRect.height()/2, text);
+    painter.drawText(boundingRect, Qt::TextWordWrap, text, &boundingRect);
 
     return pixmap;
 }
