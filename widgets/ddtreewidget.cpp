@@ -112,17 +112,18 @@ QPixmap DDTreeWidget::generatePixmap(const QTreeWidgetItem *pItem)
                 text);
 
     /* Add some margins around the bounding rect */
-    QRect outerRect = boundingRect.marginsAdded(QMargins(20,20,20,20));
+    QRect outerRect = boundingRect.marginsAdded(QMargins(10,10,10,10));
     outerRect.moveTopLeft(QPoint(0,0));
-    QRect redRect = boundingRect.marginsAdded(QMargins(10,10,10,10));
-    redRect.moveTopLeft(QPoint(10,10));
-    boundingRect.moveTopLeft(QPoint(20,20));
+    QRect redRect = boundingRect.marginsAdded(QMargins(5,5,5,5));
+    redRect.moveTopLeft(QPoint(5,5));
+    boundingRect.moveTopLeft(QPoint(10,10));
 
     /* Generate the actual pixmap */
     QPixmap pixmap(outerRect.size());
-    pixmap.fill(Qt::white);
+    pixmap.fill(QColor("#DEDEDE"));
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
     painter.setFont(font);
     painter.drawText(boundingRect, Qt::AlignLeft | Qt::TextWordWrap, text, &boundingRect);
 
