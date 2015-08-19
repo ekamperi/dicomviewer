@@ -68,6 +68,9 @@ void DDTreeWidget::mouseMoveEvent(QMouseEvent *event)
     QPixmap pixmap = this->generatePixmap(this->pDraggedItem);
     drag->setPixmap(pixmap);
 
+    drag->setHotSpot(QPoint(drag->pixmap().width()/2,
+                            drag->pixmap().height()));
+
     Qt::DropAction dropAction;
     dropAction = drag->exec(Qt::MoveAction);
 }
@@ -101,16 +104,22 @@ QPixmap DDTreeWidget::generatePixmap(const QTreeWidgetItem *pItem)
             QFontMetrics(font);
     QString text =
             patient.getName() + "\n" +
-            series.getDesc() + "\n" +
-            study.getDesc();
-
+            study.getDesc() + "\n" +
+            series.getDesc();
     QRect boundingRect =
             fontMetrics.boundingRect(
-                0,0,300,100,Qt::AlignLeft | Qt::TextWordWrap,
+                0,0,350,0,Qt::AlignLeft | Qt::TextWordWrap,
                 text);
 
+    /* Add some margins around the bounding rect */
+    QRect outerRect = boundingRect.marginsAdded(QMargins(20,20,20,20));
+    outerRect.moveTopLeft(QPoint(0,0));
+    QRect redRect = boundingRect.marginsAdded(QMargins(10,10,10,10));
+    redRect.moveTopLeft(QPoint(10,10));
+    boundingRect.moveTopLeft(QPoint(20,20));
+
     /* Generate the actual pixmap */
-    QPixmap pixmap(boundingRect.size());
+    QPixmap pixmap(outerRect.size());
     pixmap.fill(Qt::white);
     QPainter painter(&pixmap);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -122,7 +131,7 @@ QPixmap DDTreeWidget::generatePixmap(const QTreeWidgetItem *pItem)
     p.setWidth(2);
     p.setColor(Qt::red);
     painter.setPen(p);
-    painter.drawRect(boundingRect);
+    painter.drawRoundedRect(redRect,5,5);
 
     return pixmap;
 }
