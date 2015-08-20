@@ -48,6 +48,7 @@ public:
         return this->details["patientPosition"];
     }
 
+    /* These are implemented in examdetails.cpp file */
     QString getStudyDate(void) const;
     QString getStudyTime(void) const;
 
