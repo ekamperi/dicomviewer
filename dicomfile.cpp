@@ -247,7 +247,7 @@ unsigned char *DicomFile::getCompressedData()
     if (status == EC_Normal) {
         DcmPixelItem* pixitem = NULL;
 
-		/* Access first frame (skipping offset table) */
+        /* Access first frame (skipping offset table) */
         dseq->getItem(pixitem, 1);
         if (pixitem == NULL)
             return NULL;
@@ -256,7 +256,7 @@ unsigned char *DicomFile::getCompressedData()
          * Get the length of this pixel item (i.e. fragment, i.e. most of
          * the time, the length of the frame).
          */
-		Uint32 length = pixitem->getLength();
+        Uint32 length = pixitem->getLength();
         if (length == 0) {
             qDebug() << "length = 0";
             return NULL;
@@ -329,6 +329,7 @@ ExamDetails DicomFile::getExamDetails(void)
     { DCM_StudyDate,        "studyDate"	       },
     { DCM_StudyTime,        "studyTime"        },
     { DCM_InstitutionName,  "institutionName"  },
+    { DCM_PatientPosition,  "patientPosition"  },
     /* CT specific tags */
     { DCM_KVP,              "kvp"              },
     { DCM_XRayTubeCurrent,  "xrayTubeCurrent"  },

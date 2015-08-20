@@ -44,6 +44,10 @@ public:
         return this->details["institutionName"];
     }
 
+    QString getPatientPosition(void) const {
+        return this->details["patientPosition"];
+    }
+
     QString getStudyDate(void) const;
     QString getStudyTime(void) const;
 
