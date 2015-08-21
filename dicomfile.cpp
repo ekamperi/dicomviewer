@@ -335,7 +335,8 @@ ExamDetails DicomFile::getExamDetails(void)
     { DCM_XRayTubeCurrent,  "xrayTubeCurrent"  },
     { DCM_Exposure,         "exposure"         },
     { DCM_GantryDetectorTilt, "gantryDetectorTilt" },
-    { DCM_SliceThickness,   "sliceThickness"   }
+    { DCM_SliceThickness,   "sliceThickness"   },
+    { DCM_SliceLocation,    "sliceLocation"    },
 };
 
     /* Calculate size of array */

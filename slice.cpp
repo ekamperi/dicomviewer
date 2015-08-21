@@ -7,6 +7,7 @@ Slice::Slice(QString filename, unsigned int index)
 //    qDebug() << Q_FUNC_INFO;
 
     /* Index to numerically identify a slice */
+    // XXX This will be overriden by slice location reordering
     this->index = index;
 
     /* Create a DicomFile object to dissect the input file */

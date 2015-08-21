@@ -47,7 +47,8 @@ QString ExamDetails::getSpecificDetails(Exam::Modality examModality) const
                 +       "KVp: " + this->getKVP() + "\n"
                 +  "Exposure: " + this->getExposure() + "\n"
                 +      "Tilt: " + this->getGantryDetectorTilt() + "\n"
-                + "Thickness: " + this->getSliceThickness() + "mm";
+                + "Thickness: " + this->getSliceThickness() + "mm" + "\n"
+                + "Slice Location: " + this->getSliceLocation();
     }
 
     return specificDetails;

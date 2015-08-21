@@ -73,6 +73,10 @@ public:
         return this->details["sliceThickness"];
     }
 
+    QString getSliceLocation(void) const {
+        return this->details["sliceLocation"];
+    }
+
     /* Aggregate functions */
     QMap<QString, QString> getDetails(void) {
         return this->details;

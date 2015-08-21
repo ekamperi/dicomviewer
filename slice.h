@@ -23,6 +23,10 @@ public:
         return this->index;
     }
 
+    void setIndex(unsigned int idx) {
+        this->index = idx;
+    }
+
     float *getRawPixelData(void) const {
         return this->pRawPixelData;
     }
