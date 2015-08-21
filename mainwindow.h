@@ -47,7 +47,6 @@ private slots:
     void switchToSliceWidget(void);
     void switchToStartupMenu(void);
     void changeWindow(QString newWindow);
-    void dockWidgetClosed(void);
 
     void on_actionExit_triggered();
 

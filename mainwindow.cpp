@@ -312,8 +312,6 @@ void MainWindow::on_actionOpen_patient_explorer_triggered()
     /* Connect the signals */
     connect(this->pDockWidget, SIGNAL(topLevelChanged(bool)),
             this->pExplorerWidget, SLOT(updateUI(bool)));
-    connect(this->pDockWidget, SIGNAL(destroyed()),
-            this, SLOT(dockWidgetClosed));
     addDockWidget(Qt::LeftDockWidgetArea, this->pDockWidget);
 
     /* For some reason in Ubuntu Linux the patient explorer widget is shown
@@ -624,10 +622,4 @@ void MainWindow::setupToolbar(void)
 
     /* By default, the whole main toolbar isn't visible upon program start */
     ui->tlbMain->setVisible(false);
-}
-
-void MainWindow::dockWidgetClosed(void)
-{
-    qDebug() << Q_FUNC_INFO;
-    this->pDockWidget = NULL;
 }
