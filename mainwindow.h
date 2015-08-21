@@ -47,6 +47,7 @@ private slots:
     void switchToSliceWidget(void);
     void switchToStartupMenu(void);
     void changeWindow(QString newWindow);
+    void dockWidgetClosed(void);
 
     void on_actionExit_triggered();
 
@@ -99,6 +100,7 @@ private:
      */
     GridWidget *pGridWidget;
     SliceWidget *pSliceWidget;
+    QDockWidget *pDockWidget;
 
     /* The patient explorer widget is used to discover dicom files and
      * build the patients > image studies > image series hierarchy */

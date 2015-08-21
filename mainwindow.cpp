@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
      */
     this->pExplorerWidget = new PatientExplorerWidget();
     Q_ASSERT(this->pExplorerWidget);
+    this->pDockWidget = NULL;
 
     /* Setup the main toolbar, but don't display it yet */
     this->setupToolbar();
@@ -290,27 +291,37 @@ void MainWindow::on_actionOpen_patient_explorer_triggered()
 {
     qDebug() << Q_FUNC_INFO;
 
+    if (this->pDockWidget) {
+        this->pDockWidget->setVisible(true);
+        return;
+    }
+
     /* The dock widget is used to allowed patient explorer widget to be
      * embedded in the main window or float. Don't create it until the user
      * hits to open patient explorer widget, eitherwise an empty dock will be
      * created and shown to main window.
      */
-    QDockWidget *pDockWidget = new QDockWidget("Patients", this);
-    Q_ASSERT(pDockWidget);
-    pDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    pDockWidget->setFloating(true);     // By default, float!
-    pDockWidget->setWidget(this->pExplorerWidget);
-    pDockWidget->resize(800, 480);
-    connect(pDockWidget, SIGNAL(topLevelChanged(bool)),
+    this->pDockWidget = new QDockWidget("Patients", this);
+    Q_ASSERT(this->pDockWidget);
+
+    this->pDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    this->pDockWidget->setFloating(true);     // By default, float!
+    this->pDockWidget->setWidget(this->pExplorerWidget);
+    this->pDockWidget->resize(800, 480);
+
+    /* Connect the signals */
+    connect(this->pDockWidget, SIGNAL(topLevelChanged(bool)),
             this->pExplorerWidget, SLOT(updateUI(bool)));
-    addDockWidget(Qt::LeftDockWidgetArea, pDockWidget);
+    connect(this->pDockWidget, SIGNAL(destroyed()),
+            this, SLOT(dockWidgetClosed));
+    addDockWidget(Qt::LeftDockWidgetArea, this->pDockWidget);
 
     /* For some reason in Ubuntu Linux the patient explorer widget is shown
      * outside and far away from main window, which is very annoying. Try to
      * center it. XXX: Check how this code affects Windows/Mac OSX and other
      * Linux distributions.
     */
-    pDockWidget->move(
+    this->pDockWidget->move(
         this->frameGeometry().topLeft() +
         this->rect().center() - pDockWidget->rect().center());
 }
@@ -613,4 +624,10 @@ void MainWindow::setupToolbar(void)
 
     /* By default, the whole main toolbar isn't visible upon program start */
     ui->tlbMain->setVisible(false);
+}
+
+void MainWindow::dockWidgetClosed(void)
+{
+    qDebug() << Q_FUNC_INFO;
+    this->pDockWidget = NULL;
 }

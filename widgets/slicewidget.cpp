@@ -30,9 +30,10 @@ SliceWidget::SliceWidget(QVector<Slice *> *pVecSlices, QWidget *parent) : QWidge
     this->pHLayout->addWidget(this->pScrollBar);
 
     /* Enable support for context menu (right click shows the tools) */
-    this->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
-            this, SLOT(showContextMenu(const QPoint &)));
+    // XXX
+//    this->setContextMenuPolicy(Qt::CustomContextMenu);
+//    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
+//            this, SLOT(showContextMenu(const QPoint &)));
 }
 
 SliceWidget::~SliceWidget()
