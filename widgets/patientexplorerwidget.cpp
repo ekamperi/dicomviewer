@@ -16,7 +16,7 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
 
     /* Setup column width in the tree widget */
     ui->treePatients->setColumnWidth(0, 350);
-    ui->treePatients->setColumnWidth(1,  70);
+    ui->treePatients->setColumnWidth(1,  85);
     ui->treePatients->setColumnWidth(2,  30);
     ui->treePatients->setColumnWidth(3, 150);
     ui->treePatients->setColumnWidth(4, 150);
