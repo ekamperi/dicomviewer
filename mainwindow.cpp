@@ -353,15 +353,6 @@ void MainWindow::loadDicomFiles(QStringList fileNames)
     loadDicomThread->start();
 }
 
-bool sliceComparator(const Slice *pLeft, const Slice *pRight)
-{
-    Q_ASSERT(pLeft);
-    Q_ASSERT(pRight);
-    int left  =  pLeft->getExamDetails().getSliceLocation().toInt();
-    int right = pRight->getExamDetails().getSliceLocation().toInt();
-    return left > right;    //XXX
-}
-
 void MainWindow::filesLoaded(void)
 {
     qDebug() << Q_FUNC_INFO;
@@ -372,7 +363,7 @@ void MainWindow::filesLoaded(void)
     /* Reorder the slices based on their slice location, if any */
     // XXX skip if no Slice location available
     const int howMany = this->vecSlices.size();
-    qSort(vecSlices.begin(), vecSlices.end(), sliceComparator);
+    qSort(vecSlices.begin(), vecSlices.end(), Slice::comparator);
     for (int i = 0; i < howMany; i++) {
         Slice *pSlice = this->vecSlices.at(i);
         Q_ASSERT(pSlice);

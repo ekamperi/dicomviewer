@@ -56,3 +56,12 @@ QPair<float, float> Slice::getDefaultWindowLevelWidth(void) const
     // XXX
     return QPair<float, float>(0.0, 0.5);
 }
+
+bool Slice::comparator(const Slice *pLeft, const Slice *pRight)
+{
+    Q_ASSERT(pLeft);
+    Q_ASSERT(pRight);
+    int left  =  pLeft->getExamDetails().getSliceLocation().toInt();
+    int right = pRight->getExamDetails().getSliceLocation().toInt();
+    return left > right;    //XXX
+}

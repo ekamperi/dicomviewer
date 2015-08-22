@@ -67,6 +67,8 @@ public:
         return this->pHUConverter;
     }
 
+    static bool comparator(const Slice *pLeft, const Slice *pRight);
+
     void normalizePixels(float globalMaxPixel);
 
     QPair<float, float> getDefaultWindowLevelWidth(void) const;
