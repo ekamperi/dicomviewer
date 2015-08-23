@@ -57,6 +57,10 @@ QPair<float, float> Slice::getDefaultWindowLevelWidth(void) const
     return QPair<float, float>(0.0, 0.5);
 }
 
+/*
+ * This function is used in conjuction with qsort() on the vector
+ * holding the slices, in order to sort them by their slice location value.
+ */
 bool Slice::comparator(const Slice *pLeft, const Slice *pRight)
 {
     Q_ASSERT(pLeft);

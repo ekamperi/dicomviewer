@@ -4,7 +4,9 @@
 #include "include/workers/finddicomworker.h"
 #include "patientexplorer.h"
 
+#include <QCompleter>
 #include <QDebug>
+#include <QDirModel>
 #include <QFileDialog>
 #include <QKeyEvent>
 
@@ -34,6 +36,12 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     /* We want to be notified when user clicks on a patient image series */
     connect(ui->treePatients, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
             this, SLOT(on_itemDoubleClicked(QTreeWidgetItem*,int)));
+
+    /* Autocomplete paths */
+    QCompleter *pCompleter = new QCompleter(this);
+    Q_ASSERT(pCompleter);
+    pCompleter->setModel(new QDirModel(pCompleter));
+    ui->editPath->setCompleter(pCompleter);
 }
 
 PatientExplorerWidget::~PatientExplorerWidget()
