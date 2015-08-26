@@ -65,7 +65,10 @@ bool Slice::comparator(const Slice *pLeft, const Slice *pRight)
 {
     Q_ASSERT(pLeft);
     Q_ASSERT(pRight);
-    int left  =  pLeft->getExamDetails().getSliceLocation().toInt();
-    int right = pRight->getExamDetails().getSliceLocation().toInt();
+
+    /* Caution: don't use ::toInt(). Slice location may be float! */
+    float left  =  pLeft->getExamDetails().getSliceLocation().toFloat();
+    float right = pRight->getExamDetails().getSliceLocation().toFloat();
+
     return left > right;    //XXX
 }
