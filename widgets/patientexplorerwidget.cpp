@@ -357,3 +357,11 @@ void PatientExplorerWidget::on_btnScan_clicked()
         this->doScan(path, isRecursive);
     }
 }
+
+void PatientExplorerWidget::scanPath(QString path)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    ui->editPath->setText(path);
+    this->on_btnScan_clicked();
+}

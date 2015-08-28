@@ -39,8 +39,27 @@ void StartupMenu::dropEvent(QDropEvent *event)
 {
     qDebug() << Q_FUNC_INFO;
 
-    event->acceptProposedAction();
-    emit this->patientDropped();
+    /*
+     * There are 2 use scenarios here. The Startup menu widget shall respond
+     * either of the following:
+     *
+     * 1. user drags an image series from the patient explorer widget and drops
+     * it here, or
+     * 2. user drags a folder from his/er desktop and drops it here. In this
+     * case we shall call patient explorer widget and let it traverse the file
+     * hierarchy just as if the user had clicked 'Browse/Scan'.
+     */
+
+    if (event->mimeData()->hasUrls()) {
+        event->acceptProposedAction();
+        QUrl url = event->mimeData()->urls().at(0);
+        emit this->directoryDropped(url);
+    } else {
+        if (event->mimeData()->text() == "start") { // XXX
+            event->acceptProposedAction();
+            emit this->patientDropped();
+        }
+    }
 }
 
 void StartupMenu::dragEnterEvent(QDragEnterEvent *event)

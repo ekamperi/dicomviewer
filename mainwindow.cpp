@@ -435,6 +435,8 @@ void MainWindow::connectSignals(void) const
     connect(this->pStartupMenu, SIGNAL(openPatientExplorer()),
             this, SLOT(on_actionOpen_patient_explorer_triggered()),
             connType);
+    connect(this->pStartupMenu, SIGNAL(directoryDropped(const QUrl &)),
+            this, SLOT(loadDroppedDirectory(const QUrl &)));
     connect(this->pStartupMenu, SIGNAL(patientDropped()),
             this->pExplorerWidget, SLOT(loadDroppedPatient()));
 
@@ -613,4 +615,14 @@ void MainWindow::setupToolbar(void)
 
     /* By default, the whole main toolbar isn't visible upon program start */
     ui->tlbMain->setVisible(false);
+}
+
+void MainWindow::loadDroppedDirectory(const QUrl &url)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    if (!this->pDockWidget || (this->pDockWidget && !this->pDockWidget->isVisible())) {
+        on_actionOpen_patient_explorer_triggered();
+        this->pExplorerWidget->scanPath(url.toLocalFile());
+    }
 }

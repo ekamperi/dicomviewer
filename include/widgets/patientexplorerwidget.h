@@ -25,6 +25,8 @@ public:
     explicit PatientExplorerWidget(QWidget *parent = 0);
     ~PatientExplorerWidget();
 
+    void scanPath(QString path);
+
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
 

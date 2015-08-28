@@ -23,6 +23,7 @@ signals:
     void openDICOM_files(void);
     void openDICOM_dir(void);
     void openPatientExplorer(void);
+    void directoryDropped(const QUrl &url);
     void patientDropped(void);
 
 private slots:
