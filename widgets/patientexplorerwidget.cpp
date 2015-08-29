@@ -23,6 +23,11 @@ PatientExplorerWidget::PatientExplorerWidget(QWidget *parent) :
     ui->treePatients->setColumnWidth(3, 150);
     ui->treePatients->setColumnWidth(4, 150);
 
+    /* For some reason I don't know, the first column is sorted in descending
+     * order by default. Change that.
+     */
+    ui->treePatients->sortByColumn(0, Qt::AscendingOrder);
+
     /* Create a patient explorer object that will do the actuall scanning */
     this->pPatientExplorer = new PatientExplorer();
     Q_ASSERT(this->pPatientExplorer);
