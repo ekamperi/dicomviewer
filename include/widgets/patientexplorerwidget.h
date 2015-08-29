@@ -32,6 +32,7 @@ protected:
 
 signals:
     void loadSeries(const QList<QString> &);
+    void hideMyDockWidget(void);
 
 public slots:
     void updateUI(bool isFloating);

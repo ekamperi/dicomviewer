@@ -472,6 +472,8 @@ void MainWindow::connectSignals(void) const
     connect(this->pExplorerWidget, SIGNAL(loadSeries(const QList<QString> &)),
             this, SLOT(switchToGridWidget()),
             connType);
+    connect(this->pExplorerWidget, SIGNAL(hideMyDockWidget()),
+            this, SLOT(hideDockWidget()));
 }
 
 /*******************************************************************************
@@ -624,5 +626,14 @@ void MainWindow::loadDroppedDirectory(const QUrl &url)
     if (!this->pDockWidget || (this->pDockWidget && !this->pDockWidget->isVisible())) {
         on_actionOpen_patient_explorer_triggered();
         this->pExplorerWidget->scanPath(url.toLocalFile());
+    }
+}
+
+void MainWindow::hideDockWidget(void)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    if (this->pDockWidget && this->pDockWidget->isVisible()) {
+        this->pDockWidget->hide();
     }
 }

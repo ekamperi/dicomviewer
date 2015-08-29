@@ -40,6 +40,7 @@ private slots:
     void filesLoaded();
     void gotoSlice(const Slice *pSlice);
     void updateStatusBarForSlice(int idx) const;
+    void hideDockWidget(void);
     void loadDroppedDirectory(const QUrl &url);
     void loadSeries(const QList<QString> &);
     void displayWaitCursor(void);

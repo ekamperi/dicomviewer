@@ -61,8 +61,8 @@ void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
     qDebug() << Q_FUNC_INFO;
 
     if (pEvent->key() == Qt::Key_Escape) {
-        this->close();
-        return;
+        // XXX
+        emit this->hideMyDockWidget();
     } else if (pEvent->key() == Qt::Key_Space) {
         /* XXX: This needs to be fixed (use an event filter?) */
         QList<QTreeWidgetItem *> selectedItems = ui->treePatients->selectedItems();
