@@ -453,6 +453,8 @@ void MainWindow::connectSignals(void) const
     connect(this->pGridWidget, SIGNAL(heavyTaskCompleted()),
             this, SLOT(displayArrowCursor()),
             connType);
+    connect(this->pGridWidget, SIGNAL(backToStartupMenu()),
+            this, SLOT(switchToStartupMenu()));
 
     /* Connect signals from the slice widget to the main window */
     connect(this, SIGNAL(windowChanged(HUWindows::window)),

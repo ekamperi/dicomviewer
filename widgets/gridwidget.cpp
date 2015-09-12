@@ -112,7 +112,7 @@ bool GridWidget::event(QEvent *pEvent)
         QKeyEvent *pke = static_cast<QKeyEvent *>(pEvent);
         int key = pke->key();
         if (key == Qt::Key_Escape) {
-            //this->on_actionClose_triggered();
+            emit this->backToStartupMenu();
         } else if (key == Qt::Key_A
                    && (QApplication::keyboardModifiers() & Qt::ControlModifier)) {
             selectAll();
