@@ -353,10 +353,11 @@ ExamDetails DicomFile::getExamDetails(void)
     OFCondition status = this->pDcmDataset->findAndGetOFString(DCM_Modality, result);
     if (status.good()) {
         if (result == "CT") {
-        } else if (result == "MRI") {
+        } else if (result == "MRI" || result == "MR") {
         } else {
             qDebug() << "Unknown imaging modality. We will not show examination " \
                         "specific details";
+            qDebug() << "Modality = " << result.c_str();
         }
     }
 
