@@ -6,6 +6,8 @@
 #include <QGraphicsView>
 #include <QGridLayout>
 #include <QProgressDialog>
+#include <QWidgetAction>
+#include <QMimeData>
 
 #include "flowlayout.h"
 #include "include/widgets/gridwidget.h"

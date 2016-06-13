@@ -3,6 +3,11 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QScrollBar>
+#include <QEvent>
+#include <QKeyEvent>
+#include <QApplication>
+#include <QMenu>
 
 #include "myglwidget.h"
 

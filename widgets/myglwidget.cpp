@@ -8,11 +8,13 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QtGlobal>
-#include <QtOpenGL/QGLWidget>
+#include <QOpenGLWidget>
 #include <QGLShader>
+#include <QApplication>
+#include <qmath.h>
 
 MyGLWidget::MyGLWidget(QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+    QOpenGLWidget(parent)
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -593,7 +595,7 @@ unsigned int MyGLWidget::calcPhysicalDistance(const QLine &line)
 
     float dx = sx * (np2.x() - np1.x());
     float dy = sy * (np2.y() - np1.y());
-    float len = sqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
+    float len = qSqrt((dx*dx*hs*hs) + (dy*dy*vs*vs));
 
 //    qDebug() << "sx =" << sx << " sy =" << sy << " dx =" << dx << " dy =" << dy
 //                << " hs =" << hs << " vs =" << vs;

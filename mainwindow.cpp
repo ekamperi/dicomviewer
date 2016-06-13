@@ -5,6 +5,9 @@
 #include <QKeyEvent>
 #include <QtGlobal>
 #include <QProgressDialog>
+#include <QMessageBox>
+#include <QDockWidget>
+#include <QComboBox>
 
 #include "dicomfile.h"
 #include "include/workers/loaddicomworker.h"

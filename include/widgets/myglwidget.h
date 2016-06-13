@@ -1,7 +1,8 @@
 #ifndef MYGLWIDGET_H
 #define MYGLWIDGET_H
 
-#include <QtOpenGL>
+#include <QOpenGLWidget>
+#include <QGLShader>
 
 #include "distline.h"
 #include "denscircle.h"
@@ -14,7 +15,7 @@
 
 class Slice;
 
-class MyGLWidget : public QGLWidget
+class MyGLWidget : public QOpenGLWidget
 {
     Q_OBJECT
 
