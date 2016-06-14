@@ -43,8 +43,8 @@ public:
         return this->format;
     }
 
-    ExamDetails getExamDetails(void) const  {
-        return this->examDetails;
+    const ExamDetails * getExamDetails(void) const  {
+        return &this->examDetails;
     }
 
     void setImageWidget(ImageWidget *pMyImageWidget) {

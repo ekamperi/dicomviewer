@@ -7,6 +7,7 @@
 #include "distline.h"
 #include "denscircle.h"
 #include "examdetails.h"
+#include "include/widgets/examdetailswidget.h"
 #include "geomtransformation.h"
 #include "slice.h"
 #include "topogram.h"
@@ -30,6 +31,7 @@ public:
     Slice *getSlice(void) const;
     unsigned int getSliceIndex(void) const;
 
+    void genExamDetails(void);
     void genTopogram(float angle);
 
     /* Geometric transformations (e.g., flip, etc) */
@@ -148,6 +150,11 @@ private:
      */
     QVector<Slice *> vecSlices;
 
+    /*
+     * Examination Details Widget
+     * Topogram
+     */
+    ExamDetailsWidget *pExamDetailsWidget;
     Topogram *pTopogram;
 
     /* OpenGL matrices */

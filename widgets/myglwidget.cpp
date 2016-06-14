@@ -39,6 +39,9 @@ MyGLWidget::MyGLWidget(QWidget *parent) :
     this->tmin = 0.0;
     this->tmax = 0.4;
 
+    /* Generate Examination Details Widget */
+    this->genExamDetails();
+
     /* By default we don't show any topogram */
     this->pTopogram = NULL;
 
@@ -56,9 +59,16 @@ MyGLWidget::~MyGLWidget()
 //    Q_ASSERT(this->pProgram);
 //    delete this->pProgram;
 
+    /* Get rid of the examination details widget */
+    if (this->pExamDetailsWidget) {
+        delete this->pExamDetailsWidget;
+        this->pExamDetailsWidget = NULL;
+    }
+
     /* Get rid of the topogram, if any */
     if (this->pTopogram) {
         delete this->pTopogram;
+        this->pTopogram = NULL;
     }
 
     /* Don't forget to delete the textures */
@@ -75,6 +85,11 @@ void MyGLWidget::setSlice(Slice *pSlice)
     /* Also notify our associated topogram, if any */
     if (pTopogram) {
         this->pTopogram->setNewSliceIndex(pSlice->getIndex());
+    }
+
+    if (this->pExamDetailsWidget) {
+        this->pExamDetailsWidget->setExamDetails(
+                    this->pSlice->getExamDetails());
     }
 
     /* Force a redraw */
@@ -201,7 +216,11 @@ void MyGLWidget::resizeGL(int w, int h)
 
     /* If there is a topogram and only if it's embedded into us move it */
     if (this->pTopogram && this->pTopogram->isEmbedded()) {
-        this->pTopogram->move(this->width()-pTopogram->width(), 0);
+        this->pTopogram->move(this->width() - pTopogram->width(), 0);
+    }
+
+    if (this->pExamDetailsWidget) {
+        this->pExamDetailsWidget->resize(200, h);
     }
 }
 
@@ -285,24 +304,7 @@ void MyGLWidget::drawDetails(QPainter *pPainter)
 {
     Q_ASSERT(pPainter);
 
-    QFont font = pPainter->font();
-    font.setPointSize(10);
-    pPainter->setFont(font);
-    pPainter->setPen(Qt::yellow);
-    ExamDetails examDetails = this->pSlice->getExamDetails();
-
-    /* Draw generic examination details (patient name, age, sex, etc) */
-    pPainter->drawText(
-                QRect(5, 5, this->width(), this->height()),
-                Qt::TextWordWrap,
-                examDetails.getGenericDetails());
-
-    /* Draw specific examination details (e.g. KVp, mAs in CT) */
-    pPainter->drawText(
-                QRect(5, 5 + this->height() - 100,
-                      this->width(), this->height()),
-                      Qt::TextWordWrap,
-                      examDetails.getSpecificDetails(Exam::CT));
+    const ExamDetails *examDetails = this->pSlice->getExamDetails();
 }
 
 void MyGLWidget::drawCurrentDistance(QPainter *painter)
@@ -694,6 +696,20 @@ MyGLWidget::getGeomTransformation(void) const
     return this->geomTransformation;
 }
 
+void MyGLWidget::genExamDetails()
+{
+    this->pExamDetailsWidget = new ExamDetailsWidget(
+                this->pSlice->getExamDetails());
+    Q_ASSERT(this->pExamDetailsWidget);
+
+    this->pExamDetailsWidget->setParent(this);
+    this->pExamDetailsWidget->resize(200, this->height());
+
+    /* Position the topogram at the top left corner */
+    this->pExamDetailsWidget->show();
+    this->pExamDetailsWidget->move(0, 0);
+}
+
 void MyGLWidget::genTopogram(float angle)
 {
     /* If there's no topogram at all, construct a new one */
@@ -717,7 +733,7 @@ void MyGLWidget::genTopogram(float angle)
 
         /* Position the topogram at the top right corner */
         this->pTopogram->show();
-        this->pTopogram->move(this->width()-pTopogram->width(), 0);
+        this->pTopogram->move(this->width() - pTopogram->width(), 0);
     } else {
         /* We already have a topogram. Just toggle its visibility (do not destroy it)! */
         bool isVisible = this->pTopogram->isVisible();
