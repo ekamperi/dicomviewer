@@ -164,42 +164,42 @@ void MainWindow::on_actionDeleteSelectedMeasures_triggered()
 }
 
 /*******************************************************************************
- *              WINDOW/WIDTH LEVELS (Abdomenm, Bones, Lung, etc)
+ *              WINDOW/WIDTH LEVELS (Abdomen, Bones, Lung, etc)
  ******************************************************************************/
 void MainWindow::on_actionAbdomen_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    emit this->windowChanged(HUWindows::ABDOMEN);
+    this->changeWindow(HUWindows::ABDOMEN);
 }
 
 void MainWindow::on_actionBone_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    emit this->windowChanged(HUWindows::BONE);
+    this->changeWindow(HUWindows::BONE);
 }
 
 void MainWindow::on_actionLung_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    emit this->windowChanged(HUWindows::LUNG);
+    this->changeWindow(HUWindows::LUNG);
 }
 
 void MainWindow::on_actionHead_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    emit this->windowChanged(HUWindows::HEAD);
+    this->changeWindow(HUWindows::HEAD);
 }
 
 void MainWindow::on_actionMediastinum_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    emit this->windowChanged(HUWindows::MEDIASTINUM);
+    this->changeWindow(HUWindows::MEDIASTINUM);
 }
 
 void MainWindow::on_actionSoft_tissue_triggered()
 {
     qDebug() << Q_FUNC_INFO;
-    emit this->windowChanged(HUWindows::SOFT_TISSUE);
+    this->changeWindow(HUWindows::SOFT_TISSUE);
 }
 
 /*******************************************************************************
@@ -447,8 +447,8 @@ void MainWindow::connectSignals(void) const
     connect(this->pGridWidget, SIGNAL(sliceDoubleClicked(const Slice *)),
             this, SLOT(gotoSlice(const Slice *)),
             connType);
-    connect(this, SIGNAL(windowChanged(HUWindows::window)),
-            this->pGridWidget, SLOT(changeWindow(HUWindows::window)),
+    connect(this, SIGNAL(windowChanged(const QWidget *, HUWindows::window)),
+            this->pGridWidget, SLOT(changeWindow(const QWidget *, HUWindows::window)),
             connType);
     connect(this->pGridWidget, SIGNAL(heavyTaskInitiated()),
             this, SLOT(displayWaitCursor()),
@@ -460,8 +460,8 @@ void MainWindow::connectSignals(void) const
             this, SLOT(switchToStartupMenu()));
 
     /* Connect signals from the slice widget to the main window */
-    connect(this, SIGNAL(windowChanged(HUWindows::window)),
-            this->pSliceWidget, SLOT(changeWindow(HUWindows::window)),
+    connect(this, SIGNAL(windowChanged(const QWidget *, HUWindows::window)),
+            this->pSliceWidget, SLOT(changeWindow(const QWidget *, HUWindows::window)),
             connType);
     connect(this->pSliceWidget, SIGNAL(sliceChanged(int)),
             this, SLOT(updateStatusBarForSlice(int)),
@@ -495,6 +495,7 @@ void MainWindow::setupAlignmentGroups(void)
     pAlGroupWindowLevel->addAction(ui->actionHead);
     pAlGroupWindowLevel->addAction(ui->actionLung);
     pAlGroupWindowLevel->addAction(ui->actionMediastinum);
+    pAlGroupWindowLevel->addAction(ui->actionSoft_tissue);
 
     /* Flip horizontally/vertically */
     QActionGroup *pAlGroupFlip = new QActionGroup(this);
@@ -532,10 +533,16 @@ void MainWindow::changeWindow(QString newWindow)
     /* Convert the text from Combo Box to appropriate HU window structure, e.g.
      * "ABDOMEN" -> HUWindows::ABDOMEN */
     HUWindows::window newHUWindow = HUWindow::fromText(newWindow);
+    this->changeWindow(newHUWindow);
+}
+
+void MainWindow::changeWindow(HUWindows::window newWindow)
+{
+    qDebug() << Q_FUNC_INFO;
 
     /* Emit a signal so that anyone interested (e.g. SliceWidget)
      * redraws itself. */
-    emit this->windowChanged(newHUWindow);
+    emit this->windowChanged(ui->stackedWidget->currentWidget(), newWindow);
 }
 
 /*******************************************************************************

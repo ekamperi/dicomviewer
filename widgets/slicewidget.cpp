@@ -152,7 +152,7 @@ void SliceWidget::scrollBarValueChanged(int value)
     this->gotoSlice(value);
 }
 
-void SliceWidget::changeWindow(HUWindows::window newWindow)
+void SliceWidget::changeWindow(const QWidget *currentWidget, HUWindows::window newWindow)
 {
     qDebug() << Q_FUNC_INFO;
 

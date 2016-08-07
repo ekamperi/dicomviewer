@@ -45,7 +45,7 @@ signals:
 private slots:
     void gotoSlice(int idx);
     void scrollBarValueChanged(int value);
-    void changeWindow(HUWindows::window newWindow);
+    void changeWindow(const QWidget *currentWidget, HUWindows::window newWindow);
     void showContextMenu(const QPoint &pos);
 };
 

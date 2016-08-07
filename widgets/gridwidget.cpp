@@ -85,9 +85,22 @@ void GridWidget::selectAll(void)
     }
 }
 
-void GridWidget::changeWindow(HUWindows::window newWindow)
+void GridWidget::changeWindow(const QWidget *currentWidget, HUWindows::window newWindow)
 {
     qDebug() << Q_FUNC_INFO;
+
+    /*
+     * When user changes the window level at the main screen widget, a signal is emitted
+     * towards all the stacked widgets (GridWidget, SliceWidget, etc). We shall react to
+     * it if and only if we are the currently activated widget in the StackedWidget.
+     *
+     * Otherwise, we may be looking at a particular slice and GridWidget will be changing
+     * the window to all slices, which will be slow and unnecessary.
+     */
+    if (currentWidget != this) {
+        return;
+        /* NEVER REACHED */
+    }
 
     /* This usually takes some time, so let others know, e.g. the MainWindow,
      * so that they change the cursor from default icon to wait cursor.

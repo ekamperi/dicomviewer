@@ -34,7 +34,7 @@ signals:
     void backToStartupMenu(void);
 
 private slots:
-    void changeWindow(HUWindows::window newWindow);
+    void changeWindow(const QWidget *currentWidget, HUWindows::window newWindow);
 };
 
 #endif // GRIDWIDGET_H

@@ -31,7 +31,7 @@ public:
     ~MainWindow();
 
 signals:
-    void windowChanged(HUWindows::window newWindow);
+    void windowChanged(const QWidget* currentWidget, HUWindows::window newWindow);
 
 private slots:
     void on_actionAbout_triggered();
@@ -51,6 +51,7 @@ private slots:
     void switchToSliceWidget(void);
     void switchToStartupMenu(void);
     void changeWindow(QString newWindow);
+    void changeWindow(HUWindows::window newWindow);
 
     void on_actionExit_triggered();
 
