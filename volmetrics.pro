@@ -16,6 +16,7 @@ SOURCES += \
     helpers/huconverter.cpp \
     helpers/mymath.cpp \
     widgets/ddtreewidget.cpp \
+    widgets/examdetailswidget.cpp \
     widgets/gridwidget.cpp \
     widgets/imagewidget.cpp \
     widgets/myglwidget.cpp \
@@ -45,6 +46,7 @@ HEADERS  += \
     include/helpers/huconverter.h \
     include/helpers/mymath.h \
     include/widgets/ddtreewidget.h \
+    include/widgets/examdetailswidget.h \
     include/widgets/gridwidget.h \
     include/widgets/imagewidget.h \
     include/widgets/myglwidget.h \
