@@ -73,7 +73,14 @@ void PatientExplorerWidget::keyPressEvent(QKeyEvent *pEvent)
             QWidget::keyPressEvent(pEvent);
         }
     } else if (pEvent->key() == Qt::Key_Return) {
-        this->on_itemDoubleClicked(ui->treePatients->selectedItems().at(0), 0);
+        /*
+         * The return key may be pressed while on the path edit box OR
+         * while on a selected item in the list. Make sure that we only
+         * try to load an item if the user actually selected one.
+         */
+        if (ui->treePatients->selectedItems().size() > 0) {
+            this->on_itemDoubleClicked(ui->treePatients->selectedItems().at(0), 0);
+        }
     } else {
         QWidget::keyPressEvent(pEvent);
     }
