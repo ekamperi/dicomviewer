@@ -532,10 +532,6 @@ body.manpage div.sectionbody {
 
 
 /* BEG @import url(bare.css); */
-/* ---------------------------------------------------------------------------
-   Bare AsciiDoc styles
-   Ryan Tomayko <r@tomayko.com>
---------------------------------------------------------------------------- */
 
 body {
 	font-family:verdana,helvetica,arial,sans-serif;
@@ -716,13 +712,6 @@ pre {
 /* vim: set ft=css ts=4 sw=4 noexpandtab: */
 
 /* END @import url(bare.css); */
-
-/* ---------------------------------------------------------------------------
-   FreeBSD AsciiDoc Theme
-   Ryan Tomayko <r@tomayko.com>
-
-   Based on The FreeBSD Handbook and various other FreeBSD documenration.
---------------------------------------------------------------------------- */
 
 body {
   font-family:verdana,helvetica,arial,sans-serif;
