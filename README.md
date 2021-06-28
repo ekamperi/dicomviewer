@@ -27,19 +27,19 @@ This ended up being more a DICOM viewer.
 ![Startup screen](images/1.png)
 
 ## Patient explorer
-Patient explorer
+![Patient explorer](images/2.png)
 
 ## Autocompletion
-Autocompletion
+![Autocompletion](images/3.png)
 
 ## Floating grid layout
-Floating grid layout
+![Floating grid layout](images/4.png)
 
 ## Scout topogram
-Scout topogram
+![Scout topogram](images/5.png)
 
 ## Measure distances
-Measure distances
+![Measure distances](images/6.png)
 
 ## Measure HU in a ROI
-Measure HU in a ROI
+![Measure HU in a ROI](images/7.png)
