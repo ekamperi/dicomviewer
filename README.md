@@ -1,14 +1,10 @@
-Volmetrics Project
-STATHIS KAMPERIS
-Eleni Maria Stea
-
 Table of Contents
-# 1. Introduction
+# Introduction
 The volmetrics project started as an endeavour to create a volumetric medical image software, in order to study certain geometrical aspects of malignant tumors. We had already done some prototyping on the matter with Mathematica and R.
 
 This ended up being more a DICOM viewer.
 
-# 2. Features
+# Features
 
 * Cross platform application (tested in Linux and Mac OSX)
 * Makes use of robust free/open source software (Qt for GUI, DCMTK for DICOM manipulation)
@@ -26,24 +22,24 @@ This ended up being more a DICOM viewer.
 * Dockable windows (patient explorer widget, topogram)
 * Overlay of examination and patient details
 
-3. Screenshots
-Startup screen
-Startup screen
+# Screenshots
+## Startup screen
+![Startup screen](images/1.png)
 
+## Patient explorer
 Patient explorer
-Patient explorer
 
+## Autocompletion
 Autocompletion
-Autocompletion
 
+## Floating grid layout
 Floating grid layout
-Floating grid layout
 
+## Scout topogram
 Scout topogram
-Scout topogram
 
-Measure distances
+## Measure distances
 Measure distances
 
-Measure HU in a ROI
+## Measure HU in a ROI
 Measure HU in a ROI
